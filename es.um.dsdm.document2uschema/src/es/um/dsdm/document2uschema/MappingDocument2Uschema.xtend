@@ -90,7 +90,7 @@ class MappingDocument2Uschema {
 		val aggregate = uschemaFactory.createAggregate
 		aggregate.name = g.name
 		aggregate.lowerBound = 1
-		aggregate.upperBound = g.isIsMany ? -1 : 1
+		aggregate.upperBound = g.isMany ? -1 : 1
 		aggregate.aggregates = eg
 		mappedEntityTypes.get(g.eContainer).root = true
 		return aggregate
