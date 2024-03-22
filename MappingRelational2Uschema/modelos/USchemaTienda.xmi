@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/USchema" name="Tienda">
+  <entities name="Cliente">
+    <features xsi:type="uschema:Attribute" name="Nombre" key="//@entities.0/@features.3">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Apellido" key="//@entities.0/@features.3">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Telefono" key="//@entities.0/@features.3">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Key" name="ID_cliente" attributes="//@entities.0/@features.0 //@entities.0/@features.1 //@entities.0/@features.2"/>
+  </entities>
+  <entities name="Producto">
+    <features xsi:type="uschema:Attribute" name="NombreProducto" key="//@entities.1/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Descripcion" key="//@entities.1/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Precio" optional="true">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Stock" key="//@entities.1/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Key" name="ID_uk_pedido" attributes="//@entities.1/@features.3" isID="false"/>
+    <features xsi:type="uschema:Key" name="ID_pedido" attributes="//@entities.1/@features.0 //@entities.1/@features.1"/>
+  </entities>
+</uschema:USchema>

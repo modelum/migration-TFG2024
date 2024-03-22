@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/MappingRelational2Uschema/src" modelPluginID="MappingRelational2Uschema"
+    modelName="RelationalMM" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>relationalMM.ecore</foreignModel>
+  <genPackages prefix="Relationalschema" disposableProviderFactory="true" ecorePackage="relationalMM.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="relationalMM.ecore#//ReferentialAction">
+      <genEnumLiterals ecoreEnumLiteral="relationalMM.ecore#//ReferentialAction/NO_ACTION"/>
+      <genEnumLiterals ecoreEnumLiteral="relationalMM.ecore#//ReferentialAction/CASCADE"/>
+      <genEnumLiterals ecoreEnumLiteral="relationalMM.ecore#//ReferentialAction/SET_NULL"/>
+      <genEnumLiterals ecoreEnumLiteral="relationalMM.ecore#//ReferentialAction/SET_DEFAULT"/>
+    </genEnums>
+    <genClasses ecoreClass="relationalMM.ecore#//NamedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//NamedElement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="relationalMM.ecore#//RelationalSchema">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//RelationalSchema/version"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference relationalMM.ecore#//RelationalSchema/tables"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//RelationalSchema/location"/>
+    </genClasses>
+    <genClasses ecoreClass="relationalMM.ecore#//Table">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference relationalMM.ecore#//Table/columns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference relationalMM.ecore#//Table/keys"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference relationalMM.ecore#//Table/fks"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference relationalMM.ecore#//Table/owner"/>
+    </genClasses>
+    <genClasses ecoreClass="relationalMM.ecore#//Column">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Column/datatype"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Column/size"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Column/nullable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Column/defaultvalue"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference relationalMM.ecore#//Column/owner"/>
+    </genClasses>
+    <genClasses ecoreClass="relationalMM.ecore#//Key">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference relationalMM.ecore#//Key/columns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Key/constraintname"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference relationalMM.ecore#//Key/owner"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//Key/isPK"/>
+    </genClasses>
+    <genClasses ecoreClass="relationalMM.ecore#//FKey">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference relationalMM.ecore#//FKey/columns"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference relationalMM.ecore#//FKey/refsTo"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//FKey/onDelete"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//FKey/onUpdate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute relationalMM.ecore#//FKey/constraintname"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference relationalMM.ecore#//FKey/owner"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

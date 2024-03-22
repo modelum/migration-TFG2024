@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated relationalMM -->
+      <package
+            uri="http://www.example.org/relationalschema"
+            class="relationalschema.RelationalschemaPackage"
+            genModel="metamodelos/relationalMM.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated uschemaMM -->
+      <package
+            uri="http://www.modelum.es/USchema"
+            class="uschema.UschemaPackage"
+            genModel="metamodelos/uschemaMM.genmodel"/>
+   </extension>
+
+</plugin>

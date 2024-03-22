@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/MappingRelational2Uschema/src" modelPluginID="MappingRelational2Uschema"
+    modelName="UschemaMM" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>uschemaMM.ecore</foreignModel>
+  <genPackages prefix="Uschema" disposableProviderFactory="true" ecorePackage="uschemaMM.ecore#/">
+    <genClasses ecoreClass="uschemaMM.ecore#//USchema">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//USchema/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//USchema/entities"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//USchema/relationships"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//EntityType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//EntityType/root"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="uschemaMM.ecore#//Feature">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Feature/name"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//Attribute">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Attribute/type"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Attribute/key"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Attribute/references"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="uschemaMM.ecore#//DataType"/>
+    <genClasses ecoreClass="uschemaMM.ecore#//PList">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//PList/elementType"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//Reference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Reference/opposite"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Reference/refsTo"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Reference/isFeaturedBy"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Reference/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Reference/upperBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Reference/lowerBound"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//Aggregate">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Aggregate/aggregates"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Aggregate/upperBound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Aggregate/lowerBound"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//PrimitiveType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//PrimitiveType/name"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//Null"/>
+    <genClasses ecoreClass="uschemaMM.ecore#//RelationshipType"/>
+    <genClasses image="false" ecoreClass="uschemaMM.ecore#//SchemaType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//SchemaType/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//SchemaType/parents"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//SchemaType/features"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//PMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//PMap/keyType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//PMap/valueType"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//PSet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//PSet/elementType"/>
+    </genClasses>
+    <genClasses ecoreClass="uschemaMM.ecore#//PTuple">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//PTuple/elements"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="uschemaMM.ecore#//LogicalFeature"/>
+    <genClasses ecoreClass="uschemaMM.ecore#//Key">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference uschemaMM.ecore#//Key/attributes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//Key/isID"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="uschemaMM.ecore#//StructuralFeature">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute uschemaMM.ecore#//StructuralFeature/optional"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
