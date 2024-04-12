@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ASCII"?>
+<USchema:USchemaClass xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:USchema="http://www.modelum.es/USchema" name="prueba">
+  <entities name="entidad1" root="true"/>
+  <entities name="entidad2" root="true"/>
+</USchema:USchemaClass>

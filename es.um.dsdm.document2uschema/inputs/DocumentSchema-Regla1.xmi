@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentschema:DocumentSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:documentschema="http://www.example.org/documentschema"
+    name="prueba">
+  <entities
+      name="entidad1"/>
+  <entities
+      name="entidad2"/>
+</documentschema:DocumentSchema>

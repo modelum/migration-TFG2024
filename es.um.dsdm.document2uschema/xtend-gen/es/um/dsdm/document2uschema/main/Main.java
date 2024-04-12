@@ -52,8 +52,8 @@ public class Main {
 
   public static void main(final String[] args) {
     try {
-      final String inputFileName = "DocumentSchema";
-      final String outputFileName = "USchema";
+      final String inputFileName = "DocumentSchema-Regla4";
+      final String outputFileName = "USchema-Regla4";
       final Main main2 = new Main();
       InputOutput.<String>println((((("Loading DocumentSchema from " + Main.USER_DIR) + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));
       final DocumentSchema entitiesModel = main2.readModel((((Main.USER_DIR + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));

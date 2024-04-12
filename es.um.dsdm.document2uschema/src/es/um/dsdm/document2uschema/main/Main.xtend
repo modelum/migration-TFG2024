@@ -44,8 +44,8 @@ class Main {
 	}
 	
 	def static void main(String[] args) {
-		val inputFileName = "DocumentSchema";
-		val outputFileName = "USchema";
+		val inputFileName = "DocumentSchema-Regla4";
+		val outputFileName = "USchema-Regla4";
 		
 		val main2 = new Main()
 		

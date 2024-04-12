@@ -8,26 +8,25 @@
   <entities
       name="entidad1">
     <properties
-        xsi:type="documentschema:Attribute"
-        name="atributo1"
-        isKey="true"/>
-    <properties
         xsi:type="documentschema:Reference"
         name="referencia1"
-        target="//@entities.0"/>
+        target="//@entities.0"
+        type="//@types.0"/>
     <properties
-        xsi:type="documentschema:Aggregate"
-        name="agregate1"
-        aggregates="//@entities.1/@properties.1"
-        isMany="true"/>
+        xsi:type="documentschema:Reference"
+        name="referencia2"
+        target="//@entities.1"
+        type="//@types.1"/>
   </entities>
   <entities
       name="entidad2">
     <properties
-        xsi:type="documentschema:Attribute"
-        name="atributo2"/>
-    <properties
-        xsi:type="documentschema:Attribute"
-        name="atributo3"/>
+        xsi:type="documentschema:Reference"
+        name="referencia3"
+        target="//@entities.0"
+        type="//@types.0"/>
   </entities>
+  <types xsi:type="documentschema:PrimitiveType"/>
+  <types xsi:type="documentschema:Array"
+      type="//@types.0"/>
 </documentschema:DocumentSchema>
