@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<relationalschema:RelationalSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:relationalschema="http://www.example.org/relationalschema" name="nombre1">
+  <tables name="entidad1">
+    <columns name="atributo2" nullable="true"/>
+    <columns name="atributo1" nullable="true"/>
+    <columns name="atributo3" nullable="true"/>
+    <columns name="atributo4" nullable="true"/>
+    <keys columns="//@tables.0/@columns.0" constraintname="entidad1_pk"/>
+    <keys columns="//@tables.0/@columns.1 //@tables.0/@columns.3" constraintname="key2_ak" isPK="false"/>
+  </tables>
+  <tables name="entidad2"/>
+</relationalschema:RelationalSchema>
