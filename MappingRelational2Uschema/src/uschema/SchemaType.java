@@ -62,11 +62,13 @@ public interface SchemaType extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Features</b></em>' containment reference list.
 	 * The list contents are of type {@link uschema.Feature}.
+	 * It is bidirectional and its opposite is '{@link uschema.Feature#getOwner <em>Owner</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Features</em>' containment reference list.
 	 * @see uschema.UschemaPackage#getSchemaType_Features()
-	 * @model containment="true"
+	 * @see uschema.Feature#getOwner
+	 * @model opposite="owner" containment="true"
 	 * @generated
 	 */
 	EList<Feature> getFeatures();

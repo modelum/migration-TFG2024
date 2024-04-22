@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -142,9 +142,24 @@ public abstract class SchemaTypeImpl extends MinimalEObjectImpl.Container implem
 	@Override
 	public EList<Feature> getFeatures() {
 		if (features == null) {
-			features = new EObjectContainmentEList<Feature>(Feature.class, this, UschemaPackage.SCHEMA_TYPE__FEATURES);
+			features = new EObjectContainmentWithInverseEList<Feature>(Feature.class, this, UschemaPackage.SCHEMA_TYPE__FEATURES, UschemaPackage.FEATURE__OWNER);
 		}
 		return features;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case UschemaPackage.SCHEMA_TYPE__FEATURES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getFeatures()).basicAdd(otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**

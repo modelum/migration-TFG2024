@@ -14,14 +14,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import uschema.Attribute;
 import uschema.EntityType;
 import uschema.Reference;
-import uschema.SchemaType;
+import uschema.RelationshipType;
 import uschema.UschemaPackage;
 
 /**
@@ -34,10 +33,10 @@ import uschema.UschemaPackage;
  * <ul>
  *   <li>{@link uschema.impl.ReferenceImpl#getOpposite <em>Opposite</em>}</li>
  *   <li>{@link uschema.impl.ReferenceImpl#getRefsTo <em>Refs To</em>}</li>
- *   <li>{@link uschema.impl.ReferenceImpl#getIsFeaturedBy <em>Is Featured By</em>}</li>
  *   <li>{@link uschema.impl.ReferenceImpl#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link uschema.impl.ReferenceImpl#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link uschema.impl.ReferenceImpl#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link uschema.impl.ReferenceImpl#getIsFeaturedBy <em>Is Featured By</em>}</li>
  * </ul>
  *
  * @generated
@@ -62,16 +61,6 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 	 * @ordered
 	 */
 	protected EntityType refsTo;
-
-	/**
-	 * The cached value of the '{@link #getIsFeaturedBy() <em>Is Featured By</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIsFeaturedBy()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<SchemaType> isFeaturedBy;
 
 	/**
 	 * The cached value of the '{@link #getAttributes() <em>Attributes</em>}' reference list.
@@ -122,6 +111,16 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 	 * @ordered
 	 */
 	protected int lowerBound = LOWER_BOUND_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getIsFeaturedBy() <em>Is Featured By</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIsFeaturedBy()
+	 * @generated
+	 * @ordered
+	 */
+	protected RelationshipType isFeaturedBy;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -228,19 +227,6 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 	 * @generated
 	 */
 	@Override
-	public EList<SchemaType> getIsFeaturedBy() {
-		if (isFeaturedBy == null) {
-			isFeaturedBy = new EObjectResolvingEList<SchemaType>(SchemaType.class, this, UschemaPackage.REFERENCE__IS_FEATURED_BY);
-		}
-		return isFeaturedBy;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EList<Attribute> getAttributes() {
 		if (attributes == null) {
 			attributes = new EObjectWithInverseResolvingEList.ManyInverse<Attribute>(Attribute.class, this, UschemaPackage.REFERENCE__ATTRIBUTES, UschemaPackage.ATTRIBUTE__REFERENCES);
@@ -299,12 +285,78 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public RelationshipType getIsFeaturedBy() {
+		if (isFeaturedBy != null && isFeaturedBy.eIsProxy()) {
+			InternalEObject oldIsFeaturedBy = (InternalEObject)isFeaturedBy;
+			isFeaturedBy = (RelationshipType)eResolveProxy(oldIsFeaturedBy);
+			if (isFeaturedBy != oldIsFeaturedBy) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UschemaPackage.REFERENCE__IS_FEATURED_BY, oldIsFeaturedBy, isFeaturedBy));
+			}
+		}
+		return isFeaturedBy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RelationshipType basicGetIsFeaturedBy() {
+		return isFeaturedBy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetIsFeaturedBy(RelationshipType newIsFeaturedBy, NotificationChain msgs) {
+		RelationshipType oldIsFeaturedBy = isFeaturedBy;
+		isFeaturedBy = newIsFeaturedBy;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, UschemaPackage.REFERENCE__IS_FEATURED_BY, oldIsFeaturedBy, newIsFeaturedBy);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIsFeaturedBy(RelationshipType newIsFeaturedBy) {
+		if (newIsFeaturedBy != isFeaturedBy) {
+			NotificationChain msgs = null;
+			if (isFeaturedBy != null)
+				msgs = ((InternalEObject)isFeaturedBy).eInverseRemove(this, UschemaPackage.RELATIONSHIP_TYPE__REFERENCE, RelationshipType.class, msgs);
+			if (newIsFeaturedBy != null)
+				msgs = ((InternalEObject)newIsFeaturedBy).eInverseAdd(this, UschemaPackage.RELATIONSHIP_TYPE__REFERENCE, RelationshipType.class, msgs);
+			msgs = basicSetIsFeaturedBy(newIsFeaturedBy, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UschemaPackage.REFERENCE__IS_FEATURED_BY, newIsFeaturedBy, newIsFeaturedBy));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAttributes()).basicAdd(otherEnd, msgs);
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				if (isFeaturedBy != null)
+					msgs = ((InternalEObject)isFeaturedBy).eInverseRemove(this, UschemaPackage.RELATIONSHIP_TYPE__REFERENCE, RelationshipType.class, msgs);
+				return basicSetIsFeaturedBy((RelationshipType)otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -319,6 +371,8 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 		switch (featureID) {
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				return ((InternalEList<?>)getAttributes()).basicRemove(otherEnd, msgs);
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				return basicSetIsFeaturedBy(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -337,14 +391,15 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 			case UschemaPackage.REFERENCE__REFS_TO:
 				if (resolve) return getRefsTo();
 				return basicGetRefsTo();
-			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
-				return getIsFeaturedBy();
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				return getAttributes();
 			case UschemaPackage.REFERENCE__UPPER_BOUND:
 				return getUpperBound();
 			case UschemaPackage.REFERENCE__LOWER_BOUND:
 				return getLowerBound();
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				if (resolve) return getIsFeaturedBy();
+				return basicGetIsFeaturedBy();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -364,10 +419,6 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 			case UschemaPackage.REFERENCE__REFS_TO:
 				setRefsTo((EntityType)newValue);
 				return;
-			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
-				getIsFeaturedBy().clear();
-				getIsFeaturedBy().addAll((Collection<? extends SchemaType>)newValue);
-				return;
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				getAttributes().clear();
 				getAttributes().addAll((Collection<? extends Attribute>)newValue);
@@ -377,6 +428,9 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 				return;
 			case UschemaPackage.REFERENCE__LOWER_BOUND:
 				setLowerBound((Integer)newValue);
+				return;
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				setIsFeaturedBy((RelationshipType)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -396,9 +450,6 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 			case UschemaPackage.REFERENCE__REFS_TO:
 				setRefsTo((EntityType)null);
 				return;
-			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
-				getIsFeaturedBy().clear();
-				return;
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				getAttributes().clear();
 				return;
@@ -407,6 +458,9 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 				return;
 			case UschemaPackage.REFERENCE__LOWER_BOUND:
 				setLowerBound(LOWER_BOUND_EDEFAULT);
+				return;
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				setIsFeaturedBy((RelationshipType)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -424,14 +478,14 @@ public class ReferenceImpl extends LogicalFeatureImpl implements Reference {
 				return opposite != null;
 			case UschemaPackage.REFERENCE__REFS_TO:
 				return refsTo != null;
-			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
-				return isFeaturedBy != null && !isFeaturedBy.isEmpty();
 			case UschemaPackage.REFERENCE__ATTRIBUTES:
 				return attributes != null && !attributes.isEmpty();
 			case UschemaPackage.REFERENCE__UPPER_BOUND:
 				return upperBound != UPPER_BOUND_EDEFAULT;
 			case UschemaPackage.REFERENCE__LOWER_BOUND:
 				return lowerBound != LOWER_BOUND_EDEFAULT;
+			case UschemaPackage.REFERENCE__IS_FEATURED_BY:
+				return isFeaturedBy != null;
 		}
 		return super.eIsSet(featureID);
 	}

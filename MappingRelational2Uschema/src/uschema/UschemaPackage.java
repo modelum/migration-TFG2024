@@ -38,7 +38,7 @@ public interface UschemaPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://www.modelum.es/USchema";
+	String eNS_URI = "http://www.modelum.es/uschema";
 
 	/**
 	 * The package namespace name.
@@ -250,13 +250,22 @@ public interface UschemaPackage extends EPackage {
 	int FEATURE__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE__OWNER = 1;
+
+	/**
 	 * The number of structural features of the '<em>Feature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_FEATURE_COUNT = 1;
+	int FEATURE_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Feature</em>' class.
@@ -285,6 +294,15 @@ public interface UschemaPackage extends EPackage {
 	 * @ordered
 	 */
 	int STRUCTURAL_FEATURE__NAME = FEATURE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURAL_FEATURE__OWNER = FEATURE__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -331,6 +349,15 @@ public interface UschemaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ATTRIBUTE__NAME = STRUCTURAL_FEATURE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ATTRIBUTE__OWNER = STRUCTURAL_FEATURE__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -471,6 +498,15 @@ public interface UschemaPackage extends EPackage {
 	int LOGICAL_FEATURE__NAME = FEATURE__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGICAL_FEATURE__OWNER = FEATURE__OWNER;
+
+	/**
 	 * The number of structural features of the '<em>Logical Feature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -508,6 +544,15 @@ public interface UschemaPackage extends EPackage {
 	int REFERENCE__NAME = LOGICAL_FEATURE__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE__OWNER = LOGICAL_FEATURE__OWNER;
+
+	/**
 	 * The feature id for the '<em><b>Opposite</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -526,22 +571,13 @@ public interface UschemaPackage extends EPackage {
 	int REFERENCE__REFS_TO = LOGICAL_FEATURE_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Is Featured By</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE__IS_FEATURED_BY = LOGICAL_FEATURE_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Attributes</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE__ATTRIBUTES = LOGICAL_FEATURE_FEATURE_COUNT + 3;
+	int REFERENCE__ATTRIBUTES = LOGICAL_FEATURE_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Upper Bound</b></em>' attribute.
@@ -550,7 +586,7 @@ public interface UschemaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE__UPPER_BOUND = LOGICAL_FEATURE_FEATURE_COUNT + 4;
+	int REFERENCE__UPPER_BOUND = LOGICAL_FEATURE_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Lower Bound</b></em>' attribute.
@@ -559,7 +595,16 @@ public interface UschemaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE__LOWER_BOUND = LOGICAL_FEATURE_FEATURE_COUNT + 5;
+	int REFERENCE__LOWER_BOUND = LOGICAL_FEATURE_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Is Featured By</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE__IS_FEATURED_BY = LOGICAL_FEATURE_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Reference</em>' class.
@@ -599,6 +644,15 @@ public interface UschemaPackage extends EPackage {
 	int AGGREGATE__NAME = STRUCTURAL_FEATURE__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int AGGREGATE__OWNER = STRUCTURAL_FEATURE__OWNER;
+
+	/**
 	 * The feature id for the '<em><b>Optional</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -608,13 +662,13 @@ public interface UschemaPackage extends EPackage {
 	int AGGREGATE__OPTIONAL = STRUCTURAL_FEATURE__OPTIONAL;
 
 	/**
-	 * The feature id for the '<em><b>Aggregates</b></em>' reference.
+	 * The feature id for the '<em><b>Specified By</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int AGGREGATE__AGGREGATES = STRUCTURAL_FEATURE_FEATURE_COUNT + 0;
+	int AGGREGATE__SPECIFIED_BY = STRUCTURAL_FEATURE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Upper Bound</b></em>' attribute.
@@ -755,13 +809,22 @@ public interface UschemaPackage extends EPackage {
 	int RELATIONSHIP_TYPE__FEATURES = SCHEMA_TYPE__FEATURES;
 
 	/**
+	 * The feature id for the '<em><b>Reference</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RELATIONSHIP_TYPE__REFERENCE = SCHEMA_TYPE_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Relationship Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RELATIONSHIP_TYPE_FEATURE_COUNT = SCHEMA_TYPE_FEATURE_COUNT + 0;
+	int RELATIONSHIP_TYPE_FEATURE_COUNT = SCHEMA_TYPE_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Relationship Type</em>' class.
@@ -912,6 +975,15 @@ public interface UschemaPackage extends EPackage {
 	int KEY__NAME = LOGICAL_FEATURE__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY__OWNER = LOGICAL_FEATURE__OWNER;
+
+	/**
 	 * The feature id for the '<em><b>Attributes</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1034,6 +1106,17 @@ public interface UschemaPackage extends EPackage {
 	EAttribute getFeature_Name();
 
 	/**
+	 * Returns the meta object for the container reference '{@link uschema.Feature#getOwner <em>Owner</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Owner</em>'.
+	 * @see uschema.Feature#getOwner()
+	 * @see #getFeature()
+	 * @generated
+	 */
+	EReference getFeature_Owner();
+
+	/**
 	 * Returns the meta object for class '{@link uschema.Attribute <em>Attribute</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1140,17 +1223,6 @@ public interface UschemaPackage extends EPackage {
 	EReference getReference_RefsTo();
 
 	/**
-	 * Returns the meta object for the reference list '{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Is Featured By</em>'.
-	 * @see uschema.Reference#getIsFeaturedBy()
-	 * @see #getReference()
-	 * @generated
-	 */
-	EReference getReference_IsFeaturedBy();
-
-	/**
 	 * Returns the meta object for the reference list '{@link uschema.Reference#getAttributes <em>Attributes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1184,6 +1256,17 @@ public interface UschemaPackage extends EPackage {
 	EAttribute getReference_LowerBound();
 
 	/**
+	 * Returns the meta object for the reference '{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Is Featured By</em>'.
+	 * @see uschema.Reference#getIsFeaturedBy()
+	 * @see #getReference()
+	 * @generated
+	 */
+	EReference getReference_IsFeaturedBy();
+
+	/**
 	 * Returns the meta object for class '{@link uschema.Aggregate <em>Aggregate</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1194,15 +1277,15 @@ public interface UschemaPackage extends EPackage {
 	EClass getAggregate();
 
 	/**
-	 * Returns the meta object for the reference '{@link uschema.Aggregate#getAggregates <em>Aggregates</em>}'.
+	 * Returns the meta object for the reference '{@link uschema.Aggregate#getSpecifiedBy <em>Specified By</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Aggregates</em>'.
-	 * @see uschema.Aggregate#getAggregates()
+	 * @return the meta object for the reference '<em>Specified By</em>'.
+	 * @see uschema.Aggregate#getSpecifiedBy()
 	 * @see #getAggregate()
 	 * @generated
 	 */
-	EReference getAggregate_Aggregates();
+	EReference getAggregate_SpecifiedBy();
 
 	/**
 	 * Returns the meta object for the attribute '{@link uschema.Aggregate#getUpperBound <em>Upper Bound</em>}'.
@@ -1266,6 +1349,17 @@ public interface UschemaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getRelationshipType();
+
+	/**
+	 * Returns the meta object for the reference '{@link uschema.RelationshipType#getReference <em>Reference</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Reference</em>'.
+	 * @see uschema.RelationshipType#getReference()
+	 * @see #getRelationshipType()
+	 * @generated
+	 */
+	EReference getRelationshipType_Reference();
 
 	/**
 	 * Returns the meta object for class '{@link uschema.SchemaType <em>Schema Type</em>}'.
@@ -1541,6 +1635,14 @@ public interface UschemaPackage extends EPackage {
 		EAttribute FEATURE__NAME = eINSTANCE.getFeature_Name();
 
 		/**
+		 * The meta object literal for the '<em><b>Owner</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference FEATURE__OWNER = eINSTANCE.getFeature_Owner();
+
+		/**
 		 * The meta object literal for the '{@link uschema.impl.AttributeImpl <em>Attribute</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1629,14 +1731,6 @@ public interface UschemaPackage extends EPackage {
 		EReference REFERENCE__REFS_TO = eINSTANCE.getReference_RefsTo();
 
 		/**
-		 * The meta object literal for the '<em><b>Is Featured By</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference REFERENCE__IS_FEATURED_BY = eINSTANCE.getReference_IsFeaturedBy();
-
-		/**
 		 * The meta object literal for the '<em><b>Attributes</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1661,6 +1755,14 @@ public interface UschemaPackage extends EPackage {
 		EAttribute REFERENCE__LOWER_BOUND = eINSTANCE.getReference_LowerBound();
 
 		/**
+		 * The meta object literal for the '<em><b>Is Featured By</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference REFERENCE__IS_FEATURED_BY = eINSTANCE.getReference_IsFeaturedBy();
+
+		/**
 		 * The meta object literal for the '{@link uschema.impl.AggregateImpl <em>Aggregate</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1671,12 +1773,12 @@ public interface UschemaPackage extends EPackage {
 		EClass AGGREGATE = eINSTANCE.getAggregate();
 
 		/**
-		 * The meta object literal for the '<em><b>Aggregates</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Specified By</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference AGGREGATE__AGGREGATES = eINSTANCE.getAggregate_Aggregates();
+		EReference AGGREGATE__SPECIFIED_BY = eINSTANCE.getAggregate_SpecifiedBy();
 
 		/**
 		 * The meta object literal for the '<em><b>Upper Bound</b></em>' attribute feature.
@@ -1731,6 +1833,14 @@ public interface UschemaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass RELATIONSHIP_TYPE = eINSTANCE.getRelationshipType();
+
+		/**
+		 * The meta object literal for the '<em><b>Reference</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference RELATIONSHIP_TYPE__REFERENCE = eINSTANCE.getRelationshipType_Reference();
 
 		/**
 		 * The meta object literal for the '{@link uschema.impl.SchemaTypeImpl <em>Schema Type</em>}' class.

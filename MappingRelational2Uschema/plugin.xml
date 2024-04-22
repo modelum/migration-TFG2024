@@ -17,7 +17,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated uschemaMM -->
       <package
-            uri="http://www.modelum.es/USchema"
+            uri="http://www.modelum.es/uschema"
             class="uschema.UschemaPackage"
             genModel="metamodelos/uschemaMM.genmodel"/>
    </extension>

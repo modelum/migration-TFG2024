@@ -309,6 +309,16 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	 * @generated
 	 */
 	@Override
+	public EReference getFeature_Owner() {
+		return (EReference)featureEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getAttribute() {
 		return attributeEClass;
 	}
@@ -409,7 +419,7 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	 * @generated
 	 */
 	@Override
-	public EReference getReference_IsFeaturedBy() {
+	public EReference getReference_Attributes() {
 		return (EReference)referenceEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -419,18 +429,8 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	 * @generated
 	 */
 	@Override
-	public EReference getReference_Attributes() {
-		return (EReference)referenceEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EAttribute getReference_UpperBound() {
-		return (EAttribute)referenceEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)referenceEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -440,7 +440,17 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	 */
 	@Override
 	public EAttribute getReference_LowerBound() {
-		return (EAttribute)referenceEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)referenceEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getReference_IsFeaturedBy() {
+		return (EReference)referenceEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -459,7 +469,7 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	 * @generated
 	 */
 	@Override
-	public EReference getAggregate_Aggregates() {
+	public EReference getAggregate_SpecifiedBy() {
 		return (EReference)aggregateEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -521,6 +531,16 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 	@Override
 	public EClass getRelationshipType() {
 		return relationshipTypeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getRelationshipType_Reference() {
+		return (EReference)relationshipTypeEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -732,6 +752,7 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 
 		featureEClass = createEClass(FEATURE);
 		createEAttribute(featureEClass, FEATURE__NAME);
+		createEReference(featureEClass, FEATURE__OWNER);
 
 		attributeEClass = createEClass(ATTRIBUTE);
 		createEReference(attributeEClass, ATTRIBUTE__TYPE);
@@ -746,13 +767,13 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 		referenceEClass = createEClass(REFERENCE);
 		createEReference(referenceEClass, REFERENCE__OPPOSITE);
 		createEReference(referenceEClass, REFERENCE__REFS_TO);
-		createEReference(referenceEClass, REFERENCE__IS_FEATURED_BY);
 		createEReference(referenceEClass, REFERENCE__ATTRIBUTES);
 		createEAttribute(referenceEClass, REFERENCE__UPPER_BOUND);
 		createEAttribute(referenceEClass, REFERENCE__LOWER_BOUND);
+		createEReference(referenceEClass, REFERENCE__IS_FEATURED_BY);
 
 		aggregateEClass = createEClass(AGGREGATE);
-		createEReference(aggregateEClass, AGGREGATE__AGGREGATES);
+		createEReference(aggregateEClass, AGGREGATE__SPECIFIED_BY);
 		createEAttribute(aggregateEClass, AGGREGATE__UPPER_BOUND);
 		createEAttribute(aggregateEClass, AGGREGATE__LOWER_BOUND);
 
@@ -762,6 +783,7 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 		nullEClass = createEClass(NULL);
 
 		relationshipTypeEClass = createEClass(RELATIONSHIP_TYPE);
+		createEReference(relationshipTypeEClass, RELATIONSHIP_TYPE__REFERENCE);
 
 		schemaTypeEClass = createEClass(SCHEMA_TYPE);
 		createEAttribute(schemaTypeEClass, SCHEMA_TYPE__NAME);
@@ -842,6 +864,7 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 
 		initEClass(featureEClass, Feature.class, "Feature", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeature_Name(), ecorePackage.getEString(), "name", null, 0, 1, Feature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFeature_Owner(), this.getSchemaType(), this.getSchemaType_Features(), "owner", null, 0, 1, Feature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(attributeEClass, Attribute.class, "Attribute", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getAttribute_Type(), this.getDataType(), null, "type", null, 1, 1, Attribute.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -856,13 +879,13 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 		initEClass(referenceEClass, Reference.class, "Reference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getReference_Opposite(), this.getReference(), null, "opposite", null, 0, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getReference_RefsTo(), this.getEntityType(), null, "refsTo", null, 1, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getReference_IsFeaturedBy(), this.getSchemaType(), null, "isFeaturedBy", null, 0, -1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getReference_Attributes(), this.getAttribute(), this.getAttribute_References(), "attributes", null, 0, -1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReference_UpperBound(), ecorePackage.getEInt(), "upperBound", null, 0, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReference_LowerBound(), ecorePackage.getEInt(), "lowerBound", null, 0, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getReference_IsFeaturedBy(), this.getRelationshipType(), this.getRelationshipType_Reference(), "isFeaturedBy", null, 0, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(aggregateEClass, Aggregate.class, "Aggregate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getAggregate_Aggregates(), this.getSchemaType(), null, "aggregates", null, 1, 1, Aggregate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAggregate_SpecifiedBy(), this.getSchemaType(), null, "specifiedBy", null, 1, 1, Aggregate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAggregate_UpperBound(), ecorePackage.getEInt(), "upperBound", null, 0, 1, Aggregate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAggregate_LowerBound(), ecorePackage.getEInt(), "lowerBound", null, 0, 1, Aggregate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -872,11 +895,12 @@ public class UschemaPackageImpl extends EPackageImpl implements UschemaPackage {
 		initEClass(nullEClass, Null.class, "Null", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(relationshipTypeEClass, RelationshipType.class, "RelationshipType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getRelationshipType_Reference(), this.getReference(), this.getReference_IsFeaturedBy(), "reference", null, 1, 1, RelationshipType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(schemaTypeEClass, SchemaType.class, "SchemaType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSchemaType_Name(), ecorePackage.getEString(), "name", null, 1, 1, SchemaType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSchemaType_Parents(), this.getSchemaType(), null, "parents", null, 0, -1, SchemaType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getSchemaType_Features(), this.getFeature(), null, "features", null, 0, -1, SchemaType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSchemaType_Features(), this.getFeature(), this.getFeature_Owner(), "features", null, 0, -1, SchemaType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pMapEClass, PMap.class, "PMap", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPMap_KeyType(), this.getPrimitiveType(), null, "keyType", null, 1, 1, PMap.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

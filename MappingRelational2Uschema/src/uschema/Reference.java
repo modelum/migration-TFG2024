@@ -15,10 +15,10 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link uschema.Reference#getOpposite <em>Opposite</em>}</li>
  *   <li>{@link uschema.Reference#getRefsTo <em>Refs To</em>}</li>
- *   <li>{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}</li>
  *   <li>{@link uschema.Reference#getAttributes <em>Attributes</em>}</li>
  *   <li>{@link uschema.Reference#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link uschema.Reference#getLowerBound <em>Lower Bound</em>}</li>
+ *   <li>{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}</li>
  * </ul>
  *
  * @see uschema.UschemaPackage#getReference()
@@ -69,18 +69,6 @@ public interface Reference extends LogicalFeature {
 	 * @generated
 	 */
 	void setRefsTo(EntityType value);
-
-	/**
-	 * Returns the value of the '<em><b>Is Featured By</b></em>' reference list.
-	 * The list contents are of type {@link uschema.SchemaType}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Featured By</em>' reference list.
-	 * @see uschema.UschemaPackage#getReference_IsFeaturedBy()
-	 * @model
-	 * @generated
-	 */
-	EList<SchemaType> getIsFeaturedBy();
 
 	/**
 	 * Returns the value of the '<em><b>Attributes</b></em>' reference list.
@@ -139,5 +127,29 @@ public interface Reference extends LogicalFeature {
 	 * @generated
 	 */
 	void setLowerBound(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Is Featured By</b></em>' reference.
+	 * It is bidirectional and its opposite is '{@link uschema.RelationshipType#getReference <em>Reference</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Is Featured By</em>' reference.
+	 * @see #setIsFeaturedBy(RelationshipType)
+	 * @see uschema.UschemaPackage#getReference_IsFeaturedBy()
+	 * @see uschema.RelationshipType#getReference
+	 * @model opposite="reference"
+	 * @generated
+	 */
+	RelationshipType getIsFeaturedBy();
+
+	/**
+	 * Sets the value of the '{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Is Featured By</em>' reference.
+	 * @see #getIsFeaturedBy()
+	 * @generated
+	 */
+	void setIsFeaturedBy(RelationshipType value);
 
 } // Reference

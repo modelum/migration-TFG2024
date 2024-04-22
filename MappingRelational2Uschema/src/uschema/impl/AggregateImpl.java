@@ -21,7 +21,7 @@ import uschema.UschemaPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link uschema.impl.AggregateImpl#getAggregates <em>Aggregates</em>}</li>
+ *   <li>{@link uschema.impl.AggregateImpl#getSpecifiedBy <em>Specified By</em>}</li>
  *   <li>{@link uschema.impl.AggregateImpl#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link uschema.impl.AggregateImpl#getLowerBound <em>Lower Bound</em>}</li>
  * </ul>
@@ -30,14 +30,14 @@ import uschema.UschemaPackage;
  */
 public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	/**
-	 * The cached value of the '{@link #getAggregates() <em>Aggregates</em>}' reference.
+	 * The cached value of the '{@link #getSpecifiedBy() <em>Specified By</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getAggregates()
+	 * @see #getSpecifiedBy()
 	 * @generated
 	 * @ordered
 	 */
-	protected SchemaType aggregates;
+	protected SchemaType specifiedBy;
 
 	/**
 	 * The default value of the '{@link #getUpperBound() <em>Upper Bound</em>}' attribute.
@@ -104,16 +104,16 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	 * @generated
 	 */
 	@Override
-	public SchemaType getAggregates() {
-		if (aggregates != null && aggregates.eIsProxy()) {
-			InternalEObject oldAggregates = (InternalEObject)aggregates;
-			aggregates = (SchemaType)eResolveProxy(oldAggregates);
-			if (aggregates != oldAggregates) {
+	public SchemaType getSpecifiedBy() {
+		if (specifiedBy != null && specifiedBy.eIsProxy()) {
+			InternalEObject oldSpecifiedBy = (InternalEObject)specifiedBy;
+			specifiedBy = (SchemaType)eResolveProxy(oldSpecifiedBy);
+			if (specifiedBy != oldSpecifiedBy) {
 				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, UschemaPackage.AGGREGATE__SPECIFIED_BY, oldSpecifiedBy, specifiedBy));
 			}
 		}
-		return aggregates;
+		return specifiedBy;
 	}
 
 	/**
@@ -121,8 +121,8 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SchemaType basicGetAggregates() {
-		return aggregates;
+	public SchemaType basicGetSpecifiedBy() {
+		return specifiedBy;
 	}
 
 	/**
@@ -131,11 +131,11 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	 * @generated
 	 */
 	@Override
-	public void setAggregates(SchemaType newAggregates) {
-		SchemaType oldAggregates = aggregates;
-		aggregates = newAggregates;
+	public void setSpecifiedBy(SchemaType newSpecifiedBy) {
+		SchemaType oldSpecifiedBy = specifiedBy;
+		specifiedBy = newSpecifiedBy;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, UschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
+			eNotify(new ENotificationImpl(this, Notification.SET, UschemaPackage.AGGREGATE__SPECIFIED_BY, oldSpecifiedBy, specifiedBy));
 	}
 
 	/**
@@ -192,9 +192,9 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case UschemaPackage.AGGREGATE__AGGREGATES:
-				if (resolve) return getAggregates();
-				return basicGetAggregates();
+			case UschemaPackage.AGGREGATE__SPECIFIED_BY:
+				if (resolve) return getSpecifiedBy();
+				return basicGetSpecifiedBy();
 			case UschemaPackage.AGGREGATE__UPPER_BOUND:
 				return getUpperBound();
 			case UschemaPackage.AGGREGATE__LOWER_BOUND:
@@ -211,8 +211,8 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case UschemaPackage.AGGREGATE__AGGREGATES:
-				setAggregates((SchemaType)newValue);
+			case UschemaPackage.AGGREGATE__SPECIFIED_BY:
+				setSpecifiedBy((SchemaType)newValue);
 				return;
 			case UschemaPackage.AGGREGATE__UPPER_BOUND:
 				setUpperBound((Integer)newValue);
@@ -232,8 +232,8 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case UschemaPackage.AGGREGATE__AGGREGATES:
-				setAggregates((SchemaType)null);
+			case UschemaPackage.AGGREGATE__SPECIFIED_BY:
+				setSpecifiedBy((SchemaType)null);
 				return;
 			case UschemaPackage.AGGREGATE__UPPER_BOUND:
 				setUpperBound(UPPER_BOUND_EDEFAULT);
@@ -253,8 +253,8 @@ public class AggregateImpl extends StructuralFeatureImpl implements Aggregate {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case UschemaPackage.AGGREGATE__AGGREGATES:
-				return aggregates != null;
+			case UschemaPackage.AGGREGATE__SPECIFIED_BY:
+				return specifiedBy != null;
 			case UschemaPackage.AGGREGATE__UPPER_BOUND:
 				return upperBound != UPPER_BOUND_EDEFAULT;
 			case UschemaPackage.AGGREGATE__LOWER_BOUND:

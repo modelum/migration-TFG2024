@@ -12,7 +12,7 @@ package uschema;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link uschema.Aggregate#getAggregates <em>Aggregates</em>}</li>
+ *   <li>{@link uschema.Aggregate#getSpecifiedBy <em>Specified By</em>}</li>
  *   <li>{@link uschema.Aggregate#getUpperBound <em>Upper Bound</em>}</li>
  *   <li>{@link uschema.Aggregate#getLowerBound <em>Lower Bound</em>}</li>
  * </ul>
@@ -23,26 +23,26 @@ package uschema;
  */
 public interface Aggregate extends StructuralFeature {
 	/**
-	 * Returns the value of the '<em><b>Aggregates</b></em>' reference.
+	 * Returns the value of the '<em><b>Specified By</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Aggregates</em>' reference.
-	 * @see #setAggregates(SchemaType)
-	 * @see uschema.UschemaPackage#getAggregate_Aggregates()
+	 * @return the value of the '<em>Specified By</em>' reference.
+	 * @see #setSpecifiedBy(SchemaType)
+	 * @see uschema.UschemaPackage#getAggregate_SpecifiedBy()
 	 * @model required="true"
 	 * @generated
 	 */
-	SchemaType getAggregates();
+	SchemaType getSpecifiedBy();
 
 	/**
-	 * Sets the value of the '{@link uschema.Aggregate#getAggregates <em>Aggregates</em>}' reference.
+	 * Sets the value of the '{@link uschema.Aggregate#getSpecifiedBy <em>Specified By</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Aggregates</em>' reference.
-	 * @see #getAggregates()
+	 * @param value the new value of the '<em>Specified By</em>' reference.
+	 * @see #getSpecifiedBy()
 	 * @generated
 	 */
-	void setAggregates(SchemaType value);
+	void setSpecifiedBy(SchemaType value);
 
 	/**
 	 * Returns the value of the '<em><b>Upper Bound</b></em>' attribute.
