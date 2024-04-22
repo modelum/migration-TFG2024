@@ -1,22 +1,25 @@
 package es.um.dsdm.document2uschema;
 
+import USchema.Aggregate;
+import USchema.Attribute;
 import USchema.DataType;
+import USchema.Feature;
 import USchema.Key;
 import USchema.PList;
+import USchema.Reference;
 import USchema.USchemaClass;
 import USchema.UschemaMMFactory;
-import documentschema.Aggregate;
 import documentschema.Array;
-import documentschema.Attribute;
 import documentschema.DocumentSchema;
 import documentschema.EntityType;
 import documentschema.PrimitiveType;
 import documentschema.Property;
-import documentschema.Reference;
 import documentschema.Type;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
+import org.eclipse.xtext.xbase.lib.Conversions;
 
 @SuppressWarnings("all")
 public class MappingDocument2Uschema {
@@ -24,13 +27,21 @@ public class MappingDocument2Uschema {
 
   private final Map<EntityType, USchema.EntityType> mappedEntityTypes;
 
+  private final Map<DocumentSchema, USchemaClass> mappedSchemas;
+
   public MappingDocument2Uschema() {
     this.uschemaFactory = UschemaMMFactory.eINSTANCE;
     this.mappedEntityTypes = CollectionLiterals.<EntityType, USchema.EntityType>newHashMap();
+    this.mappedSchemas = CollectionLiterals.<DocumentSchema, USchemaClass>newHashMap();
   }
 
   public USchemaClass document2uschema(final DocumentSchema documentSchema) {
+    boolean _containsKey = this.mappedSchemas.containsKey(documentSchema);
+    if (_containsKey) {
+      return this.mappedSchemas.get(documentSchema);
+    }
     final USchemaClass USchema = this.uschemaFactory.createUSchemaClass();
+    this.mappedSchemas.put(documentSchema, USchema);
     USchema.setName(documentSchema.getName());
     final Consumer<EntityType> _function = (EntityType entity) -> {
       USchema.getEntities().add(this.entityType2entityType(entity));
@@ -47,25 +58,16 @@ public class MappingDocument2Uschema {
     final USchema.EntityType uschemaEntity = this.uschemaFactory.createEntityType();
     this.mappedEntityTypes.put(documentEntity, uschemaEntity);
     uschemaEntity.setName(documentEntity.getName());
+    uschemaEntity.setRoot(true);
     final Consumer<Property> _function = (Property property) -> {
-      if ((property instanceof Attribute)) {
-        uschemaEntity.getFeatures().add(this.property2feature(((Attribute)property)));
-      } else {
-        if ((property instanceof Reference)) {
-          uschemaEntity.getFeatures().add(this.property2feature(((Reference)property)));
-        } else {
-          if ((property instanceof Aggregate)) {
-            uschemaEntity.getFeatures().add(this.property2feature(((Aggregate)property)));
-          }
-        }
-      }
+      uschemaEntity.getFeatures().add(this.property2feature(property));
     };
     documentEntity.getProperties().forEach(_function);
     return uschemaEntity;
   }
 
-  private USchema.Attribute property2feature(final Attribute a) {
-    final USchema.Attribute ea = this.uschemaFactory.createAttribute();
+  private Attribute _property2feature(final documentschema.Attribute a) {
+    final Attribute ea = this.uschemaFactory.createAttribute();
     ea.setName(a.getName());
     ea.setType(this.type2datatype(a.getType()));
     boolean _isIsKey = a.isIsKey();
@@ -81,10 +83,10 @@ public class MappingDocument2Uschema {
     return ea;
   }
 
-  private USchema.Reference property2feature(final Reference r) {
-    final USchema.Reference er = this.uschemaFactory.createReference();
+  private Reference _property2feature(final documentschema.Reference r) {
+    final Reference er = this.uschemaFactory.createReference();
     er.setName(r.getName());
-    final USchema.Attribute ea = this.uschemaFactory.createAttribute();
+    final Attribute ea = this.uschemaFactory.createAttribute();
     ea.setName(r.getName());
     er.setLowerBound(1);
     int _xifexpression = (int) 0;
@@ -102,11 +104,18 @@ public class MappingDocument2Uschema {
     return er;
   }
 
-  private USchema.Aggregate property2feature(final Aggregate g) {
+  private Aggregate _property2feature(final documentschema.Aggregate g) {
     final USchema.EntityType eg = this.uschemaFactory.createEntityType();
     eg.setName(g.getName());
+    Property _aggregates = g.getAggregates();
+    boolean _tripleNotEquals = (_aggregates != null);
+    if (_tripleNotEquals) {
+      eg.getFeatures().add(this.property2feature(g.getAggregates()));
+    }
     eg.setRoot(false);
-    final USchema.Aggregate aggregate = this.uschemaFactory.createAggregate();
+    final USchemaClass uschemaClass = ((USchemaClass[])Conversions.unwrapArray(this.mappedSchemas.values(), USchemaClass.class))[0];
+    uschemaClass.getEntities().add(eg);
+    final Aggregate aggregate = this.uschemaFactory.createAggregate();
     aggregate.setName(g.getName());
     aggregate.setLowerBound(1);
     int _xifexpression = (int) 0;
@@ -117,7 +126,7 @@ public class MappingDocument2Uschema {
       _xifexpression = 1;
     }
     aggregate.setUpperBound(_xifexpression);
-    aggregate.setAggregates(eg);
+    aggregate.setSpecifiedBy(eg);
     USchema.EntityType _get = this.mappedEntityTypes.get(g.eContainer());
     _get.setRoot(true);
     return aggregate;
@@ -154,5 +163,18 @@ public class MappingDocument2Uschema {
       }
     }
     return null;
+  }
+
+  private Feature property2feature(final Property g) {
+    if (g instanceof documentschema.Aggregate) {
+      return _property2feature((documentschema.Aggregate)g);
+    } else if (g instanceof documentschema.Attribute) {
+      return _property2feature((documentschema.Attribute)g);
+    } else if (g instanceof documentschema.Reference) {
+      return _property2feature((documentschema.Reference)g);
+    } else {
+      throw new IllegalArgumentException("Unhandled parameter types: " +
+        Arrays.<Object>asList(g).toString());
+    }
   }
 }

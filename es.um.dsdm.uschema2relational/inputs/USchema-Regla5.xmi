@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<USchema:USchemaClass
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:USchema="http://www.modelum.es/USchema"
+    name="nombre1">
+  <entities
+      name="entidad1"
+      root="true">
+    <features
+        xsi:type="USchema:Aggregate"
+        name="agregado1"
+        specifiedBy="//@entities.0"/>
+  </entities>
+  <entities
+      name="entidad2"/>
+</USchema:USchemaClass>

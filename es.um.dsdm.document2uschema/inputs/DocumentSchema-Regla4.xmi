@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<documentschema:DocumentSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:documentschema="http://www.example.org/documentschema"
+    name="prueba">
+  <entities
+      name="entidad1">
+    <properties
+        xsi:type="documentschema:Aggregate"
+        name="aggregate1"
+        isMany="true">
+      <aggregates
+          xsi:type="documentschema:Attribute"
+          name="atributo1"
+          type="//@types.0"/>
+    </properties>
+  </entities>
+  <entities
+      name="entidad2">
+    <properties
+        xsi:type="documentschema:Aggregate"
+        name="agregado2"/>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType"/>
+</documentschema:DocumentSchema>

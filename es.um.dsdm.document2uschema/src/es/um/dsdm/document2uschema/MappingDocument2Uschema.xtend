@@ -6,22 +6,28 @@ import documentschema.DocumentSchema
 import USchema.USchemaClass
 import documentschema.Array
 import USchema.SchemaType
+import documentschema.Aggregate
 
 class MappingDocument2Uschema {
 	
 	val UschemaMMFactory uschemaFactory;
 	val Map<documentschema.EntityType, USchema.EntityType> mappedEntityTypes
+	val Map<DocumentSchema, USchemaClass> mappedSchemas
 	
 	new() {
 		uschemaFactory = UschemaMMFactory.eINSTANCE
 		mappedEntityTypes = newHashMap()
+		mappedSchemas = newHashMap()
 	}
 	
 	
 	
 	// R0
 	def USchemaClass document2uschema(DocumentSchema documentSchema) {
+		if (mappedSchemas.containsKey(documentSchema)) 
+	    	return mappedSchemas.get(documentSchema)
 		val USchema = uschemaFactory.createUSchemaClass
+		mappedSchemas.put(documentSchema, USchema)
 		USchema.name = documentSchema.name
 		documentSchema.entities.forEach[entity |
 			USchema.entities.add(entityType2entityType(entity))
@@ -36,22 +42,15 @@ class MappingDocument2Uschema {
 		val uschemaEntity = uschemaFactory.createEntityType
 		mappedEntityTypes.put(documentEntity, uschemaEntity)
 		uschemaEntity.name = documentEntity.name
+		uschemaEntity.root = true
 		documentEntity.properties.forEach[property |
-			if (property instanceof documentschema.Attribute) {
-				uschemaEntity.features.add(property2feature(property))
-			}
-			else if (property instanceof documentschema.Reference) {
-				uschemaEntity.features.add(property2feature(property))
-			}
-			else if (property instanceof documentschema.Aggregate) {
-				uschemaEntity.features.add(property2feature(property))
-			}
+			uschemaEntity.features.add(property2feature(property))
 		]
 		return uschemaEntity
 	}
 	
 	// R2
-	def private USchema.Attribute property2feature(documentschema.Attribute a) {
+	def dispatch private USchema.Attribute property2feature(documentschema.Attribute a) {
 		val ea = uschemaFactory.createAttribute
 		ea.name = a.name
 		ea.type = type2datatype(a.type)
@@ -67,7 +66,7 @@ class MappingDocument2Uschema {
 	}	
 	
 	// R3
-	def private USchema.Reference property2feature(documentschema.Reference r) {
+	def dispatch private USchema.Reference property2feature(documentschema.Reference r) {
 		val er = uschemaFactory.createReference
 		er.name = r.name
 		val ea = uschemaFactory.createAttribute
@@ -82,19 +81,23 @@ class MappingDocument2Uschema {
 	}
 	
 	// R4
-	def private USchema.Aggregate property2feature(documentschema.Aggregate g) {
+	def dispatch private USchema.Aggregate property2feature(documentschema.Aggregate g) {
 		val eg = uschemaFactory.createEntityType
-		eg.name = g.name
-		// falta eg.features = g.aggregates 
+		eg.name = g.name 
+		if (g.aggregates !== null) {
+			eg.features.add(property2feature(g.aggregates))
+		}
 		eg.root = false
+		// añado la entidad al uschema
+		val uschemaClass = mappedSchemas.values.get(0)
+		uschemaClass.entities.add(eg)
 		val aggregate = uschemaFactory.createAggregate
 		aggregate.name = g.name
 		aggregate.lowerBound = 1
 		aggregate.upperBound = g.isMany ? -1 : 1
-		aggregate.aggregates = eg
+		aggregate.specifiedBy = eg
 		mappedEntityTypes.get(g.eContainer).root = true
 		return aggregate
-		
 	}
 	// R5
 	def private USchema.DataType type2datatype(documentschema.Type type) {
