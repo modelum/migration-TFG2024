@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Biblioteca">
+  <tables name="Libro">
+    <columns
+        name="LibroID"
+        datatype="INT"/>
+    <columns
+        name="Titulo"
+        datatype="VARCHAR"/>
+    <columns
+        name="AñoPublicacion"
+        datatype="INT"/>
+    <columns
+        name="ISBN"
+        datatype="VARCHAR"/>
+    <keys columns="//@tables.0/@columns.0"
+        constraintname="LibroID"/>
+    <keys columns="//@tables.0/@columns.3"
+        constraintname="ISBN"
+        isPK="false"/>
+  </tables>
+  <tables name="Usuario">
+    <columns
+        name="UsuarioID"
+        datatype="INT"/>
+    <columns
+        name="Nombre"
+        datatype="VARCHAR"/>
+    <columns
+        name="Email"
+        datatype="VARCHAR"/>
+    <columns
+        name="FechaRegistro"
+        datatype="DATE"/>
+    <keys columns="//@tables.1/@columns.0"
+        constraintname="UsuarioID"/>
+    <keys columns="//@tables.1/@columns.2"
+        constraintname="Email"
+        isPK="false"/>
+  </tables>
+  <tables name="Reserva">
+    <columns
+        name="ReservaID"
+        datatype="INT"/>
+    <columns
+        name="UsuarioID_FK"
+        datatype="INT"/>
+    <columns
+        name="LibroID_FK"
+        datatype="INT"/>
+    <columns
+        name="FechaReserva"
+        datatype="DATE"/>
+    <keys columns="//@tables.2/@columns.0"
+        constraintname="ReservaID"/>
+    <keys columns="//@tables.2/@columns.1 //@tables.2/@columns.2 //@tables.2/@columns.3"
+        constraintname="UsuarioID_LibroID_FechaReserva"
+        isPK="false"/>
+    <fks columns="//@tables.2/@columns.1"
+        refsTo="//@tables.1/@keys.0"
+        constraintname="UsuarioID_FK"/>
+    <fks columns="//@tables.2/@columns.2"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="LibroID_FK"/>
+  </tables>
+</relationalschema:RelationalSchema>

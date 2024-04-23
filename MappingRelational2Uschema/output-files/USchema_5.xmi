@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
+  <entities name="Autor" root="true">
+    <features xsi:type="uschema:Attribute" name="Nombre">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="FechaNacimiento">
+      <type xsi:type="uschema:PrimitiveType" name="Date"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="AutorID" key="//@entities.0/@features.3">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Key" name="AutorID" attributes="//@entities.0/@features.2"/>
+  </entities>
+  <entities name="Libro" root="true">
+    <features xsi:type="uschema:Attribute" name="LibroID" key="//@entities.1/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Titulo">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="A&#xf1;oPublicacion">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="ISBN" key="//@entities.1/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Key" name="LibroID" attributes="//@entities.1/@features.0"/>
+    <features xsi:type="uschema:Key" name="ISBN" attributes="//@entities.1/@features.3" isID="false"/>
+    <features xsi:type="uschema:Reference" name="Autor" refsTo="//@entities.0" attributes="//@relationships.0/@features.1" upperBound="1" lowerBound="1" isFeaturedBy="//@relationships.0"/>
+  </entities>
+  <relationships name="Libros_Autores" reference="//@entities.1/@features.6">
+    <features xsi:type="uschema:Attribute" name="LibroID_FK" key="//@relationships.0/@features.2">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="AutorID_FK" key="//@relationships.0/@features.2" references="//@entities.1/@features.6">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Key" name="LibroID_AutorID" attributes="//@relationships.0/@features.0 //@relationships.0/@features.1"/>
+  </relationships>
+</uschema:USchema>

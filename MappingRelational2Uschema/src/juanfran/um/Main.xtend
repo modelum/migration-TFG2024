@@ -11,8 +11,8 @@ import uschema.USchema
 import relationalschema.RelationalSchema
 
 class Main {
-	static val INPUT_XMI_PATH = "modelos/Relational_1.xmi"
-	static val OUTPUT_XMI_PATH = "modelos/USchema_1.xmi"
+	static val INPUT_XMI_PATH = "input-files/Relational_6-1_N.xmi"
+	static val OUTPUT_XMI_PATH = "output-files/USchema_6-1_N.xmi"
 	
 	def static RelationalSchema loadSchema() {
 		var ResourceSet resourceSet

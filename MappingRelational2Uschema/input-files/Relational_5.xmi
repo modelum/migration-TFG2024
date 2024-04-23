@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Biblioteca">
+  <tables name="Autor">
+    <columns
+        name="Nombre"
+        datatype="varchar"/>
+    <columns
+        name="FechaNacimiento"
+        datatype="DATE"/>
+    <columns
+        name="AutorID"
+        datatype="INT"/>
+    <keys columns="//@tables.0/@columns.2"
+        constraintname="AutorID"/>
+  </tables>
+  <tables name="Libro">
+    <columns
+        name="LibroID"
+        datatype="INT"/>
+    <columns
+        name="Titulo"
+        datatype="VARCHAR"/>
+    <columns
+        name="AñoPublicacion"
+        datatype="INT"/>
+    <columns
+        name="ISBN"
+        datatype="VARCHAR"/>
+    <keys columns="//@tables.1/@columns.0"
+        constraintname="LibroID"/>
+    <keys columns="//@tables.1/@columns.3"
+        constraintname="ISBN"
+        isPK="false"/>
+  </tables>
+  <tables name="Libros_Autores">
+    <columns
+        name="LibroID_FK"
+        datatype="INT"/>
+    <columns
+        name="AutorID_FK"
+        datatype="INT"/>
+    <keys columns="//@tables.2/@columns.0 //@tables.2/@columns.1"
+        constraintname="LibroID_AutorID"/>
+    <fks columns="//@tables.2/@columns.0"
+        refsTo="//@tables.1/@keys.0"
+        constraintname="LibroID_FK"/>
+    <fks columns="//@tables.2/@columns.1"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="AutorID_FK"/>
+  </tables>
+</relationalschema:RelationalSchema>

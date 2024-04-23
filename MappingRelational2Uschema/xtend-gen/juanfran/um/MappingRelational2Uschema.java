@@ -317,6 +317,8 @@ public class MappingRelational2Uschema {
           return "double";
         case "BOOLEAN":
           return "boolean";
+        case "DATE":
+          return "Date";
       }
     }
     return null;

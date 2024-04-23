@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
+  <entities name="Autor" root="true"/>
+</uschema:USchema>

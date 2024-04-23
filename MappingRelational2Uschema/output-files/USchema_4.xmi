@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
+  <entities name="Usuario" root="true">
+    <features xsi:type="uschema:Attribute" name="UsuarioID" key="//@entities.0/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Nombre">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Email" key="//@entities.0/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="FechaRegistro">
+      <type xsi:type="uschema:PrimitiveType" name="Date"/>
+    </features>
+    <features xsi:type="uschema:Key" name="UsuarioID" attributes="//@entities.0/@features.0"/>
+    <features xsi:type="uschema:Key" name="Email" attributes="//@entities.0/@features.2" isID="false"/>
+    <features xsi:type="uschema:Aggregate" name="DetallesUsuarios" specifiedBy="//@entities.1" upperBound="-1"/>
+  </entities>
+  <entities name="DetallesUsuario">
+    <features xsi:type="uschema:Attribute" name="UsuarioID_FK" key="//@entities.1/@features.3">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Direccion">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Telefono" optional="true">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Key" name="UsuarioID_FK" attributes="//@entities.1/@features.0"/>
+  </entities>
+</uschema:USchema>

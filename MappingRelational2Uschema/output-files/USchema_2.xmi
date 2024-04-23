@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
+  <entities name="Autor" root="true">
+    <features xsi:type="uschema:Attribute" name="Nombre">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="FechaNacimiento">
+      <type xsi:type="uschema:PrimitiveType" name="Date"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="AutorID">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+  </entities>
+</uschema:USchema>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Biblioteca">
+  <tables name="Usuario">
+    <columns
+        name="UsuarioID"
+        datatype="INT"/>
+    <columns
+        name="Nombre"
+        datatype="VARCHAR"/>
+    <columns
+        name="Email"
+        datatype="VARCHAR"/>
+    <columns
+        name="FechaRegistro"
+        datatype="DATE"/>
+    <keys columns="//@tables.0/@columns.0"
+        constraintname="UsuarioID"/>
+    <keys columns="//@tables.0/@columns.2"
+        constraintname="Email"
+        isPK="false"/>
+  </tables>
+  <tables name="DetallesUsuario">
+    <columns
+        name="UsuarioID_FK"
+        datatype="INT"/>
+    <columns
+        name="Direccion"
+        datatype="VARCHAR"/>
+    <columns
+        name="Telefono"
+        datatype="VARCHAR"
+        nullable="true"/>
+    <keys columns="//@tables.1/@columns.0"
+        constraintname="UsuarioID_FK"/>
+    <fks columns="//@tables.1/@columns.0"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="UsuarioID_FK"/>
+  </tables>
+</relationalschema:RelationalSchema>

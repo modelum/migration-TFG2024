@@ -299,6 +299,7 @@ class MappingRelational2Uschema {
 		 	case "INT": return "int"
 		 	case "DOUBLE": return "double"
 		 	case "BOOLEAN": return "boolean"
+		 	case "DATE": return "Date"
  		}
 	}
 	
