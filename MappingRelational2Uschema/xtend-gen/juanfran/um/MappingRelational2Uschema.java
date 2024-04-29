@@ -1,13 +1,12 @@
 package juanfran.um;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import juanfran.um.trace.Trace;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import relationalschema.Column;
@@ -29,141 +28,139 @@ import uschema.UschemaFactory;
 public class MappingRelational2Uschema {
   private final UschemaFactory usFactory;
 
-  private final Map<Table, EntityType> entityTypes;
-
-  private final Map<Table, RelationshipType> relationshipTypes;
-
-  private final Map<Column, Attribute> attributes;
-
-  private final Map<Key, uschema.Key> keys;
+  private final Trace trace;
 
   public MappingRelational2Uschema() {
     this.usFactory = UschemaFactory.eINSTANCE;
-    HashMap<Table, EntityType> _hashMap = new HashMap<Table, EntityType>();
-    this.entityTypes = _hashMap;
-    HashMap<Table, RelationshipType> _hashMap_1 = new HashMap<Table, RelationshipType>();
-    this.relationshipTypes = _hashMap_1;
-    HashMap<Column, Attribute> _hashMap_2 = new HashMap<Column, Attribute>();
-    this.attributes = _hashMap_2;
-    HashMap<Key, uschema.Key> _hashMap_3 = new HashMap<Key, uschema.Key>();
-    this.keys = _hashMap_3;
+    Trace _trace = new Trace();
+    this.trace = _trace;
   }
 
   public USchema relationalSchema2USchema(final RelationalSchema relationalSchema) {
     final USchema uSchema = this.usFactory.createUSchema();
     uSchema.setName(relationalSchema.getName());
     final Consumer<Table> _function = (Table t) -> {
-      final SchemaType st = this.table2SchemaType(t);
-      boolean _matched = false;
-      if ((st instanceof EntityType)) {
-        _matched=true;
-        uSchema.getEntities().add(((EntityType) st));
-      }
-      if (!_matched) {
-        if ((st instanceof RelationshipType)) {
-          _matched=true;
-          uSchema.getRelationships().add(((RelationshipType) st));
-        }
-      }
+      this.table2SchemaType(t, uSchema);
     };
     relationalSchema.getTables().forEach(_function);
-    final BiConsumer<Table, RelationshipType> _function_1 = (Table t, RelationshipType __) -> {
-      this.mNTable2RelationshipType(t);
-    };
-    this.relationshipTypes.forEach(_function_1);
-    final BiConsumer<Table, EntityType> _function_2 = (Table t, EntityType __) -> {
+    final Consumer<Table> _function_1 = (Table t) -> {
       boolean _weakCondition = this.weakCondition(t);
       if (_weakCondition) {
         this.weakTable2Aggregate(t);
+      } else {
+        boolean _mNCondition = this.mNCondition(t);
+        if (_mNCondition) {
+          this.mNTable2RelationshipType(t);
+        } else {
+          this.r6(t);
+        }
       }
-      this.r6(t);
     };
-    this.entityTypes.forEach(_function_2);
+    relationalSchema.getTables().forEach(_function_1);
+    this.trace.addTrace(relationalSchema.getName(), relationalSchema, uSchema.getName(), uSchema);
+    this.trace.printDirectTraceTypes();
     return uSchema;
   }
 
-  public SchemaType table2SchemaType(final Table t) {
+  public void table2SchemaType(final Table t, final USchema uSchema) {
     SchemaType st = null;
     boolean _mNCondition = this.mNCondition(t);
     if (_mNCondition) {
       st = this.usFactory.createRelationshipType();
-      this.relationshipTypes.put(t, ((RelationshipType) st));
+      uSchema.getRelationships().add(((RelationshipType) st));
     } else {
       final EntityType et = this.usFactory.createEntityType();
       et.setRoot(true);
-      this.entityTypes.put(t, et);
+      uSchema.getEntities().add(et);
       st = et;
     }
     st.setName(t.getName());
-    final Function1<Column, Attribute> _function = (Column c) -> {
-      return this.column2Attribute(c);
-    };
-    final List<Attribute> attributes = ListExtensions.<Column, Attribute>map(t.getColumns(), _function);
-    st.getFeatures().addAll(attributes);
-    final Function1<Key, uschema.Key> _function_1 = (Key k) -> {
-      return this.pK2Key(k);
-    };
-    final List<uschema.Key> keys = ListExtensions.<Key, uschema.Key>map(t.getKeys(), _function_1);
-    st.getFeatures().addAll(keys);
-    return st;
+    EList<Column> _columns = t.getColumns();
+    for (final Column c : _columns) {
+      this.column2Attribute(c, st);
+    }
+    EList<Key> _keys = t.getKeys();
+    for (final Key k : _keys) {
+      this.pK2Key(k, st);
+    }
+    this.trace.addTrace(t.getName(), t, st.getName(), st);
   }
 
-  public Attribute column2Attribute(final Column c) {
+  public void column2Attribute(final Column c, final SchemaType st) {
     final Attribute at = this.usFactory.createAttribute();
-    final PrimitiveType primitiveType = this.usFactory.createPrimitiveType();
-    primitiveType.setName(MappingRelational2Uschema.typeConversionRelToUsc(c.getDatatype()));
+    st.getFeatures().add(at);
     at.setName(c.getName());
-    at.setType(primitiveType);
+    this.datatype2PrimitiveType(c, at);
     at.setOptional(c.isNullable());
-    this.attributes.put(c, at);
-    return at;
+    this.trace.addTrace(MappingRelational2Uschema.dot(c.getOwner().getName(), c.getName()), c, MappingRelational2Uschema.dot(at.getOwner().getName(), at.getName()), at);
   }
 
-  public uschema.Key pK2Key(final Key rKey) {
+  public void pK2Key(final Key rKey, final SchemaType st) {
     final uschema.Key uKey = this.usFactory.createKey();
+    st.getFeatures().add(uKey);
     uKey.setName(rKey.getConstraintname());
     uKey.setIsID(rKey.isIsPK());
     uKey.getAttributes().addAll(this.columns2Attributes(rKey.getColumns()));
-    this.keys.put(rKey, uKey);
-    return uKey;
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(rKey.getOwner().getName(), rKey.getConstraintname()), rKey, 
+      MappingRelational2Uschema.dot(uKey.getOwner().getName(), uKey.getName()), uKey);
   }
 
   public void weakTable2Aggregate(final Table w) {
-    InputOutput.<String>println(w.toString());
-    final Table s = IterableExtensions.<FKey>head(this.getFKsInPK(w)).getRefsTo().getOwner();
-    final EntityType es = this.entityTypes.get(s);
-    final EntityType ew = this.entityTypes.get(w);
+    final FKey fk = IterableExtensions.<FKey>head(this.getFKsInPK(w));
+    final Table s = fk.getRefsTo().getOwner();
+    Object _targetInstance = this.trace.getTargetInstance(s.getName(), EntityType.class.getName());
+    final EntityType es = ((EntityType) _targetInstance);
+    Object _targetInstance_1 = this.trace.getTargetInstance(w.getName(), EntityType.class.getName());
+    final EntityType ew = ((EntityType) _targetInstance_1);
     final Aggregate ag = this.usFactory.createAggregate();
+    es.getFeatures().add(ag);
     String _name = w.getName();
     String _plus = (_name + "s");
     ag.setName(_plus);
     ag.setLowerBound(0);
     ag.setUpperBound((-1));
     ag.setSpecifiedBy(ew);
-    es.getFeatures().add(ag);
     ew.setRoot(false);
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(fk.getOwner().getName(), fk.getConstraintname()), fk, 
+      MappingRelational2Uschema.dot(ag.getOwner().getName(), ag.getName()), ag);
   }
 
-  public RelationshipType mNTable2RelationshipType(final Table m) {
-    final RelationshipType rm = this.relationshipTypes.get(m);
+  public void mNTable2RelationshipType(final Table m) {
+    Object _targetInstance = this.trace.getTargetInstance(m.getName(), RelationshipType.class.getName());
+    final RelationshipType rm = ((RelationshipType) _targetInstance);
     final List<FKey> fKs = this.getFKsInPK(m);
     final FKey fK1 = fKs.get(0);
     final FKey fK2 = fKs.get(1);
     final Table t1 = fK1.getRefsTo().getOwner();
     final Table t2 = fK2.getRefsTo().getOwner();
-    final EntityType et1 = this.entityTypes.get(t1);
-    final EntityType et2 = this.entityTypes.get(t2);
-    final Reference ref = this.usFactory.createReference();
-    ref.setName(t2.getName());
-    ref.setLowerBound(1);
-    ref.setUpperBound(1);
-    ref.setRefsTo(et2);
-    ref.setOwner(et1);
-    ref.setIsFeaturedBy(rm);
-    ref.getAttributes().addAll(this.columns2Attributes(fK2.getColumns()));
-    et1.setRoot(true);
-    et2.setRoot(true);
-    return rm;
+    Object _targetInstance_1 = this.trace.getTargetInstance(t1.getName(), EntityType.class.getName());
+    final EntityType et1 = ((EntityType) _targetInstance_1);
+    Object _targetInstance_2 = this.trace.getTargetInstance(t2.getName(), EntityType.class.getName());
+    final EntityType et2 = ((EntityType) _targetInstance_2);
+    final Reference ref1 = this.usFactory.createReference();
+    final Reference ref2 = this.usFactory.createReference();
+    ref1.setName(t1.getName());
+    ref1.setLowerBound(1);
+    ref1.setUpperBound(1);
+    ref1.setRefsTo(et1);
+    ref1.setIsFeaturedBy(rm);
+    ref1.setOwner(et1);
+    ref1.getAttributes().addAll(this.columns2Attributes(fK1.getColumns()));
+    ref2.setName(t2.getName());
+    ref2.setLowerBound(1);
+    ref2.setUpperBound(1);
+    ref2.setRefsTo(et2);
+    ref2.setIsFeaturedBy(rm);
+    ref2.setOwner(et2);
+    ref2.getAttributes().addAll(this.columns2Attributes(fK2.getColumns()));
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(fK1.getOwner().getName(), fK1.getConstraintname()), fK1, 
+      MappingRelational2Uschema.dot(ref1.getOwner().getName(), ref1.getName()), ref1);
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(fK2.getOwner().getName(), fK2.getConstraintname()), fK2, 
+      MappingRelational2Uschema.dot(ref2.getOwner().getName(), ref2.getName()), ref2);
   }
 
   public void r6(final Table t) {
@@ -182,8 +179,10 @@ public class MappingRelational2Uschema {
 
   public void r6Table1_1(final Table t, final FKey fk) {
     final Table s = fk.getRefsTo().getOwner();
-    final EntityType et = this.entityTypes.get(t);
-    final EntityType es = this.entityTypes.get(s);
+    Object _targetInstance = this.trace.getTargetInstance(t.getName(), EntityType.class.getName());
+    final EntityType et = ((EntityType) _targetInstance);
+    Object _targetInstance_1 = this.trace.getTargetInstance(s.getName(), EntityType.class.getName());
+    final EntityType es = ((EntityType) _targetInstance_1);
     final Reference rs = this.usFactory.createReference();
     String _name = s.getName();
     String _plus = (_name + "_");
@@ -195,12 +194,17 @@ public class MappingRelational2Uschema {
     rs.setRefsTo(es);
     rs.getAttributes().addAll(this.columns2Attributes(fk.getColumns()));
     et.getFeatures().add(rs);
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(fk.getOwner().getName(), fk.getConstraintname()), fk, 
+      MappingRelational2Uschema.dot(rs.getOwner().getName(), rs.getName()), rs);
   }
 
   public void r6Table1_N(final Table t, final FKey fk) {
     final Table s = fk.getRefsTo().getOwner();
-    final EntityType et = this.entityTypes.get(t);
-    final EntityType es = this.entityTypes.get(s);
+    Object _targetInstance = this.trace.getTargetInstance(t.getName(), EntityType.class.getName());
+    final EntityType et = ((EntityType) _targetInstance);
+    Object _targetInstance_1 = this.trace.getTargetInstance(s.getName(), EntityType.class.getName());
+    final EntityType es = ((EntityType) _targetInstance_1);
     final Reference rt = this.usFactory.createReference();
     final Key pk = this.findPK(t);
     String _name = t.getName();
@@ -212,18 +216,22 @@ public class MappingRelational2Uschema {
     es.getFeatures().add(rt);
     final Consumer<Column> _function = (Column col) -> {
       final Attribute at = this.usFactory.createAttribute();
-      final PrimitiveType primitiveType = this.usFactory.createPrimitiveType();
-      primitiveType.setName(MappingRelational2Uschema.typeConversionRelToUsc(col.getDatatype()));
       String _name_1 = col.getName();
       String _name_2 = et.getName();
       String _plus_1 = (_name_1 + _name_2);
       String _plus_2 = (_plus_1 + "s");
       at.setName(_plus_2);
-      at.setType(primitiveType);
       rt.getAttributes().add(at);
       es.getFeatures().add(at);
+      this.datatype2PrimitiveType(col, at);
+      this.trace.addTrace(
+        MappingRelational2Uschema.dot(col.getOwner().getName(), col.getName()), col, 
+        MappingRelational2Uschema.dot(at.getOwner().getName(), at.getName()), at);
     };
     pk.getColumns().forEach(_function);
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(fk.getOwner().getName(), fk.getConstraintname()), fk, 
+      MappingRelational2Uschema.dot(rt.getOwner().getName(), rt.getName()), rt);
   }
 
   public boolean weakCondition(final Table t) {
@@ -305,6 +313,26 @@ public class MappingRelational2Uschema {
     return false;
   }
 
+  public void datatype2PrimitiveType(final Column c, final Attribute at) {
+    final PrimitiveType primitiveType = this.usFactory.createPrimitiveType();
+    primitiveType.setName(MappingRelational2Uschema.typeConversionRelToUsc(c.getDatatype()));
+    at.setType(primitiveType);
+    this.trace.addTrace(
+      MappingRelational2Uschema.dot(c.getOwner().getName(), c.getName()), c, 
+      MappingRelational2Uschema.dot(at.getOwner().getName(), at.getName(), primitiveType.getName()), 
+      at.getType());
+  }
+
+  public List<Attribute> columns2Attributes(final List<Column> columns) {
+    final Function1<Column, Attribute> _function = (Column c) -> {
+      final String columnName = MappingRelational2Uschema.dot(c.getOwner().getName(), c.getName());
+      Object _targetInstance = this.trace.getTargetInstance(columnName, Attribute.class.getName());
+      final Attribute at = ((Attribute) _targetInstance);
+      return at;
+    };
+    return ListExtensions.<Column, Attribute>map(columns, _function);
+  }
+
   public static String typeConversionRelToUsc(final String dataType) {
     final String dtUp = dataType.toUpperCase();
     if (dtUp != null) {
@@ -324,10 +352,7 @@ public class MappingRelational2Uschema {
     return null;
   }
 
-  public List<Attribute> columns2Attributes(final List<Column> columns) {
-    final Function1<Column, Attribute> _function = (Column c) -> {
-      return this.attributes.get(c);
-    };
-    return ListExtensions.<Column, Attribute>map(columns, _function);
+  public static String dot(final String... strings) {
+    return IterableExtensions.join(((Iterable<?>)Conversions.doWrapArray(strings)), ".");
   }
 }

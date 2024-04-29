@@ -16,9 +16,9 @@ import uschema.UschemaPackage;
 
 @SuppressWarnings("all")
 public class Main {
-  private static final String INPUT_XMI_PATH = "input-files/Relational_6-1_N.xmi";
+  private static final String INPUT_XMI_PATH = "input-files/Relational_0.xmi";
 
-  private static final String OUTPUT_XMI_PATH = "output-files/USchema_6-1_N.xmi";
+  private static final String OUTPUT_XMI_PATH = "output-files/USchema_0.xmi";
 
   public static RelationalSchema loadSchema() {
     ResourceSet resourceSet = null;

@@ -3,10 +3,8 @@ package juanfran.um
 import uschema.UschemaFactory
 import relationalschema.RelationalSchema
 import uschema.USchema
-import java.util.Map
 import relationalschema.Table
 import uschema.SchemaType
-import java.util.HashMap
 import uschema.EntityType
 import uschema.RelationshipType
 import uschema.Aggregate
@@ -18,21 +16,16 @@ import java.util.List
 import java.util.LinkedList
 import relationalschema.FKey
 import uschema.Reference
+import juanfran.um.trace.Trace
 
 class MappingRelational2Uschema {
 	
 	val UschemaFactory usFactory;
-	val Map<Table, EntityType> entityTypes;
-	val Map<Table, RelationshipType> relationshipTypes;
-	val Map<Column, Attribute> attributes;
-	val Map<Key, uschema.Key> keys;
+	val Trace trace;
 	
 	new() {
 		this.usFactory = UschemaFactory.eINSTANCE
-		this.entityTypes = new HashMap()
-		this.relationshipTypes = new HashMap()
-		this.attributes = new HashMap()
-		this.keys = new HashMap()
+		this.trace = new Trace()
 	}
 	
 	// R0: RelationalSchema to USchema
@@ -41,135 +34,147 @@ class MappingRelational2Uschema {
 		
 		uSchema.name = relationalSchema.name
 		
-		relationalSchema.tables.forEach[ t |
-			val SchemaType st = table2SchemaType(t)
-			switch st {
-				case st instanceof EntityType: 
-					uSchema.entities.add(st as EntityType)
-				case st instanceof RelationshipType:
-					uSchema.relationships.add(st as RelationshipType)
-			}
-		]
+		relationalSchema.tables.forEach[ t | table2SchemaType(t, uSchema) ] //r1
 		
-		relationshipTypes.forEach[ t, _ |
-			//r5
-			mNTable2RelationshipType(t)
-		]
-		
-		entityTypes.forEach[ t, _ | 
+		relationalSchema.tables.forEach[ t | 
 			if (weakCondition(t))
-				//r4
-				weakTable2Aggregate(t)
-			//r6
-			r6(t)
+				weakTable2Aggregate(t) //r4
+			else if (mNCondition(t))
+				mNTable2RelationshipType(t) //r5
+			else
+				r6(t) //r6
 		]
+		
+		trace.addTrace(relationalSchema.name, relationalSchema, uSchema.name, uSchema);
+		trace.printDirectTraceTypes
 
 		return uSchema
 	}
 	
 	// R1: Table to SchemaType
-	def SchemaType table2SchemaType(Table t) {
+	def void table2SchemaType(Table t, USchema uSchema) {
 		var SchemaType st;
 		
 		if (mNCondition(t)) {
 			st = usFactory.createRelationshipType
-			relationshipTypes.put(t, st as RelationshipType)
+			uSchema.relationships.add(st as RelationshipType)
 		} else {
 			val EntityType et = usFactory.createEntityType
-			et.root = true //TODO: si se pone por defecto a true en el metamodelo, esto no hará falta
-			entityTypes.put(t, et)
-			
+			et.root = true
+			uSchema.entities.add(et)
 			st = et
 		}
 		
 		st.name = t.name
 		
-		//r2
-		val List<Attribute> attributes = t.columns.map[ c | column2Attribute(c) ]
-		st.features.addAll(attributes)
+		for(c : t.columns) { column2Attribute(c, st) } //r2
 		
-		//r3
-		val List<uschema.Key> keys = t.keys.map[ k | pK2Key(k) ]
-		st.features.addAll(keys)
+		for(k : t.keys) { pK2Key(k, st) } //r3
 		
-		return st
+		trace.addTrace(t.name, t, st.name, st)
 	}
 	
 	// R2: Column to Attribute
-	def Attribute column2Attribute(Column c) {
+	def void column2Attribute(Column c, SchemaType st) {
 		val Attribute at = usFactory.createAttribute
-		val PrimitiveType primitiveType = usFactory.createPrimitiveType
-		primitiveType.name = typeConversionRelToUsc(c.datatype)
+		
+		st.features.add(at)
 		
 		at.name = c.name
-		at.type = primitiveType
+		datatype2PrimitiveType(c, at) //at.type = primitiveType
 		at.optional = c.nullable
 		
-		attributes.put(c, at)
-		
-		return at
+		trace.addTrace(dot(c.owner.name, c.name), c, dot(at.owner.name, at.name), at)
 	}
 	
 	// R3: PK & UK to Key
-	def uschema.Key pK2Key(Key rKey) {
+	def void pK2Key(Key rKey, SchemaType st) {
 		val uschema.Key uKey = usFactory.createKey
-
+		
+		st.features.add(uKey)
+		
 		uKey.name = rKey.constraintname
 		uKey.isID = rKey.isIsPK
 		uKey.attributes.addAll(columns2Attributes(rKey.columns))
 		
-		keys.put(rKey, uKey)
-		
-		return uKey
+		trace.addTrace(
+			dot(rKey.owner.name, rKey.constraintname), 
+			rKey, 
+			dot(uKey.owner.name, uKey.name), 
+			uKey
+		)
 	}
 	
 	// R4: Weak Table to Aggregate
 	def void weakTable2Aggregate(Table w) {
-		println(w.toString)
-		val Table s = getFKsInPK(w).head.refsTo.owner
-		val EntityType es = entityTypes.get(s)
-		val EntityType ew = entityTypes.get(w)
+		val FKey fk = getFKsInPK(w).head
+		val Table s = fk.refsTo.owner
+		val EntityType es = trace.getTargetInstance(s.name, EntityType.name) as EntityType
+		val EntityType ew = trace.getTargetInstance(w.name, EntityType.name) as EntityType
 		val Aggregate ag = usFactory.createAggregate
+		
+		es.features.add(ag)
 	
 		ag.name = w.name + "s"
 		ag.lowerBound = 0
 		ag.upperBound = -1 // Many (n)
 		ag.specifiedBy = ew
-		es.features.add(ag)
 		ew.root = false
+		
+		trace.addTrace(
+			dot(fk.owner.name, fk.constraintname),
+			fk, 
+			dot(ag.owner.name, ag.name),
+			ag
+		)
 	}
 	
 	// R5: M:N Table to RelationshipType
-	def RelationshipType mNTable2RelationshipType(Table m) {
-		val RelationshipType rm = relationshipTypes.get(m)
+	def void mNTable2RelationshipType(Table m) {
+		val RelationshipType rm = trace.getTargetInstance(m.name, RelationshipType.name) as RelationshipType
 		val List<FKey> fKs = getFKsInPK(m)
 		val FKey fK1 = fKs.get(0)
 		val FKey fK2 = fKs.get(1)
 		val Table t1 = fK1.refsTo.owner
 		val Table t2 = fK2.refsTo.owner
-		val EntityType et1 = entityTypes.get(t1)
-		val EntityType et2 = entityTypes.get(t2)
-		val Reference ref = usFactory.createReference
+		val EntityType et1 = trace.getTargetInstance(t1.name, EntityType.name) as EntityType
+		val EntityType et2 = trace.getTargetInstance(t2.name, EntityType.name) as EntityType
+		val Reference ref1 = usFactory.createReference
+		val Reference ref2 = usFactory.createReference
 		
-		ref.name = t2.name
-		ref.lowerBound = 1
-		ref.upperBound = 1
-		ref.refsTo = et2
-		ref.owner = et1
-		ref.isFeaturedBy = rm
+		ref1.name = t1.name
+		ref1.lowerBound = 1
+		ref1.upperBound = 1
+		ref1.refsTo = et1
+		ref1.isFeaturedBy = rm
+		ref1.owner = et1
+		ref1.attributes.addAll(columns2Attributes(fK1.columns))
 		
-		ref.attributes.addAll(columns2Attributes(fK2.columns)) 
+		ref2.name = t2.name
+		ref2.lowerBound = 1
+		ref2.upperBound = 1
+		ref2.refsTo = et2
+		ref2.isFeaturedBy = rm
+		ref2.owner = et2
+		ref2.attributes.addAll(columns2Attributes(fK2.columns)) 
 		
-		et1.root = true //TODO: si se pone por defecto a true en el metamodelo, esto no hará falta
-		et2.root = true
-		
-		return rm
+		trace.addTrace(
+			dot(fK1.owner.name, fK1.constraintname),
+			fK1,
+			dot(ref1.owner.name, ref1.name),
+			ref1
+		)
+		trace.addTrace(
+			dot(fK2.owner.name, fK2.constraintname),
+			fK2,
+			dot(ref2.owner.name, ref2.name),
+			ref2
+		)
 	}
 	
 	// R6
 	def void r6(Table t) {
-		// KeyPropagation condition
-		val List<FKey> fKs = getFKsNotInPK(t)
+		val List<FKey> fKs = getFKsNotInPK(t) // KeyPropagation condition
 		val List<Key> uKs = findUKs(t)
 		
 		fKs.forEach[ fk |
@@ -183,8 +188,8 @@ class MappingRelational2Uschema {
 	// R6: 1:1 table
 	def void r6Table1_1(Table t, FKey fk) {
 		val Table s = fk.refsTo.owner
-		val EntityType et = entityTypes.get(t)
-		val EntityType es = entityTypes.get(s)
+		val EntityType et = trace.getTargetInstance(t.name, EntityType.name) as EntityType
+		val EntityType es = trace.getTargetInstance(s.name, EntityType.name) as EntityType
 		val Reference rs = usFactory.createReference
 		
 		rs.name = s.name + "_" + fk.constraintname
@@ -193,13 +198,20 @@ class MappingRelational2Uschema {
 		rs.refsTo = es
 		rs.attributes.addAll(columns2Attributes(fk.columns))
 		et.features.add(rs)
+		
+		trace.addTrace(
+			dot(fk.owner.name, fk.constraintname),
+			fk,
+			dot(rs.owner.name, rs.name),
+			rs
+		)
 	}
 	
 	// R6: 1:N table
 	def r6Table1_N(Table t, FKey fk) {
 		val Table s = fk.refsTo.owner
-		val EntityType et = entityTypes.get(t)
-		val EntityType es = entityTypes.get(s)
+		val EntityType et = trace.getTargetInstance(t.name, EntityType.name) as EntityType
+		val EntityType es = trace.getTargetInstance(s.name, EntityType.name) as EntityType
 		val Reference rt = usFactory.createReference
 		val Key pk = findPK(t);
 		
@@ -211,14 +223,26 @@ class MappingRelational2Uschema {
 		
 		pk.columns.forEach[ col |
 			val Attribute at = usFactory.createAttribute
-			val PrimitiveType primitiveType = usFactory.createPrimitiveType
-			primitiveType.name = typeConversionRelToUsc(col.datatype)
 		
 			at.name = col.name + et.name + 's'
-			at.type = primitiveType
 			rt.attributes.add(at)
 			es.features.add(at)
+			datatype2PrimitiveType(col, at) //at.type = primitiveType
+			
+			trace.addTrace(
+				dot(col.owner.name, col.name),
+				col,
+				dot(at.owner.name, at.name),
+				at
+			)
 		]
+		
+		trace.addTrace(
+			dot(fk.owner.name, fk.constraintname),
+			fk,
+			dot(rt.owner.name, rt.name),
+			rt
+		)
 	}
 	
 	// Checks whether a table satisfies the weak condition
@@ -291,6 +315,31 @@ class MappingRelational2Uschema {
 		return false;
 	}
 	
+	// datatype of a Column to PrimitiveType
+	def void datatype2PrimitiveType(Column c, Attribute at) {
+		val PrimitiveType primitiveType = usFactory.createPrimitiveType
+		primitiveType.name = typeConversionRelToUsc(c.datatype)
+		
+		at.type = primitiveType
+		
+		trace.addTrace(
+			dot(c.owner.name, c.name),
+			c,
+			dot(at.owner.name, at.name, primitiveType.name),
+			at.type
+		)
+	}
+	
+	// Columns to attributes
+	def List<Attribute> columns2Attributes(List<Column> columns) {
+		return columns.map[ c | 
+			val String columnName = dot(c.owner.name, c.name)
+			val at = trace.getTargetInstance(columnName, Attribute.name) as Attribute
+			
+			return at
+		]
+	}
+	
 	// Types conversion from Relational to USchema
 	def static String typeConversionRelToUsc(String dataType) {
 		val String dtUp = dataType.toUpperCase
@@ -303,8 +352,8 @@ class MappingRelational2Uschema {
  		}
 	}
 	
-	// Columns to attributes
-	def List<Attribute> columns2Attributes(List<Column> columns) {
-		return columns.map[ c | attributes.get(c)]
+	// Separate a list of string with dots
+	def static String dot(String... strings) {
+		return strings.join('.')
 	}
 }
