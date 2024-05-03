@@ -122,7 +122,7 @@ public class Trace {
         String _plus_2 = ((entrada + "(") + _join_2);
         String _plus_3 = (_plus_2 + ")");
         entrada = _plus_3;
-        String _format = String.format("%80s", entrada);
+        String _format = String.format("%70s", entrada);
         String _plus_4 = (_format + " -> ");
         String _plus_5 = (_plus_4 + auxSal);
         System.out.println(_plus_5);

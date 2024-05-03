@@ -11,8 +11,8 @@ import documentschema.DocumentSchema
 import documentschema.DocumentschemaPackage
 
 class Main {
-	static val INPUT_XMI_PATH = "input-files/USchema_0.xmi"
-	static val OUTPUT_XMI_PATH = "output-files/Document_0.xmi"
+	static val INPUT_XMI_PATH = "input-files/USchema_1.xmi"
+	static val OUTPUT_XMI_PATH = "output-files/Document_1.xmi"
 	
 	def static USchema loadSchema() {
 		var ResourceSet resourceSet

@@ -88,7 +88,7 @@ class Trace {
 
 			var String auxSal=String.join(", ", salida)+" ("+String.join(", ", salidaTipos)+")"
 			entrada=entrada+"("+String.join(", ", entradaTipos)+")"
-			System.out.println(String::format("%80s",entrada)+" -> "+auxSal)
+			System.out.println(String::format("%70s",entrada)+" -> "+auxSal)
 		}
 	}
 

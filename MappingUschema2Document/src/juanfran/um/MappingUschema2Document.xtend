@@ -16,15 +16,31 @@ class MappingUschema2Document {
 	}
 	
 	// R0: USchema to DocumentSchema
-	def DocumentSchema USchema2DocumentSchema(USchema uSchema) {
-		val DocumentSchema documentSchema = dsFactory.createDocumentSchema
+	def DocumentSchema USchema2DocumentSchema(USchema us) {
+		val DocumentSchema ds = dsFactory.createDocumentSchema
 		
-		documentSchema.name = uSchema.name
+		ds.name = us.name
 		
-		trace.addTrace(uSchema.name, uSchema, documentSchema.name, documentSchema);
+		// r1
+		for (e : us.entities) {
+			if (e.root) {
+				entityType2EntityType(e, ds)
+			}
+		}
+		
+		trace.addTrace(us.name, us, ds.name, ds);
 		trace.printDirectTraceTypes
 
-		return documentSchema
+		return ds
 	}
 	
+	// R1: uschema.EntityType to documentschema.EntityType
+	def void entityType2EntityType(uschema.EntityType e, DocumentSchema ds) {
+		val documentschema.EntityType d = dsFactory.createEntityType
+		
+		ds.entities.add(d)
+		d.name = e.name
+		
+		trace.addTrace(e.name, e, d.name, d)
+	}	
 }

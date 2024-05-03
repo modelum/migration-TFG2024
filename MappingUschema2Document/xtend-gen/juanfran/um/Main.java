@@ -16,9 +16,9 @@ import uschema.UschemaPackage;
 
 @SuppressWarnings("all")
 public class Main {
-  private static final String INPUT_XMI_PATH = "input-files/USchema_0.xmi";
+  private static final String INPUT_XMI_PATH = "input-files/USchema_1.xmi";
 
-  private static final String OUTPUT_XMI_PATH = "output-files/Document_0.xmi";
+  private static final String OUTPUT_XMI_PATH = "output-files/Document_1.xmi";
 
   public static USchema loadSchema() {
     ResourceSet resourceSet = null;
