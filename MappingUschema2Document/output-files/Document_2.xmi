@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca">
+  <entities name="Autor">
+    <properties xsi:type="documentschema:Attribute" name="Nombre" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="EditorialesFavoritas" type="//@types.2"/>
+    <properties xsi:type="documentschema:Attribute" name="AutorID" type="//@types.3"/>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:Array" type="//@types.1"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
+</documentschema:DocumentSchema>
