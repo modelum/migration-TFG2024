@@ -55,10 +55,6 @@ class Trace {
 		return T_targetInstance.get(source)
 	}
 	
-	def Object getTargetInstance(String source, String className) {
-		return this.getTargetInstance(source).filter[ obj | this.getType(obj) == className].head
-	}
-	
 	def String getType(Object o) {
 		o.class.interfaces.head.name
 	}
@@ -88,7 +84,7 @@ class Trace {
 
 			var String auxSal=String.join(", ", salida)+" ("+String.join(", ", salidaTipos)+")"
 			entrada=entrada+"("+String.join(", ", entradaTipos)+")"
-			System.out.println(String::format("%70s",entrada)+" -> "+auxSal)
+			System.out.println(String::format("%80s",entrada)+" -> "+auxSal)
 		}
 	}
 

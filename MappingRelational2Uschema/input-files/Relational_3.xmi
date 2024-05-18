@@ -18,9 +18,9 @@
         name="FechaRegistro"
         datatype="DATE"/>
     <keys columns="//@tables.0/@columns.0"
-        constraintname="UsuarioID"/>
+        constraintname="Usuario_PK"/>
     <keys columns="//@tables.0/@columns.2"
-        constraintname="Email"
+        constraintname="Email_UK"
         isPK="false"/>
   </tables>
 </relationalschema:RelationalSchema>

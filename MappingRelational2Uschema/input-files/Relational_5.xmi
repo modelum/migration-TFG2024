@@ -15,7 +15,7 @@
         name="AutorID"
         datatype="INT"/>
     <keys columns="//@tables.0/@columns.2"
-        constraintname="AutorID"/>
+        constraintname="Autor_PK"/>
   </tables>
   <tables name="Libro">
     <columns
@@ -31,25 +31,25 @@
         name="ISBN"
         datatype="VARCHAR"/>
     <keys columns="//@tables.1/@columns.0"
-        constraintname="LibroID"/>
+        constraintname="Libro_PK"/>
     <keys columns="//@tables.1/@columns.3"
-        constraintname="ISBN"
+        constraintname="ISBN_UK"
         isPK="false"/>
   </tables>
   <tables name="Libros_Autores">
     <columns
-        name="LibroID_FK"
+        name="Libro"
         datatype="INT"/>
     <columns
-        name="AutorID_FK"
+        name="Autor"
         datatype="INT"/>
     <keys columns="//@tables.2/@columns.0 //@tables.2/@columns.1"
-        constraintname="LibroID_AutorID"/>
+        constraintname="Libros_Autores_PK"/>
     <fks columns="//@tables.2/@columns.0"
         refsTo="//@tables.1/@keys.0"
-        constraintname="LibroID_FK"/>
+        constraintname="Libro_FK"/>
     <fks columns="//@tables.2/@columns.1"
         refsTo="//@tables.0/@keys.0"
-        constraintname="AutorID_FK"/>
+        constraintname="Autor_FK"/>
   </tables>
 </relationalschema:RelationalSchema>

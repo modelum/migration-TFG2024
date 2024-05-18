@@ -11,7 +11,7 @@
       <package
             uri="http://www.example.org/relationalschema"
             class="relationalschema.RelationalschemaPackage"
-            genModel="metamodelos/relationalMM.genmodel"/>
+            genModel="metamodels/relationalMM.genmodel"/>
    </extension>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
@@ -19,7 +19,7 @@
       <package
             uri="http://www.modelum.es/uschema"
             class="uschema.UschemaPackage"
-            genModel="metamodelos/uschemaMM.genmodel"/>
+            genModel="metamodels/uschemaMM.genmodel"/>
    </extension>
 
 </plugin>

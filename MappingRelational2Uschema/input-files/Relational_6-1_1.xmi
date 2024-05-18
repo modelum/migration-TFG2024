@@ -18,9 +18,9 @@
         name="ISBN"
         datatype="VARCHAR"/>
     <keys columns="//@tables.0/@columns.0"
-        constraintname="LibroID"/>
+        constraintname="Libro_PK"/>
     <keys columns="//@tables.0/@columns.3"
-        constraintname="ISBN"
+        constraintname="ISBN_UK"
         isPK="false"/>
   </tables>
   <tables name="Usuario">
@@ -37,9 +37,9 @@
         name="FechaRegistro"
         datatype="DATE"/>
     <keys columns="//@tables.1/@columns.0"
-        constraintname="UsuarioID"/>
+        constraintname="Usuario_PK"/>
     <keys columns="//@tables.1/@columns.2"
-        constraintname="Email"
+        constraintname="Email_UK"
         isPK="false"/>
   </tables>
   <tables name="Reserva">
@@ -47,24 +47,24 @@
         name="ReservaID"
         datatype="INT"/>
     <columns
-        name="UsuarioID_FK"
+        name="Usuario"
         datatype="INT"/>
     <columns
-        name="LibroID_FK"
+        name="Libro"
         datatype="INT"/>
     <columns
         name="FechaReserva"
         datatype="DATE"/>
     <keys columns="//@tables.2/@columns.0"
-        constraintname="ReservaID"/>
+        constraintname="Reserva_PK"/>
     <keys columns="//@tables.2/@columns.1 //@tables.2/@columns.2 //@tables.2/@columns.3"
-        constraintname="UsuarioID_LibroID_FechaReserva"
+        constraintname="Usuario_Libro_FechaReserva_UK"
         isPK="false"/>
     <fks columns="//@tables.2/@columns.1"
         refsTo="//@tables.1/@keys.0"
-        constraintname="UsuarioID_FK"/>
+        constraintname="Usuario_FK"/>
     <fks columns="//@tables.2/@columns.2"
         refsTo="//@tables.0/@keys.0"
-        constraintname="LibroID_FK"/>
+        constraintname="Libro_FK"/>
   </tables>
 </relationalschema:RelationalSchema>

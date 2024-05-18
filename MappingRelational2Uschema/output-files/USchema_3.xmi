@@ -13,7 +13,7 @@
     <features xsi:type="uschema:Attribute" name="FechaRegistro">
       <type xsi:type="uschema:PrimitiveType" name="Date"/>
     </features>
-    <features xsi:type="uschema:Key" name="UsuarioID" attributes="//@entities.0/@features.0"/>
-    <features xsi:type="uschema:Key" name="Email" attributes="//@entities.0/@features.2" isID="false"/>
+    <features xsi:type="uschema:Key" name="Usuario_PK" attributes="//@entities.0/@features.0"/>
+    <features xsi:type="uschema:Key" name="Email_UK" attributes="//@entities.0/@features.2" isID="false"/>
   </entities>
 </uschema:USchema>

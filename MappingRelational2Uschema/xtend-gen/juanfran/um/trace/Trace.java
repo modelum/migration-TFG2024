@@ -1,6 +1,5 @@
 package juanfran.um.trace;
 
-import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,14 +74,6 @@ public class Trace {
     return this.T_targetInstance.get(source);
   }
 
-  public Object getTargetInstance(final String source, final String className) {
-    final Function1<Object, Boolean> _function = (Object obj) -> {
-      String _type = this.getType(obj);
-      return Boolean.valueOf(Objects.equal(_type, className));
-    };
-    return IterableExtensions.<Object>head(IterableExtensions.<Object>filter(this.getTargetInstance(source), _function));
-  }
-
   public String getType(final Object o) {
     return IterableExtensions.<Class<?>>head(((Iterable<Class<?>>)Conversions.doWrapArray(o.getClass().getInterfaces()))).getName();
   }
@@ -122,7 +113,7 @@ public class Trace {
         String _plus_2 = ((entrada + "(") + _join_2);
         String _plus_3 = (_plus_2 + ")");
         entrada = _plus_3;
-        String _format = String.format("%70s", entrada);
+        String _format = String.format("%80s", entrada);
         String _plus_4 = (_format + " -> ");
         String _plus_5 = (_plus_4 + auxSal);
         System.out.println(_plus_5);
