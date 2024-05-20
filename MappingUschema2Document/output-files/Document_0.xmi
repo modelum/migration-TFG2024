@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
-<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca"/>
+<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca">
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="DOUBLE"/>
+  <types xsi:type="documentschema:PrimitiveType"/>
+</documentschema:DocumentSchema>

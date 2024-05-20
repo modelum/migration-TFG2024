@@ -1,6 +1,5 @@
 package juanfran.um.trace;
 
-import com.google.common.base.Objects;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -73,14 +72,6 @@ public class Trace {
 
   public List<Object> getTargetInstance(final String source) {
     return this.T_targetInstance.get(source);
-  }
-
-  public Object getTargetInstance(final String source, final String className) {
-    final Function1<Object, Boolean> _function = (Object obj) -> {
-      String _type = this.getType(obj);
-      return Boolean.valueOf(Objects.equal(_type, className));
-    };
-    return IterableExtensions.<Object>head(IterableExtensions.<Object>filter(this.getTargetInstance(source), _function));
   }
 
   public String getType(final Object o) {

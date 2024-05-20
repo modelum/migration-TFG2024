@@ -55,10 +55,6 @@ class Trace {
 		return T_targetInstance.get(source)
 	}
 	
-	def Object getTargetInstance(String source, String className) {
-		return this.getTargetInstance(source).filter[ obj | this.getType(obj) == className].head
-	}
-	
 	def String getType(Object o) {
 		o.class.interfaces.head.name
 	}

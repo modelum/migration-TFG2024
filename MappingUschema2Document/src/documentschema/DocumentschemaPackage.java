@@ -141,13 +141,22 @@ public interface DocumentschemaPackage extends EPackage {
 	int ENTITY_TYPE__PROPERTIES = 1;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENTITY_TYPE__OWNER = 2;
+
+	/**
 	 * The number of structural features of the '<em>Entity Type</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ENTITY_TYPE_FEATURE_COUNT = 2;
+	int ENTITY_TYPE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Entity Type</em>' class.
@@ -178,13 +187,22 @@ public interface DocumentschemaPackage extends EPackage {
 	int PROPERTY__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROPERTY__OWNER = 1;
+
+	/**
 	 * The number of structural features of the '<em>Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROPERTY_FEATURE_COUNT = 1;
+	int PROPERTY_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Property</em>' class.
@@ -213,6 +231,15 @@ public interface DocumentschemaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ATTRIBUTE__NAME = PROPERTY__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ATTRIBUTE__OWNER = PROPERTY__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Is Key</b></em>' attribute.
@@ -270,6 +297,15 @@ public interface DocumentschemaPackage extends EPackage {
 	int REFERENCE__NAME = PROPERTY__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE__OWNER = PROPERTY__OWNER;
+
+	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -325,7 +361,16 @@ public interface DocumentschemaPackage extends EPackage {
 	int AGGREGATE__NAME = PROPERTY__NAME;
 
 	/**
-	 * The feature id for the '<em><b>Aggregates</b></em>' containment reference.
+	 * The feature id for the '<em><b>Owner</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int AGGREGATE__OWNER = PROPERTY__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Aggregates</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -549,6 +594,17 @@ public interface DocumentschemaPackage extends EPackage {
 	EReference getEntityType_Properties();
 
 	/**
+	 * Returns the meta object for the container reference '{@link documentschema.EntityType#getOwner <em>Owner</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Owner</em>'.
+	 * @see documentschema.EntityType#getOwner()
+	 * @see #getEntityType()
+	 * @generated
+	 */
+	EReference getEntityType_Owner();
+
+	/**
 	 * Returns the meta object for class '{@link documentschema.Property <em>Property</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -568,6 +624,17 @@ public interface DocumentschemaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getProperty_Name();
+
+	/**
+	 * Returns the meta object for the container reference '{@link documentschema.Property#getOwner <em>Owner</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Owner</em>'.
+	 * @see documentschema.Property#getOwner()
+	 * @see #getProperty()
+	 * @generated
+	 */
+	EReference getProperty_Owner();
 
 	/**
 	 * Returns the meta object for class '{@link documentschema.Attribute <em>Attribute</em>}'.
@@ -644,10 +711,10 @@ public interface DocumentschemaPackage extends EPackage {
 	EClass getAggregate();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}'.
+	 * Returns the meta object for the reference '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Aggregates</em>'.
+	 * @return the meta object for the reference '<em>Aggregates</em>'.
 	 * @see documentschema.Aggregate#getAggregates()
 	 * @see #getAggregate()
 	 * @generated
@@ -811,6 +878,14 @@ public interface DocumentschemaPackage extends EPackage {
 		EReference ENTITY_TYPE__PROPERTIES = eINSTANCE.getEntityType_Properties();
 
 		/**
+		 * The meta object literal for the '<em><b>Owner</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ENTITY_TYPE__OWNER = eINSTANCE.getEntityType_Owner();
+
+		/**
 		 * The meta object literal for the '{@link documentschema.impl.PropertyImpl <em>Property</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -827,6 +902,14 @@ public interface DocumentschemaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PROPERTY__NAME = eINSTANCE.getProperty_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Owner</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROPERTY__OWNER = eINSTANCE.getProperty_Owner();
 
 		/**
 		 * The meta object literal for the '{@link documentschema.impl.AttributeImpl <em>Attribute</em>}' class.
@@ -891,7 +974,7 @@ public interface DocumentschemaPackage extends EPackage {
 		EClass AGGREGATE = eINSTANCE.getAggregate();
 
 		/**
-		 * The meta object literal for the '<em><b>Aggregates</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Aggregates</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

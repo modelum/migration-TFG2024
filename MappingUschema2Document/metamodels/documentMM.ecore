@@ -5,17 +5,21 @@
   <eClassifiers xsi:type="ecore:EClass" name="DocumentSchema">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="entities" lowerBound="1"
-        upperBound="-1" eType="#//EntityType" containment="true"/>
+        upperBound="-1" eType="#//EntityType" containment="true" eOpposite="#//EntityType/owner"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="types" lowerBound="1" upperBound="-1"
         eType="#//Type" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EntityType">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" lowerBound="1"
-        upperBound="-1" eType="#//Property" containment="true"/>
+        upperBound="-1" eType="#//Property" containment="true" eOpposite="#//Property/owner"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//DocumentSchema"
+        eOpposite="#//DocumentSchema/entities"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Property" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" lowerBound="1" eType="#//EntityType"
+        eOpposite="#//EntityType/properties"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Attribute" eSuperTypes="#//Property">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isKey" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -28,7 +32,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Aggregate" eSuperTypes="#//Property">
     <eStructuralFeatures xsi:type="ecore:EReference" name="aggregates" lowerBound="1"
-        eType="#//Property" containment="true"/>
+        eType="#//Property"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMany" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Type" abstract="true"/>

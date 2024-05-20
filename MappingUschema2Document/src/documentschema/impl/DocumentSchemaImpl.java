@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -129,7 +130,7 @@ public class DocumentSchemaImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public EList<EntityType> getEntities() {
 		if (entities == null) {
-			entities = new EObjectContainmentEList<EntityType>(EntityType.class, this, DocumentschemaPackage.DOCUMENT_SCHEMA__ENTITIES);
+			entities = new EObjectContainmentWithInverseEList<EntityType>(EntityType.class, this, DocumentschemaPackage.DOCUMENT_SCHEMA__ENTITIES, DocumentschemaPackage.ENTITY_TYPE__OWNER);
 		}
 		return entities;
 	}
@@ -145,6 +146,21 @@ public class DocumentSchemaImpl extends MinimalEObjectImpl.Container implements 
 			types = new EObjectContainmentEList<Type>(Type.class, this, DocumentschemaPackage.DOCUMENT_SCHEMA__TYPES);
 		}
 		return types;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case DocumentschemaPackage.DOCUMENT_SCHEMA__ENTITIES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEntities()).basicAdd(otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**

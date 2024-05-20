@@ -2,6 +2,7 @@
  */
 package documentschema.impl;
 
+import documentschema.DocumentSchema;
 import documentschema.DocumentschemaPackage;
 import documentschema.EntityType;
 import documentschema.Property;
@@ -19,7 +20,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -32,6 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link documentschema.impl.EntityTypeImpl#getName <em>Name</em>}</li>
  *   <li>{@link documentschema.impl.EntityTypeImpl#getProperties <em>Properties</em>}</li>
+ *   <li>{@link documentschema.impl.EntityTypeImpl#getOwner <em>Owner</em>}</li>
  * </ul>
  *
  * @generated
@@ -117,9 +120,71 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 	@Override
 	public EList<Property> getProperties() {
 		if (properties == null) {
-			properties = new EObjectContainmentEList<Property>(Property.class, this, DocumentschemaPackage.ENTITY_TYPE__PROPERTIES);
+			properties = new EObjectContainmentWithInverseEList<Property>(Property.class, this, DocumentschemaPackage.ENTITY_TYPE__PROPERTIES, DocumentschemaPackage.PROPERTY__OWNER);
 		}
 		return properties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public DocumentSchema getOwner() {
+		if (eContainerFeatureID() != DocumentschemaPackage.ENTITY_TYPE__OWNER) return null;
+		return (DocumentSchema)eInternalContainer();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetOwner(DocumentSchema newOwner, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newOwner, DocumentschemaPackage.ENTITY_TYPE__OWNER, msgs);
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setOwner(DocumentSchema newOwner) {
+		if (newOwner != eInternalContainer() || (eContainerFeatureID() != DocumentschemaPackage.ENTITY_TYPE__OWNER && newOwner != null)) {
+			if (EcoreUtil.isAncestor(this, newOwner))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newOwner != null)
+				msgs = ((InternalEObject)newOwner).eInverseAdd(this, DocumentschemaPackage.DOCUMENT_SCHEMA__ENTITIES, DocumentSchema.class, msgs);
+			msgs = basicSetOwner(newOwner, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.ENTITY_TYPE__OWNER, newOwner, newOwner));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case DocumentschemaPackage.ENTITY_TYPE__PROPERTIES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getProperties()).basicAdd(otherEnd, msgs);
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetOwner((DocumentSchema)otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -132,8 +197,24 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 		switch (featureID) {
 			case DocumentschemaPackage.ENTITY_TYPE__PROPERTIES:
 				return ((InternalEList<?>)getProperties()).basicRemove(otherEnd, msgs);
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				return basicSetOwner(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				return eInternalContainer().eInverseRemove(this, DocumentschemaPackage.DOCUMENT_SCHEMA__ENTITIES, DocumentSchema.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
@@ -148,6 +229,8 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 				return getName();
 			case DocumentschemaPackage.ENTITY_TYPE__PROPERTIES:
 				return getProperties();
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				return getOwner();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -168,6 +251,9 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 				getProperties().clear();
 				getProperties().addAll((Collection<? extends Property>)newValue);
 				return;
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				setOwner((DocumentSchema)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -186,6 +272,9 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 			case DocumentschemaPackage.ENTITY_TYPE__PROPERTIES:
 				getProperties().clear();
 				return;
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				setOwner((DocumentSchema)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -202,6 +291,8 @@ public class EntityTypeImpl extends MinimalEObjectImpl.Container implements Enti
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case DocumentschemaPackage.ENTITY_TYPE__PROPERTIES:
 				return properties != null && !properties.isEmpty();
+			case DocumentschemaPackage.ENTITY_TYPE__OWNER:
+				return getOwner() != null;
 		}
 		return super.eIsSet(featureID);
 	}

@@ -7,7 +7,6 @@ import documentschema.DocumentschemaPackage;
 import documentschema.Property;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -30,7 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class AggregateImpl extends PropertyImpl implements Aggregate {
 	/**
-	 * The cached value of the '{@link #getAggregates() <em>Aggregates</em>}' containment reference.
+	 * The cached value of the '{@link #getAggregates() <em>Aggregates</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getAggregates()
@@ -85,6 +84,14 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 */
 	@Override
 	public Property getAggregates() {
+		if (aggregates != null && aggregates.eIsProxy()) {
+			InternalEObject oldAggregates = (InternalEObject)aggregates;
+			aggregates = (Property)eResolveProxy(oldAggregates);
+			if (aggregates != oldAggregates) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, DocumentschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
+			}
+		}
 		return aggregates;
 	}
 
@@ -93,14 +100,8 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetAggregates(Property newAggregates, NotificationChain msgs) {
-		Property oldAggregates = aggregates;
-		aggregates = newAggregates;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, newAggregates);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
+	public Property basicGetAggregates() {
+		return aggregates;
 	}
 
 	/**
@@ -110,17 +111,10 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 */
 	@Override
 	public void setAggregates(Property newAggregates) {
-		if (newAggregates != aggregates) {
-			NotificationChain msgs = null;
-			if (aggregates != null)
-				msgs = ((InternalEObject)aggregates).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - DocumentschemaPackage.AGGREGATE__AGGREGATES, null, msgs);
-			if (newAggregates != null)
-				msgs = ((InternalEObject)newAggregates).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - DocumentschemaPackage.AGGREGATE__AGGREGATES, null, msgs);
-			msgs = basicSetAggregates(newAggregates, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.AGGREGATE__AGGREGATES, newAggregates, newAggregates));
+		Property oldAggregates = aggregates;
+		aggregates = newAggregates;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
 	}
 
 	/**
@@ -152,24 +146,11 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 * @generated
 	 */
 	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				return basicSetAggregates(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				return getAggregates();
+				if (resolve) return getAggregates();
+				return basicGetAggregates();
 			case DocumentschemaPackage.AGGREGATE__IS_MANY:
 				return isIsMany();
 		}

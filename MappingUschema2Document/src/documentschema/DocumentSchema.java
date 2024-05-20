@@ -50,11 +50,13 @@ public interface DocumentSchema extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Entities</b></em>' containment reference list.
 	 * The list contents are of type {@link documentschema.EntityType}.
+	 * It is bidirectional and its opposite is '{@link documentschema.EntityType#getOwner <em>Owner</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Entities</em>' containment reference list.
 	 * @see documentschema.DocumentschemaPackage#getDocumentSchema_Entities()
-	 * @model containment="true" required="true"
+	 * @see documentschema.EntityType#getOwner
+	 * @model opposite="owner" containment="true" required="true"
 	 * @generated
 	 */
 	EList<EntityType> getEntities();

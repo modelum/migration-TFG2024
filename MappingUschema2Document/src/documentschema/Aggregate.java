@@ -22,22 +22,22 @@ package documentschema;
  */
 public interface Aggregate extends Property {
 	/**
-	 * Returns the value of the '<em><b>Aggregates</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Aggregates</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Aggregates</em>' containment reference.
+	 * @return the value of the '<em>Aggregates</em>' reference.
 	 * @see #setAggregates(Property)
 	 * @see documentschema.DocumentschemaPackage#getAggregate_Aggregates()
-	 * @model containment="true" required="true"
+	 * @model required="true"
 	 * @generated
 	 */
 	Property getAggregates();
 
 	/**
-	 * Sets the value of the '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}' containment reference.
+	 * Sets the value of the '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Aggregates</em>' containment reference.
+	 * @param value the new value of the '<em>Aggregates</em>' reference.
 	 * @see #getAggregates()
 	 * @generated
 	 */

@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link documentschema.EntityType#getName <em>Name</em>}</li>
  *   <li>{@link documentschema.EntityType#getProperties <em>Properties</em>}</li>
+ *   <li>{@link documentschema.EntityType#getOwner <em>Owner</em>}</li>
  * </ul>
  *
  * @see documentschema.DocumentschemaPackage#getEntityType()
@@ -49,13 +50,39 @@ public interface EntityType extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Properties</b></em>' containment reference list.
 	 * The list contents are of type {@link documentschema.Property}.
+	 * It is bidirectional and its opposite is '{@link documentschema.Property#getOwner <em>Owner</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Properties</em>' containment reference list.
 	 * @see documentschema.DocumentschemaPackage#getEntityType_Properties()
-	 * @model containment="true" required="true"
+	 * @see documentschema.Property#getOwner
+	 * @model opposite="owner" containment="true" required="true"
 	 * @generated
 	 */
 	EList<Property> getProperties();
+
+	/**
+	 * Returns the value of the '<em><b>Owner</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link documentschema.DocumentSchema#getEntities <em>Entities</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Owner</em>' container reference.
+	 * @see #setOwner(DocumentSchema)
+	 * @see documentschema.DocumentschemaPackage#getEntityType_Owner()
+	 * @see documentschema.DocumentSchema#getEntities
+	 * @model opposite="entities" required="true" transient="false"
+	 * @generated
+	 */
+	DocumentSchema getOwner();
+
+	/**
+	 * Sets the value of the '{@link documentschema.EntityType#getOwner <em>Owner</em>}' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Owner</em>' container reference.
+	 * @see #getOwner()
+	 * @generated
+	 */
+	void setOwner(DocumentSchema value);
 
 } // EntityType
