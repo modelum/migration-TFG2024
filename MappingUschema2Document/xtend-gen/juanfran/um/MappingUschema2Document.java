@@ -24,6 +24,7 @@ import uschema.PMap;
 import uschema.PSet;
 import uschema.PTuple;
 import uschema.Reference;
+import uschema.RelationshipType;
 import uschema.SchemaType;
 import uschema.USchema;
 
@@ -187,20 +188,19 @@ public class MappingUschema2Document {
     final documentschema.Reference p_ref = this.dsFactory.createReference();
     Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(f_ref.getRefsTo().getName()));
     final documentschema.EntityType target = ((documentschema.EntityType) _head);
-    final documentschema.Attribute key = this.findAttributeKey(target.getProperties());
+    Type _type = this.findAttributeKey(target).getType();
+    final PrimitiveType primitiveType = ((PrimitiveType) _type);
     p_ref.setName(f_ref.getName());
     p_ref.setTarget(target);
     int _upperBound = f_ref.getUpperBound();
     boolean _equals = (_upperBound == 1);
     if (_equals) {
-      Type _type = key.getType();
-      p_ref.setType(((PrimitiveType) _type));
+      p_ref.setType(primitiveType);
     } else {
       if (((f_ref.getUpperBound() == (-1)) || (f_ref.getUpperBound() > 1))) {
         final Array array = this.dsFactory.createArray();
         this.documentSchema.getTypes().add(array);
-        Type _type_1 = key.getType();
-        array.setType(((PrimitiveType) _type_1));
+        array.setType(primitiveType);
         p_ref.setType(array);
       }
     }
@@ -214,6 +214,59 @@ public class MappingUschema2Document {
     String _name_3 = p_ref.getName();
     String _plus_3 = (_plus_2 + _name_3);
     this.trace.addTrace(_plus_1, f_ref, _plus_3, p_ref);
+  }
+
+  public void relationshipType2EntityType(final RelationshipType rt) {
+    final documentschema.EntityType c = this.dsFactory.createEntityType();
+    c.setName(rt.getName());
+    this.documentSchema.getEntities().add(c);
+    EList<Feature> _features = rt.getFeatures();
+    for (final Feature f : _features) {
+      boolean _matched = false;
+      if (f instanceof Attribute) {
+        _matched=true;
+        this.attribute2Attribute(((Attribute)f), c);
+      }
+    }
+    final documentschema.Attribute at = this.dsFactory.createAttribute();
+    String _name = c.getName();
+    String _plus = (_name + "_id");
+    at.setName(_plus);
+    at.setIsKey(true);
+    at.setType(this.docTypes.get(DataType.STRING));
+    c.getProperties().add(at);
+    EList<Reference> _reference = rt.getReference();
+    for (final Reference r : _reference) {
+      {
+        final documentschema.Reference rf = this.dsFactory.createReference();
+        Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(r.getRefsTo().getName()));
+        final documentschema.EntityType refsTo = ((documentschema.EntityType) _head);
+        Object _head_1 = IterableExtensions.<Object>head(this.trace.getTargetInstance(r.getOwner().getName()));
+        final documentschema.EntityType owner = ((documentschema.EntityType) _head_1);
+        String _name_1 = r.getOwner().getName();
+        String _plus_1 = (_name_1 + ".");
+        String _name_2 = c.getName();
+        String _plus_2 = (_plus_1 + _name_2);
+        Object _head_2 = IterableExtensions.<Object>head(this.trace.getTargetInstance(_plus_2));
+        final documentschema.Reference p = ((documentschema.Reference) _head_2);
+        rf.setTarget(refsTo);
+        Type _type = this.findAttributeKey(rf.getTarget()).getType();
+        rf.setType(((PrimitiveType) _type));
+        c.getProperties().add(rf);
+        if ((p != null)) {
+          owner.getProperties().remove(p);
+        }
+        final documentschema.Reference q = this.dsFactory.createReference();
+        final Array array = this.dsFactory.createArray();
+        this.documentSchema.getTypes().add(array);
+        documentschema.Attribute _findAttributeKey = this.findAttributeKey(q.getTarget());
+        array.setType(((PrimitiveType) _findAttributeKey));
+        q.setName(c.getName());
+        q.setTarget(c);
+        q.setType(array);
+        owner.getProperties().add(q);
+      }
+    }
   }
 
   public Type datatype2Type(final uschema.DataType dt) {
@@ -300,12 +353,12 @@ public class MappingUschema2Document {
     return this.docTypes.get(docDt);
   }
 
-  public documentschema.Attribute findAttributeKey(final EList<Property> properties) {
+  public documentschema.Attribute findAttributeKey(final documentschema.EntityType et) {
     final Function1<Property, Boolean> _function = (Property p) -> {
       return Boolean.valueOf(((p instanceof documentschema.Attribute) && 
         ((documentschema.Attribute) p).isIsKey()));
     };
-    Property _findFirst = IterableExtensions.<Property>findFirst(properties, _function);
+    Property _findFirst = IterableExtensions.<Property>findFirst(et.getProperties(), _function);
     return ((documentschema.Attribute) _findFirst);
   }
 

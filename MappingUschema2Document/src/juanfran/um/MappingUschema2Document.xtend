@@ -18,8 +18,8 @@ import documentschema.Attribute
 import documentschema.Aggregate
 import documentschema.DataType
 import documentschema.Reference
-import org.eclipse.emf.common.util.EList
 import documentschema.Array
+import uschema.RelationshipType
 
 class MappingUschema2Document {
 	
@@ -152,25 +152,78 @@ class MappingUschema2Document {
 	def void reference2Reference(uschema.Reference f_ref, EntityType d) {
 		val Reference p_ref = dsFactory.createReference
 		val EntityType target = trace.getTargetInstance(f_ref.refsTo.name).head as EntityType
-		val Attribute key = findAttributeKey(target.properties)
+		val PrimitiveType primitiveType = findAttributeKey(target).type as PrimitiveType
 		
 		p_ref.name = f_ref.name
 		p_ref.target = target
 		
 		// Reference.type
 		if (f_ref.upperBound == 1) {
-			p_ref.type = key.type as PrimitiveType
+			p_ref.type = primitiveType
 		} else if (f_ref.upperBound == -1 || f_ref.upperBound > 1) {
 			val Array array = dsFactory.createArray
 			
 			documentSchema.types.add(array)
-			array.type = key.type as PrimitiveType
+			array.type = primitiveType
 			p_ref.type = array
 		}
 		
 		d.properties.add(p_ref)
 		
 		trace.addTrace(f_ref.owner.name+"."+f_ref.name, f_ref, p_ref.owner.name+"."+p_ref.name, p_ref)
+	}
+	
+	// R6: RelationshipType to EntityType
+	def void relationshipType2EntityType(RelationshipType rt) {
+		val EntityType c = dsFactory.createEntityType
+		
+		c.name = rt.name
+		documentSchema.entities.add(c)
+		
+		// Map Attributes
+		for (f : rt.features) {
+			switch f {
+				uschema.Attribute: attribute2Attribute(f, c)
+			}
+		}
+		
+		// New Attribute
+		val Attribute at = dsFactory.createAttribute
+		at.name = c.name + "_id"
+		at.isKey = true
+		at.type = docTypes.get(DataType::STRING)
+		c.properties.add(at)
+		//TODO: traza del nuevo atributo
+		
+		for (r : rt.reference) {
+			val Reference rf = dsFactory.createReference
+			val EntityType refsTo = trace.getTargetInstance(r.refsTo.name).head as EntityType
+			val EntityType owner = trace.getTargetInstance(r.owner.name).head as EntityType
+			val Reference p = trace.getTargetInstance(r.owner.name+"."+c.name).head as Reference
+
+			rf.target = refsTo
+			rf.type = findAttributeKey(rf.target).type as PrimitiveType
+			c.properties.add(rf)
+			
+			// Remove Reference p
+			if (p !== null)
+				owner.properties.remove(p)
+			
+			// New Reference q
+			val Reference q = dsFactory.createReference
+			val array = dsFactory.createArray
+			documentSchema.types.add(array)
+			array.type = findAttributeKey(q.target) as PrimitiveType
+			
+			q.name = c.name
+			q.target = c
+			q.type = array
+			owner.properties.add(q)
+			
+			//TODO: traza de la referencia
+		}
+		
+		//TODO: traza del nuevo EntityType
 	}
 	
 	// R7: Datatype to Type   TODO: revisar si hay que hacer traza para array o introducirlos de forma global como los PrimitiveType
@@ -240,9 +293,9 @@ class MappingUschema2Document {
 		return docTypes.get(docDt)
 	}
 	
-	// Find the Attribute that has isKey==true from the list of documentschema.EntityType.properties
-	def Attribute findAttributeKey(EList<documentschema.Property> properties) {
-		return properties.findFirst[ p |
+	// Find the Attribute that has isKey==true from a documentschema.EntityType
+	def Attribute findAttributeKey(EntityType et) {
+		return et.properties.findFirst[ p |
 			p instanceof Attribute &&
 			(p as Attribute).isIsKey
 		] as Attribute
