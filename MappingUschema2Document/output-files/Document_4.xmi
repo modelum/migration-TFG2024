@@ -6,8 +6,8 @@
     <properties xsi:type="documentschema:Attribute" name="AutorID_id" isKey="true" type="//@types.1"/>
   </entities>
   <entities name="Libro">
-    <properties xsi:type="documentschema:Attribute" name="LibroID_id" isKey="true" type="//@types.1"/>
-    <properties xsi:type="documentschema:Attribute" name="ISBN_id" isKey="true" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="LibroID" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="ISBN" type="//@types.0"/>
     <properties xsi:type="documentschema:Attribute" name="Titulo" type="//@types.0"/>
     <properties xsi:type="documentschema:Attribute" name="Libro_id" isKey="true" type="//@types.0"/>
   </entities>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
+  <entities name="Libro" root="true">
+    <features xsi:type="uschema:Attribute" name="LibroID" key="//@entities.0/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Titulo">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="A&#xf1;oPublicacion">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="ISBN" key="//@entities.0/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Key" name="Libro_PK" attributes="//@entities.0/@features.0"/>
+    <features xsi:type="uschema:Key" name="ISBN_UK" attributes="//@entities.0/@features.3" isID="false"/>
+  </entities>
+  <entities name="Usuario" root="true">
+    <features xsi:type="uschema:Attribute" name="UsuarioID" key="//@entities.1/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Nombre">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Email" key="//@entities.1/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="String"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="FechaRegistro">
+      <type xsi:type="uschema:PrimitiveType" name="Date"/>
+    </features>
+    <features xsi:type="uschema:Key" name="Usuario_PK" attributes="//@entities.1/@features.0"/>
+    <features xsi:type="uschema:Key" name="Email_UK" attributes="//@entities.1/@features.2" isID="false"/>
+  </entities>
+  <entities name="Reserva" root="true">
+    <features xsi:type="uschema:Attribute" name="ReservaID" key="//@entities.2/@features.4">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Usuario" key="//@entities.2/@features.5" references="//@entities.2/@features.6">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="Libro" key="//@entities.2/@features.5" references="//@entities.2/@features.7">
+      <type xsi:type="uschema:PrimitiveType" name="int"/>
+    </features>
+    <features xsi:type="uschema:Attribute" name="FechaReserva" key="//@entities.2/@features.5">
+      <type xsi:type="uschema:PrimitiveType" name="Date"/>
+    </features>
+    <features xsi:type="uschema:Key" name="Reserva_PK" attributes="//@entities.2/@features.0"/>
+    <features xsi:type="uschema:Key" name="Usuario_Libro_FechaReserva_UK" attributes="//@entities.2/@features.1 //@entities.2/@features.2 //@entities.2/@features.3" isID="false"/>
+    <features xsi:type="uschema:Reference" name="Usuario_Usuario_FK" refsTo="//@entities.1" attributes="//@entities.2/@features.1" upperBound="1"/>
+    <features xsi:type="uschema:Reference" name="Libro_Libro_FK" refsTo="//@entities.0" attributes="//@entities.2/@features.2" upperBound="1"/>
+  </entities>
+</uschema:USchema>

@@ -5,12 +5,14 @@ import documentschema.DataType;
 import documentschema.DocumentSchema;
 import documentschema.DocumentschemaFactory;
 import documentschema.PrimitiveType;
+import documentschema.Property;
 import documentschema.Type;
 import java.util.HashMap;
 import java.util.List;
 import juanfran.um.trace.Trace;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.xbase.lib.Conversions;
+import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import uschema.Aggregate;
 import uschema.Attribute;
@@ -21,6 +23,7 @@ import uschema.PList;
 import uschema.PMap;
 import uschema.PSet;
 import uschema.PTuple;
+import uschema.Reference;
 import uschema.SchemaType;
 import uschema.USchema;
 
@@ -84,7 +87,18 @@ public class MappingUschema2Document {
       boolean _matched_1 = false;
       if (f_1 instanceof Key) {
         _matched_1=true;
-        this.key2Attribute(((Key) f_1), d);
+        boolean _isIsID = ((Key)f_1).isIsID();
+        if (_isIsID) {
+          this.key2Attribute(((Key) f_1), d);
+        }
+      }
+    }
+    EList<Feature> _features_2 = e.getFeatures();
+    for (final Feature f_2 : _features_2) {
+      boolean _matched_2 = false;
+      if (f_2 instanceof Reference) {
+        _matched_2=true;
+        this.reference2Reference(((Reference)f_2), d);
       }
     }
     this.trace.addTrace(e.getName(), e, d.getName(), d);
@@ -95,9 +109,7 @@ public class MappingUschema2Document {
     p_at.setName(f_at.getName());
     p_at.setType(this.datatype2Type(f_at.getType()));
     d.getProperties().add(p_at);
-    Key _key = f_at.getKey();
-    boolean _tripleNotEquals = (_key != null);
-    if (_tripleNotEquals) {
+    if ((((f_at.getKey() != null) && (f_at.getKey().getAttributes().size() == 1)) && f_at.getKey().isIsID())) {
       String _name = p_at.getName();
       String _plus = (_name + "_id");
       p_at.setName(_plus);
@@ -169,6 +181,39 @@ public class MappingUschema2Document {
       String _plus_2 = (_plus_1 + _name_3);
       this.trace.addTrace(_plus_2, f_key, name, p_at);
     }
+  }
+
+  public void reference2Reference(final Reference f_ref, final documentschema.EntityType d) {
+    final documentschema.Reference p_ref = this.dsFactory.createReference();
+    Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(f_ref.getRefsTo().getName()));
+    final documentschema.EntityType target = ((documentschema.EntityType) _head);
+    final documentschema.Attribute key = this.findAttributeKey(target.getProperties());
+    p_ref.setName(f_ref.getName());
+    p_ref.setTarget(target);
+    int _upperBound = f_ref.getUpperBound();
+    boolean _equals = (_upperBound == 1);
+    if (_equals) {
+      Type _type = key.getType();
+      p_ref.setType(((PrimitiveType) _type));
+    } else {
+      if (((f_ref.getUpperBound() == (-1)) || (f_ref.getUpperBound() > 1))) {
+        final Array array = this.dsFactory.createArray();
+        this.documentSchema.getTypes().add(array);
+        Type _type_1 = key.getType();
+        array.setType(((PrimitiveType) _type_1));
+        p_ref.setType(array);
+      }
+    }
+    d.getProperties().add(p_ref);
+    String _name = f_ref.getOwner().getName();
+    String _plus = (_name + ".");
+    String _name_1 = f_ref.getName();
+    String _plus_1 = (_plus + _name_1);
+    String _name_2 = p_ref.getOwner().getName();
+    String _plus_2 = (_name_2 + ".");
+    String _name_3 = p_ref.getName();
+    String _plus_3 = (_plus_2 + _name_3);
+    this.trace.addTrace(_plus_1, f_ref, _plus_3, p_ref);
   }
 
   public Type datatype2Type(final uschema.DataType dt) {
@@ -253,6 +298,15 @@ public class MappingUschema2Document {
       }
     }
     return this.docTypes.get(docDt);
+  }
+
+  public documentschema.Attribute findAttributeKey(final EList<Property> properties) {
+    final Function1<Property, Boolean> _function = (Property p) -> {
+      return Boolean.valueOf(((p instanceof documentschema.Attribute) && 
+        ((documentschema.Attribute) p).isIsKey()));
+    };
+    Property _findFirst = IterableExtensions.<Property>findFirst(properties, _function);
+    return ((documentschema.Attribute) _findFirst);
   }
 
   public static String dot(final String... strings) {

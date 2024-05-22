@@ -12,12 +12,20 @@ import documentschema.Type
 import uschema.Key
 import java.util.List
 import java.util.HashMap
+import documentschema.PrimitiveType
+import documentschema.EntityType
+import documentschema.Attribute
+import documentschema.Aggregate
+import documentschema.DataType
+import documentschema.Reference
+import org.eclipse.emf.common.util.EList
+import documentschema.Array
 
 class MappingUschema2Document {
 	
 	var USchema uSchema;
 	var DocumentSchema documentSchema;
-	val HashMap<documentschema.DataType, documentschema.PrimitiveType> docTypes;
+	val HashMap<DataType, PrimitiveType> docTypes;
 	val DocumentschemaFactory dsFactory;
 	val Trace trace;
 	
@@ -50,7 +58,7 @@ class MappingUschema2Document {
 	
 	// R1: uschema.EntityType to documentschema.EntityType
 	def void entityType2EntityType(uschema.EntityType e) {
-		val documentschema.EntityType d = dsFactory.createEntityType
+		val EntityType d = dsFactory.createEntityType
 		
 		d.name = e.name
 		documentSchema.entities.add(d)
@@ -63,10 +71,21 @@ class MappingUschema2Document {
 			}
 			
 		}
+		
 		//TODO: r4
 		for (f: e.features) {
 			switch f {
-				uschema.Key: key2Attribute(f as uschema.Key, d)
+				uschema.Key: { 
+					if (f.isID)
+						key2Attribute(f as uschema.Key, d)
+				}
+			}
+		}
+		
+		//TODO: r5
+		for (f: e.features) {
+			switch f {
+				uschema.Reference: reference2Reference(f, d)
 			}
 		}
 		
@@ -74,15 +93,15 @@ class MappingUschema2Document {
 	}
 	
 	// R2: uschema.Attribute to documentSchema.Attribute
-	def void attribute2Attribute(uschema.Attribute f_at, documentschema.EntityType d) {
-		val documentschema.Attribute p_at = dsFactory.createAttribute
+	def void attribute2Attribute(uschema.Attribute f_at, EntityType d) {
+		val Attribute p_at = dsFactory.createAttribute
 		
 		p_at.name = f_at.name
 		p_at.type = datatype2Type(f_at.type) // p_at.type = f_at.type
 		d.properties.add(p_at)
 		
 		// (r4)
-		if (f_at.key !== null) {
+		if (f_at.key !== null && f_at.key.attributes.size == 1 && f_at.key.isID) {
 			p_at.name = p_at.name + "_id"
 			p_at.isKey = true
 		}
@@ -92,8 +111,8 @@ class MappingUschema2Document {
 	}
 	
 	// R3: Aggregate to Aggregate
-	def void aggregate2Aggregate(uschema.Aggregate f_ag, documentschema.EntityType d) {
-		val documentschema.Aggregate p_ag = dsFactory.createAggregate
+	def void aggregate2Aggregate(uschema.Aggregate f_ag, EntityType d) {
+		val Aggregate p_ag = dsFactory.createAggregate
 		val uschema.EntityType uet = f_ag.specifiedBy as uschema.EntityType
 		
 		d.properties.add(p_ag)
@@ -109,28 +128,52 @@ class MappingUschema2Document {
 	}
 	
 	// R4: Key (isKey=true) to documentschema.Attribute
-	def void key2Attribute(Key f_key, documentschema.EntityType d) {
+	def void key2Attribute(Key f_key, EntityType d) {
 		if (f_key.attributes.size > 1) {
-			val documentschema.Attribute p_at = dsFactory.createAttribute
+			val Attribute p_at = dsFactory.createAttribute
 
 			p_at.name = d.name + "_id"
-			p_at.type = docTypes.get(documentschema.DataType::STRING)
+			p_at.type = docTypes.get(DataType::STRING)
 			p_at.isKey = true
 			d.properties.add(p_at)
 			
 			var String name = p_at.owner.name+"."
 			for (uAt : f_key.attributes) {
-				val dAt = trace.getTargetInstance(uAt.owner.name+"."+uAt.name).head as documentschema.Attribute
+				val dAt = trace.getTargetInstance(uAt.owner.name+"."+uAt.name).head as Attribute
 				name += dAt.name + ","
 			}
 			name = name.substring(0, name.length - 1) // Substracts the last comma
 			
 			trace.addTrace(f_key.owner.name+"."+f_key.name, f_key, name, p_at) //TODO: no sé si está bien la formación del nombre con el que se guarda p_at
 		}
-			
 	}
 	
-	// R7: Datatype to Type   TODO: en este método se pasa por alto el añadir el primitiveType del Array (en caso de Array) a la traza, no sé si es correcto
+	// R5: Reference to Reference
+	def void reference2Reference(uschema.Reference f_ref, EntityType d) {
+		val Reference p_ref = dsFactory.createReference
+		val EntityType target = trace.getTargetInstance(f_ref.refsTo.name).head as EntityType
+		val Attribute key = findAttributeKey(target.properties)
+		
+		p_ref.name = f_ref.name
+		p_ref.target = target
+		
+		// Reference.type
+		if (f_ref.upperBound == 1) {
+			p_ref.type = key.type as PrimitiveType
+		} else if (f_ref.upperBound == -1 || f_ref.upperBound > 1) {
+			val Array array = dsFactory.createArray
+			
+			documentSchema.types.add(array)
+			array.type = key.type as PrimitiveType
+			p_ref.type = array
+		}
+		
+		d.properties.add(p_ref)
+		
+		trace.addTrace(f_ref.owner.name+"."+f_ref.name, f_ref, p_ref.owner.name+"."+p_ref.name, p_ref)
+	}
+	
+	// R7: Datatype to Type   TODO: revisar si hay que hacer traza para array o introducirlos de forma global como los PrimitiveType
 	def Type datatype2Type(uschema.DataType dt) {
 		if(dt instanceof uschema.PrimitiveType)
 			return primitiveTypeConversionUsc2Doc(dt)
@@ -168,10 +211,10 @@ class MappingUschema2Document {
 		val doubl = dsFactory.createPrimitiveType
 		val bool = dsFactory.createPrimitiveType
 		
-		string.datatype = documentschema.DataType::STRING
-		integer.datatype = documentschema.DataType::INTEGER
-		doubl.datatype = documentschema.DataType::DOUBLE
-		bool.datatype = documentschema.DataType::BOOLEAN
+		string.datatype = DataType::STRING
+		integer.datatype = DataType::INTEGER
+		doubl.datatype = DataType::DOUBLE
+		bool.datatype = DataType::BOOLEAN
 		
 		documentSchema.types.addAll(List.of(string, integer, doubl, bool))
 		
@@ -182,19 +225,27 @@ class MappingUschema2Document {
 	}
 	
 	// Types conversion from uschema.PrimitiveType to documentschema.PrimitiveType
-	def documentschema.PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
-		var documentschema.DataType docDt;
+	def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
+		var DataType docDt;
 		
 		val String uDtUp = uDt.name.toUpperCase
 		switch uDtUp {
-			case "STRING": docDt = documentschema.DataType::STRING
-			case "INT": docDt = documentschema.DataType::INTEGER
-			case "DOUBLE": docDt = documentschema.DataType::DOUBLE
-			case "BOOLEAN": docDt = documentschema.DataType::BOOLEAN
-			case "DATE": docDt = documentschema.DataType::STRING
+			case "STRING": docDt = DataType::STRING
+			case "INT": docDt = DataType::INTEGER
+			case "DOUBLE": docDt = DataType::DOUBLE
+			case "BOOLEAN": docDt = DataType::BOOLEAN
+			case "DATE": docDt = DataType::STRING
 		}
 		
 		return docTypes.get(docDt)
+	}
+	
+	// Find the Attribute that has isKey==true from the list of documentschema.EntityType.properties
+	def Attribute findAttributeKey(EList<documentschema.Property> properties) {
+		return properties.findFirst[ p |
+			p instanceof Attribute &&
+			(p as Attribute).isIsKey
+		] as Attribute
 	}
 	
 	// Separate a list of string with dots
