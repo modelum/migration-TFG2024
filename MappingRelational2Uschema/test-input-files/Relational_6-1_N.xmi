@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Biblioteca">
+  <tables name="Libro">
+    <columns
+        name="LibroID"
+        datatype="INT"/>
+    <columns
+        name="Titulo"
+        datatype="VARCHAR"/>
+    <columns
+        name="AñoPublicacion"
+        datatype="INT"/>
+    <columns
+        name="ISBN"
+        datatype="VARCHAR"/>
+    <keys columns="//@tables.0/@columns.0"
+        constraintname="Libro_PK"/>
+    <keys columns="//@tables.0/@columns.3"
+        constraintname="ISBN_UK"
+        isPK="false"/>
+  </tables>
+  <tables name="Reserva">
+    <columns
+        name="ReservaID"
+        datatype="INT"/>
+    <columns
+        name="Usuario"
+        datatype="INT"/>
+    <columns
+        name="Libro"
+        datatype="INT"/>
+    <columns
+        name="FechaReserva"
+        datatype="DATE"/>
+    <keys columns="//@tables.1/@columns.0"
+        constraintname="Reserva_PK"/>
+    <fks columns="//@tables.1/@columns.2"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="Libro_FK"/>
+  </tables>
+</relationalschema:RelationalSchema>

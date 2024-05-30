@@ -17,6 +17,13 @@ import java.util.LinkedList
 import relationalschema.FKey
 import uschema.Reference
 import juanfran.um.trace.Trace
+import org.eclipse.emf.ecore.resource.ResourceSet
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.common.util.URI
+import relationalschema.RelationalschemaPackage
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
+import uschema.UschemaPackage
 
 class MappingRelational2Uschema {
 	
@@ -30,28 +37,38 @@ class MappingRelational2Uschema {
 		this.trace = new Trace()
 	}
 	
+	// Creation of the mapping
+	def USchema executeMapping() {
+		relationalSchema2USchema() // r0
+		
+		relationalSchema.tables.forEach[ t | table2SchemaType(t) ] // r1
+		
+		relationalSchema.tables.forEach[ t |
+			t.columns.forEach [ c | column2Attribute(c) ] // r2
+			t.keys.forEach[ k | key2Key(k) ] // r3
+		]
+		
+		relationalSchema.tables.forEach[ t | 
+			if (isWeakTable(t))
+				weakTable2Aggregate(t) // r4
+			else if (isMNTable(t))
+				mNTable2RelationshipType(t) // r5
+			else
+				r6(t) // r6
+		]
+		
+		trace.printDirectTraceTypes
+		
+		return uSchema
+	}
+	
 	// R0: RelationalSchema to USchema
-	def USchema relationalSchema2USchema(RelationalSchema rs) {
-		relationalSchema = rs
+	def void relationalSchema2USchema() {
 		uSchema = usFactory.createUSchema
 		
 		uSchema.name = relationalSchema.name
 		
-		relationalSchema.tables.forEach[ t | table2SchemaType(t) ] //r1
-		
-		relationalSchema.tables.forEach[ t | 
-			if (isWeakTable(t))
-				weakTable2Aggregate(t) //r4
-			else if (isMNTable(t))
-				mNTable2RelationshipType(t) //r5
-			else
-				r6(t) //r6
-		]
-		
 		trace.addTrace(relationalSchema.name, relationalSchema, uSchema.name, uSchema);
-		trace.printDirectTraceTypes
-
-		return uSchema
 	}
 	
 	// R1: Table to SchemaType
@@ -70,14 +87,12 @@ class MappingRelational2Uschema {
 		st.name = t.name
 		
 		trace.addTrace(t.name, t, st.name, st)
-		
-		for(c : t.columns) { column2Attribute(c, st) } //r2
-		for(k : t.keys) { pK2Key(k, st) } //r3
 	}
 	
 	// R2: Column to Attribute
-	def void column2Attribute(Column c, SchemaType st) {
+	def void column2Attribute(Column c) {
 		val Attribute at = usFactory.createAttribute
+		val SchemaType st = trace.getTargetInstance(c.owner.name).head as SchemaType
 		val PrimitiveType primitiveType = usFactory.createPrimitiveType
 		primitiveType.name = typeConversionRelToUsc(c.datatype)
 		
@@ -94,9 +109,10 @@ class MappingRelational2Uschema {
 		trace.addTrace(c.owner.name+"."+c.name, c, at.owner.name+"."+at.name+"."+primitiveType.name, at.type)
 	}
 	
-	// R3: PK & UK to Key
-	def void pK2Key(Key rKey, SchemaType st) {
+	// R3: PK & UK to Key (Key to Key)
+	def void key2Key(Key rKey) {
 		val uschema.Key uKey = usFactory.createKey
+		val SchemaType st = trace.getTargetInstance(rKey.owner.name).head as SchemaType
 		
 		// New uschema.Key
 		uKey.name = rKey.constraintname
@@ -319,5 +335,54 @@ class MappingRelational2Uschema {
 		 	case "BOOLEAN": return "boolean"
 		 	case "DATE": return "Date"
  		}
+	}
+	
+	def void loadSchema(String path) {
+		var ResourceSet resourceSet
+		var Resource relResource
+		var URI relUri = URI.createFileURI(path)
+		
+		RelationalschemaPackage.eINSTANCE.eClass()
+		
+		resourceSet = new ResourceSetImpl()
+		resourceSet.resourceFactoryRegistry.extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl())
+		
+		relResource = resourceSet.getResource(relUri, true)
+		
+		relationalSchema = relResource.contents.head as RelationalSchema
+	}
+	
+	def void saveSchema(String output) {
+		if (uSchema !== null) {
+			var ResourceSet resourceSet
+			var Resource uscResource
+			var URI uscUri = URI.createFileURI(output)
+			
+			UschemaPackage.eINSTANCE.eClass()
+			
+			resourceSet = new ResourceSetImpl()
+			resourceSet.resourceFactoryRegistry.extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl())
+			
+			uscResource = resourceSet.createResource(uscUri)
+			uscResource.contents.add(uSchema)
+			uscResource.save(null)
+		}
+	}
+	
+	// Getters
+	def RelationalSchema getRelationalSchema() {
+		return this.relationalSchema
+	}
+	def USchema getUSchema() {
+		return this.uSchema
+	}
+	def UschemaFactory getUsFactory() {
+		return this.usFactory
+	}
+	def Trace getTrace() {
+		return this.trace
+	}
+	def void setRelationalSchema(RelationalSchema rs) {
+		this.relationalSchema = rs
 	}
 }
