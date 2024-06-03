@@ -2,6 +2,7 @@ package juanfran.um;
 
 import java.util.List;
 import java.util.function.Consumer;
+import juanfran.um.trace.Trace;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.junit.jupiter.api.Assertions;
@@ -78,7 +79,7 @@ public class MappingRelational2UschemaTest {
   }
 
   @Test
-  public void column2Attribute_OK() {
+  public void column2Attribute_EntityType_OK() {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_2);
     this.mapping.relationalSchema2USchema();
     final Table t = IterableExtensions.<Table>head(this.mapping.getRelationalSchema().getTables());
@@ -95,6 +96,14 @@ public class MappingRelational2UschemaTest {
     DataType _type = at.getType();
     Assertions.assertEquals("int", ((PrimitiveType) _type).getName());
     Assertions.assertEquals(Boolean.valueOf(c.isNullable()), Boolean.valueOf(at.isOptional()));
+  }
+
+  @Test
+  public void column2Attribute_RelationshipType_OK() {
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_5);
+    this.mapping.relationalSchema2USchema();
+    final Table t = IterableExtensions.<Table>head(this.mapping.getRelationalSchema().getTables());
+    this.mapping.table2SchemaType(t);
   }
 
   @Test
@@ -193,7 +202,60 @@ public class MappingRelational2UschemaTest {
 
   @Test
   public void mNTable2RelationshipType_OK() {
-    Assertions.<Object>fail("Not yet implemented");
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_5);
+    this.mapping.relationalSchema2USchema();
+    final Consumer<Table> _function = (Table t) -> {
+      this.mapping.table2SchemaType(t);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.mapping.column2Attribute(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.mapping.key2Key(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
+    Object _head = IterableExtensions.<Object>head(this.mapping.getTrace().getSourceInstance("Libros_Autores"));
+    final Table m = ((Table) _head);
+    final FKey fk1 = m.getFks().get(0);
+    final FKey fk2 = m.getFks().get(1);
+    final Table t1 = fk1.getRefsTo().getOwner();
+    final Table t2 = fk2.getRefsTo().getOwner();
+    Object _head_1 = IterableExtensions.<Object>head(this.mapping.getTrace().getTargetInstance(m.getName()));
+    final RelationshipType rm = ((RelationshipType) _head_1);
+    final int rmNumReferences1 = rm.getReference().size();
+    this.mapping.mNTable2RelationshipType(m);
+    Trace _trace = this.mapping.getTrace();
+    String _name = m.getName();
+    String _plus = (_name + ".");
+    String _constraintname = fk1.getConstraintname();
+    String _plus_1 = (_plus + _constraintname);
+    Object _head_2 = IterableExtensions.<Object>head(_trace.getTargetInstance(_plus_1));
+    final Reference ref1 = ((Reference) _head_2);
+    Trace _trace_1 = this.mapping.getTrace();
+    String _name_1 = m.getName();
+    String _plus_2 = (_name_1 + ".");
+    String _constraintname_1 = fk2.getConstraintname();
+    String _plus_3 = (_plus_2 + _constraintname_1);
+    Object _head_3 = IterableExtensions.<Object>head(_trace_1.getTargetInstance(_plus_3));
+    final Reference ref2 = ((Reference) _head_3);
+    final int rmNumReferences2 = rm.getReference().size();
+    Assertions.assertEquals((rmNumReferences1 + 2), rmNumReferences2);
+    Assertions.assertEquals(m.getName(), rm.getName());
+    Assertions.assertEquals(fk1.getConstraintname(), ref1.getName());
+    Assertions.assertEquals(fk2.getConstraintname(), ref2.getName());
+    Assertions.assertEquals(1, ref1.getLowerBound());
+    Assertions.assertEquals(1, ref2.getLowerBound());
+    Assertions.assertEquals((-1), ref1.getUpperBound());
+    Assertions.assertEquals((-1), ref2.getUpperBound());
+    Assertions.assertTrue(rm.getReference().contains(ref1));
+    Assertions.assertTrue(rm.getReference().contains(ref2));
+    Assertions.assertTrue(ref1.getAttributes().containsAll(this.mapping.columns2Attributes(fk1.getRefsTo().getColumns())));
+    Assertions.assertTrue(ref2.getAttributes().containsAll(this.mapping.columns2Attributes(fk2.getRefsTo().getColumns())));
   }
 
   @Test

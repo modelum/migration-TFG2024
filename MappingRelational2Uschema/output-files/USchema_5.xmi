@@ -7,14 +7,14 @@
     <features xsi:type="uschema:Attribute" name="FechaNacimiento">
       <type xsi:type="uschema:PrimitiveType" name="Date"/>
     </features>
-    <features xsi:type="uschema:Attribute" name="AutorID" key="//@entities.0/@features.3">
+    <features xsi:type="uschema:Attribute" name="AutorID" key="//@entities.0/@features.3" references="//@entities.1/@features.6">
       <type xsi:type="uschema:PrimitiveType" name="int"/>
     </features>
     <features xsi:type="uschema:Key" name="Autor_PK" attributes="//@entities.0/@features.2"/>
-    <features xsi:type="uschema:Reference" name="Autor" refsTo="//@entities.0" attributes="//@relationships.0/@features.1" upperBound="1" lowerBound="1" isFeaturedBy="//@relationships.0"/>
+    <features xsi:type="uschema:Reference" name="Libro_FK" refsTo="//@entities.1" attributes="//@entities.1/@features.0" upperBound="-1" lowerBound="1" isFeaturedBy="//@relationships.0"/>
   </entities>
   <entities name="Libro" root="true">
-    <features xsi:type="uschema:Attribute" name="LibroID" key="//@entities.1/@features.4">
+    <features xsi:type="uschema:Attribute" name="LibroID" key="//@entities.1/@features.4" references="//@entities.0/@features.4">
       <type xsi:type="uschema:PrimitiveType" name="int"/>
     </features>
     <features xsi:type="uschema:Attribute" name="Titulo">
@@ -28,15 +28,7 @@
     </features>
     <features xsi:type="uschema:Key" name="Libro_PK" attributes="//@entities.1/@features.0"/>
     <features xsi:type="uschema:Key" name="ISBN_UK" attributes="//@entities.1/@features.3" isID="false"/>
-    <features xsi:type="uschema:Reference" name="Libro" refsTo="//@entities.1" attributes="//@relationships.0/@features.0" upperBound="1" lowerBound="1"/>
+    <features xsi:type="uschema:Reference" name="Autor_FK" refsTo="//@entities.0" attributes="//@entities.0/@features.2" upperBound="-1" lowerBound="1" isFeaturedBy="//@relationships.0"/>
   </entities>
-  <relationships name="Libros_Autores" reference="//@entities.0/@features.4">
-    <features xsi:type="uschema:Attribute" name="Libro" key="//@relationships.0/@features.2" references="//@entities.1/@features.6">
-      <type xsi:type="uschema:PrimitiveType" name="int"/>
-    </features>
-    <features xsi:type="uschema:Attribute" name="Autor" key="//@relationships.0/@features.2" references="//@entities.0/@features.4">
-      <type xsi:type="uschema:PrimitiveType" name="int"/>
-    </features>
-    <features xsi:type="uschema:Key" name="Libros_Autores_PK" attributes="//@relationships.0/@features.0 //@relationships.0/@features.1"/>
-  </relationships>
+  <relationships name="Libros_Autores" reference="//@entities.0/@features.4 //@entities.1/@features.6"/>
 </uschema:USchema>

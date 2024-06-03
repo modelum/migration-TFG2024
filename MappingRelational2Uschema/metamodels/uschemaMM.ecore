@@ -52,7 +52,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Null" eSuperTypes="#//DataType"/>
   <eClassifiers xsi:type="ecore:EClass" name="RelationshipType" eSuperTypes="#//SchemaType">
     <eStructuralFeatures xsi:type="ecore:EReference" name="reference" lowerBound="1"
-        eType="#//Reference" eOpposite="#//Reference/isFeaturedBy"/>
+        upperBound="-1" eType="#//Reference" eOpposite="#//Reference/isFeaturedBy"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SchemaType" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

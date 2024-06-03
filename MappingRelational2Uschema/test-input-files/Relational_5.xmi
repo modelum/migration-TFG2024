@@ -43,6 +43,9 @@
     <columns
         name="Autor"
         datatype="INT"/>
+    <columns
+        name="Editorial"
+        datatype="VARCHAR"/>
     <keys columns="//@tables.2/@columns.0 //@tables.2/@columns.1"
         constraintname="Libros_Autores_PK"/>
     <fks columns="//@tables.2/@columns.0"

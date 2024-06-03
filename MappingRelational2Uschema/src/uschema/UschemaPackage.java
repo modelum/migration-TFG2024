@@ -809,7 +809,7 @@ public interface UschemaPackage extends EPackage {
 	int RELATIONSHIP_TYPE__FEATURES = SCHEMA_TYPE__FEATURES;
 
 	/**
-	 * The feature id for the '<em><b>Reference</b></em>' reference.
+	 * The feature id for the '<em><b>Reference</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1351,10 +1351,10 @@ public interface UschemaPackage extends EPackage {
 	EClass getRelationshipType();
 
 	/**
-	 * Returns the meta object for the reference '{@link uschema.RelationshipType#getReference <em>Reference</em>}'.
+	 * Returns the meta object for the reference list '{@link uschema.RelationshipType#getReference <em>Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Reference</em>'.
+	 * @return the meta object for the reference list '<em>Reference</em>'.
 	 * @see uschema.RelationshipType#getReference()
 	 * @see #getRelationshipType()
 	 * @generated
@@ -1835,7 +1835,7 @@ public interface UschemaPackage extends EPackage {
 		EClass RELATIONSHIP_TYPE = eINSTANCE.getRelationshipType();
 
 		/**
-		 * The meta object literal for the '<em><b>Reference</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Reference</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

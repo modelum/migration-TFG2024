@@ -2,6 +2,8 @@
  */
 package uschema;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -21,27 +23,17 @@ package uschema;
  */
 public interface RelationshipType extends SchemaType {
 	/**
-	 * Returns the value of the '<em><b>Reference</b></em>' reference.
+	 * Returns the value of the '<em><b>Reference</b></em>' reference list.
+	 * The list contents are of type {@link uschema.Reference}.
 	 * It is bidirectional and its opposite is '{@link uschema.Reference#getIsFeaturedBy <em>Is Featured By</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Reference</em>' reference.
-	 * @see #setReference(Reference)
+	 * @return the value of the '<em>Reference</em>' reference list.
 	 * @see uschema.UschemaPackage#getRelationshipType_Reference()
 	 * @see uschema.Reference#getIsFeaturedBy
 	 * @model opposite="isFeaturedBy" required="true"
 	 * @generated
 	 */
-	Reference getReference();
-
-	/**
-	 * Sets the value of the '{@link uschema.RelationshipType#getReference <em>Reference</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Reference</em>' reference.
-	 * @see #getReference()
-	 * @generated
-	 */
-	void setReference(Reference value);
+	EList<Reference> getReference();
 
 } // RelationshipType

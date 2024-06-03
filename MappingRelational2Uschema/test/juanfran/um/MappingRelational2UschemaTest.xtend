@@ -29,6 +29,7 @@ class MappingRelational2UschemaTest {
 	
 	val MappingRelational2Uschema mapping = new MappingRelational2Uschema;
 	
+	// R0: RelationalSchema to USchema
 	@Test
 	def void relationalSchema2USchemaOK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_0)
@@ -37,6 +38,7 @@ class MappingRelational2UschemaTest {
 		assertEquals(mapping.USchema.name, mapping.relationalSchema.name)
 	}
 	
+	// R1: Table to EntityType
 	@Test
 	def void table2SchemaType_EntityType_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_1)
@@ -55,6 +57,7 @@ class MappingRelational2UschemaTest {
 		assertTrue(et.root)
 	}
 	
+	// R1: Table to RelationshipType
 	@Test
 	def void table2SchemaType_RelationshipType_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_5)
@@ -72,8 +75,9 @@ class MappingRelational2UschemaTest {
 		assertEquals(t.name, rt.name)
 	}
 	
+	// R2: Column to Attribute (EntityType)
 	@Test
-	def void column2Attribute_OK() {
+	def void column2Attribute_EntityType_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_2)
 		mapping.relationalSchema2USchema()
 		val Table t = mapping.relationalSchema.tables.head
@@ -94,6 +98,18 @@ class MappingRelational2UschemaTest {
 		assertEquals(c.nullable, at.optional)
 	}
 	
+	// R2: Column to Attribute (RelationshipType)
+	@Test
+	def void column2Attribute_RelationshipType_OK() {
+		mapping.loadSchema(RELATIONAL_SCHEMA_5)
+		mapping.relationalSchema2USchema()
+		val Table t = mapping.relationalSchema.tables.head
+		mapping.table2SchemaType(t)
+		
+		//TODO
+	}
+	
+	// R3: PK to Key
 	@Test
 	def void key2Key_PK_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_3)
@@ -117,6 +133,7 @@ class MappingRelational2UschemaTest {
 		assertEquals(pK.columns.size, k.attributes.size)
 	}
 	
+	// R3: UK to Key
 	@Test
 	def void key2Key_UK_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_3)
@@ -140,6 +157,7 @@ class MappingRelational2UschemaTest {
 		assertEquals(uK.columns.size, k.attributes.size)
 	}
 	
+	// R4: Weak Table to Aggregate
 	@Test
 	def void weakTable2Aggregate_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_4)
@@ -169,11 +187,46 @@ class MappingRelational2UschemaTest {
 		assertFalse(ew.root)
 	}
 	
+	// R5: M:N Table to RelationshipType
 	@Test
 	def void mNTable2RelationshipType_OK() {
-		fail("Not yet implemented")
+		mapping.loadSchema(RELATIONAL_SCHEMA_5)
+		mapping.relationalSchema2USchema()
+		mapping.relationalSchema.tables.forEach[ t | mapping.table2SchemaType(t) ]
+		mapping.relationalSchema.tables.forEach[ t |
+			t.columns.forEach [ c | mapping.column2Attribute(c) ]
+			t.keys.forEach[ k | mapping.key2Key(k) ]
+		]
+		
+		val Table m = mapping.trace.getSourceInstance("Libros_Autores").head as Table
+		val FKey fk1 = m.fks.get(0)
+		val FKey fk2 = m.fks.get(1)
+		val Table t1 = fk1.refsTo.owner
+		val Table t2 = fk2.refsTo.owner
+		val RelationshipType rm = mapping.trace.getTargetInstance(m.name).head as RelationshipType
+		val int rmNumReferences1 = rm.reference.size
+		
+		mapping.mNTable2RelationshipType(m)
+		
+		val Reference ref1 = mapping.trace.getTargetInstance(m.name+"."+fk1.constraintname).head as Reference
+		val Reference ref2 = mapping.trace.getTargetInstance(m.name+"."+fk2.constraintname).head as Reference
+		val int rmNumReferences2 = rm.reference.size
+		
+		assertEquals(rmNumReferences1+2, rmNumReferences2)
+		assertEquals(m.name, rm.name)
+		assertEquals(fk1.constraintname, ref1.name)
+		assertEquals(fk2.constraintname, ref2.name)
+		assertEquals(1, ref1.lowerBound)
+		assertEquals(1, ref2.lowerBound)
+		assertEquals(-1, ref1.upperBound)
+		assertEquals(-1, ref2.upperBound)
+		assertTrue(rm.reference.contains(ref1))
+		assertTrue(rm.reference.contains(ref2))
+		assertTrue(ref1.attributes.containsAll(mapping.columns2Attributes(fk1.refsTo.columns)))
+		assertTrue(ref2.attributes.containsAll(mapping.columns2Attributes(fk2.refsTo.columns)))
 	}
 	
+	// R6: 1:1 Table
 	@Test
 	def void r6Table1_1_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_6_1_1)
@@ -205,6 +258,7 @@ class MappingRelational2UschemaTest {
 		assertTrue(rs.attributes.containsAll(mapping.columns2Attributes(t_fk.columns)))
 	}
 	
+	// R6: 1:N Table
 	@Test
 	def void r6Table1_N_OK() {
 		mapping.loadSchema(RELATIONAL_SCHEMA_6_1_N)

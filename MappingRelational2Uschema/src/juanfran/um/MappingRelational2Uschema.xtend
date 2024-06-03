@@ -91,8 +91,11 @@ class MappingRelational2Uschema {
 	
 	// R2: Column to Attribute
 	def void column2Attribute(Column c) {
-		val Attribute at = usFactory.createAttribute
 		val SchemaType st = trace.getTargetInstance(c.owner.name).head as SchemaType
+		if (st instanceof RelationshipType && isColumnInFKsOrPKs(c))
+			return
+		
+		val Attribute at = usFactory.createAttribute
 		val PrimitiveType primitiveType = usFactory.createPrimitiveType
 		primitiveType.name = typeConversionRelToUsc(c.datatype)
 		
@@ -111,8 +114,11 @@ class MappingRelational2Uschema {
 	
 	// R3: PK & UK to Key (Key to Key)
 	def void key2Key(Key rKey) {
-		val uschema.Key uKey = usFactory.createKey
 		val SchemaType st = trace.getTargetInstance(rKey.owner.name).head as SchemaType
+		if (st instanceof RelationshipType)
+			return
+		
+		val uschema.Key uKey = usFactory.createKey
 		
 		// New uschema.Key
 		uKey.name = rKey.constraintname
@@ -156,24 +162,24 @@ class MappingRelational2Uschema {
 		val Reference ref2 = usFactory.createReference
 		
 		// New Reference 1
-		ref1.name = t1.name
+		ref1.name = fK1.constraintname
 		ref1.lowerBound = 1
-		ref1.upperBound = 1
+		ref1.upperBound = -1
 		ref1.refsTo = et1
 		ref1.isFeaturedBy = rm
-		ref1.attributes.addAll(columns2Attributes(fK1.columns))
-		et1.features.add(ref1)
+		ref1.attributes.addAll(columns2Attributes(fK1.refsTo.columns))
+		et2.features.add(ref1)
 		
 		trace.addTrace(fK1.owner.name+"."+fK1.constraintname, fK1, ref1.owner.name+"."+ref1.name, ref1)
 		
 		// New Reference 2
-		ref2.name = t2.name
+		ref2.name = fK2.constraintname
 		ref2.lowerBound = 1
-		ref2.upperBound = 1
+		ref2.upperBound = -1
 		ref2.refsTo = et2
 		ref2.isFeaturedBy = rm
-		ref2.attributes.addAll(columns2Attributes(fK2.columns))
-		et2.features.add(ref2)
+		ref2.attributes.addAll(columns2Attributes(fK2.refsTo.columns))
+		et1.features.add(ref2)
 		
 		trace.addTrace(fK2.owner.name+"."+fK2.constraintname, fK2, ref2.owner.name+"."+ref2.name, ref2)
 	}
@@ -315,7 +321,13 @@ class MappingRelational2Uschema {
 		return false;
 	}
 	
-	// Columns to attributes
+	// Returns true whether a Column is into any FK
+	def boolean isColumnInFKsOrPKs(Column c) {
+		return c.owner.fks.exists[ fk | fk.columns.contains(c) ] ||
+			c.owner.keys.exists[ k | k.columns.contains(c) ]
+	}
+	
+	// Columns to attributes using the trace
 	def List<Attribute> columns2Attributes(List<Column> columns) {
 		return columns.map[ c | 
 			val String columnName = c.owner.name+"."+c.name
@@ -337,6 +349,7 @@ class MappingRelational2Uschema {
  		}
 	}
 	
+	// Loads the RelationalSchema from the input path
 	def void loadSchema(String path) {
 		var ResourceSet resourceSet
 		var Resource relResource
@@ -352,6 +365,7 @@ class MappingRelational2Uschema {
 		relationalSchema = relResource.contents.head as RelationalSchema
 	}
 	
+	// Saves the USchema to the output path
 	def void saveSchema(String output) {
 		if (uSchema !== null) {
 			var ResourceSet resourceSet
@@ -381,8 +395,5 @@ class MappingRelational2Uschema {
 	}
 	def Trace getTrace() {
 		return this.trace
-	}
-	def void setRelationalSchema(RelationalSchema rs) {
-		this.relationalSchema = rs
 	}
 }
