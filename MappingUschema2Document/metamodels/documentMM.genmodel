@@ -25,6 +25,7 @@
     <genClasses image="false" ecoreClass="documentMM.ecore#//Property">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Property/name"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference documentMM.ecore#//Property/owner"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference documentMM.ecore#//Property/aggregatedBy"/>
     </genClasses>
     <genClasses ecoreClass="documentMM.ecore#//Attribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Attribute/isKey"/>
@@ -35,7 +36,7 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Reference/type"/>
     </genClasses>
     <genClasses ecoreClass="documentMM.ecore#//Aggregate">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Aggregate/aggregates"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference documentMM.ecore#//Aggregate/aggregates"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Aggregate/isMany"/>
     </genClasses>
     <genClasses image="false" ecoreClass="documentMM.ecore#//Type"/>

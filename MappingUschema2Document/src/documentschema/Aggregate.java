@@ -2,6 +2,8 @@
  */
 package documentschema;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -22,26 +24,18 @@ package documentschema;
  */
 public interface Aggregate extends Property {
 	/**
-	 * Returns the value of the '<em><b>Aggregates</b></em>' reference.
+	 * Returns the value of the '<em><b>Aggregates</b></em>' containment reference list.
+	 * The list contents are of type {@link documentschema.Property}.
+	 * It is bidirectional and its opposite is '{@link documentschema.Property#getAggregatedBy <em>Aggregated By</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Aggregates</em>' reference.
-	 * @see #setAggregates(Property)
+	 * @return the value of the '<em>Aggregates</em>' containment reference list.
 	 * @see documentschema.DocumentschemaPackage#getAggregate_Aggregates()
-	 * @model required="true"
+	 * @see documentschema.Property#getAggregatedBy
+	 * @model opposite="aggregatedBy" containment="true" required="true"
 	 * @generated
 	 */
-	Property getAggregates();
-
-	/**
-	 * Sets the value of the '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Aggregates</em>' reference.
-	 * @see #getAggregates()
-	 * @generated
-	 */
-	void setAggregates(Property value);
+	EList<Property> getAggregates();
 
 	/**
 	 * Returns the value of the '<em><b>Is Many</b></em>' attribute.

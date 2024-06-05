@@ -196,13 +196,22 @@ public interface DocumentschemaPackage extends EPackage {
 	int PROPERTY__OWNER = 1;
 
 	/**
+	 * The feature id for the '<em><b>Aggregated By</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROPERTY__AGGREGATED_BY = 2;
+
+	/**
 	 * The number of structural features of the '<em>Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROPERTY_FEATURE_COUNT = 2;
+	int PROPERTY_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Property</em>' class.
@@ -240,6 +249,15 @@ public interface DocumentschemaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ATTRIBUTE__OWNER = PROPERTY__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Aggregated By</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ATTRIBUTE__AGGREGATED_BY = PROPERTY__AGGREGATED_BY;
 
 	/**
 	 * The feature id for the '<em><b>Is Key</b></em>' attribute.
@@ -306,6 +324,15 @@ public interface DocumentschemaPackage extends EPackage {
 	int REFERENCE__OWNER = PROPERTY__OWNER;
 
 	/**
+	 * The feature id for the '<em><b>Aggregated By</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE__AGGREGATED_BY = PROPERTY__AGGREGATED_BY;
+
+	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -370,7 +397,16 @@ public interface DocumentschemaPackage extends EPackage {
 	int AGGREGATE__OWNER = PROPERTY__OWNER;
 
 	/**
-	 * The feature id for the '<em><b>Aggregates</b></em>' reference.
+	 * The feature id for the '<em><b>Aggregated By</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int AGGREGATE__AGGREGATED_BY = PROPERTY__AGGREGATED_BY;
+
+	/**
+	 * The feature id for the '<em><b>Aggregates</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -637,6 +673,17 @@ public interface DocumentschemaPackage extends EPackage {
 	EReference getProperty_Owner();
 
 	/**
+	 * Returns the meta object for the container reference '{@link documentschema.Property#getAggregatedBy <em>Aggregated By</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Aggregated By</em>'.
+	 * @see documentschema.Property#getAggregatedBy()
+	 * @see #getProperty()
+	 * @generated
+	 */
+	EReference getProperty_AggregatedBy();
+
+	/**
 	 * Returns the meta object for class '{@link documentschema.Attribute <em>Attribute</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -711,10 +758,10 @@ public interface DocumentschemaPackage extends EPackage {
 	EClass getAggregate();
 
 	/**
-	 * Returns the meta object for the reference '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}'.
+	 * Returns the meta object for the containment reference list '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Aggregates</em>'.
+	 * @return the meta object for the containment reference list '<em>Aggregates</em>'.
 	 * @see documentschema.Aggregate#getAggregates()
 	 * @see #getAggregate()
 	 * @generated
@@ -912,6 +959,14 @@ public interface DocumentschemaPackage extends EPackage {
 		EReference PROPERTY__OWNER = eINSTANCE.getProperty_Owner();
 
 		/**
+		 * The meta object literal for the '<em><b>Aggregated By</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROPERTY__AGGREGATED_BY = eINSTANCE.getProperty_AggregatedBy();
+
+		/**
 		 * The meta object literal for the '{@link documentschema.impl.AttributeImpl <em>Attribute</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -974,7 +1029,7 @@ public interface DocumentschemaPackage extends EPackage {
 		EClass AGGREGATE = eINSTANCE.getAggregate();
 
 		/**
-		 * The meta object literal for the '<em><b>Aggregates</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Aggregates</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

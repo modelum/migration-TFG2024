@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link documentschema.Property#getName <em>Name</em>}</li>
  *   <li>{@link documentschema.Property#getOwner <em>Owner</em>}</li>
+ *   <li>{@link documentschema.Property#getAggregatedBy <em>Aggregated By</em>}</li>
  * </ul>
  *
  * @see documentschema.DocumentschemaPackage#getProperty()
@@ -53,7 +54,7 @@ public interface Property extends EObject {
 	 * @see #setOwner(EntityType)
 	 * @see documentschema.DocumentschemaPackage#getProperty_Owner()
 	 * @see documentschema.EntityType#getProperties
-	 * @model opposite="properties" required="true" transient="false"
+	 * @model opposite="properties" transient="false"
 	 * @generated
 	 */
 	EntityType getOwner();
@@ -67,5 +68,29 @@ public interface Property extends EObject {
 	 * @generated
 	 */
 	void setOwner(EntityType value);
+
+	/**
+	 * Returns the value of the '<em><b>Aggregated By</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link documentschema.Aggregate#getAggregates <em>Aggregates</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Aggregated By</em>' container reference.
+	 * @see #setAggregatedBy(Aggregate)
+	 * @see documentschema.DocumentschemaPackage#getProperty_AggregatedBy()
+	 * @see documentschema.Aggregate#getAggregates
+	 * @model opposite="aggregates" transient="false"
+	 * @generated
+	 */
+	Aggregate getAggregatedBy();
+
+	/**
+	 * Sets the value of the '{@link documentschema.Property#getAggregatedBy <em>Aggregated By</em>}' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Aggregated By</em>' container reference.
+	 * @see #getAggregatedBy()
+	 * @generated
+	 */
+	void setAggregatedBy(Aggregate value);
 
 } // Property

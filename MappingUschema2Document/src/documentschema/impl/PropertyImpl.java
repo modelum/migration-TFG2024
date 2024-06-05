@@ -2,6 +2,7 @@
  */
 package documentschema.impl;
 
+import documentschema.Aggregate;
 import documentschema.DocumentschemaPackage;
 import documentschema.EntityType;
 import documentschema.Property;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <ul>
  *   <li>{@link documentschema.impl.PropertyImpl#getName <em>Name</em>}</li>
  *   <li>{@link documentschema.impl.PropertyImpl#getOwner <em>Owner</em>}</li>
+ *   <li>{@link documentschema.impl.PropertyImpl#getAggregatedBy <em>Aggregated By</em>}</li>
  * </ul>
  *
  * @generated
@@ -143,12 +145,59 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	@Override
+	public Aggregate getAggregatedBy() {
+		if (eContainerFeatureID() != DocumentschemaPackage.PROPERTY__AGGREGATED_BY) return null;
+		return (Aggregate)eInternalContainer();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetAggregatedBy(Aggregate newAggregatedBy, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newAggregatedBy, DocumentschemaPackage.PROPERTY__AGGREGATED_BY, msgs);
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setAggregatedBy(Aggregate newAggregatedBy) {
+		if (newAggregatedBy != eInternalContainer() || (eContainerFeatureID() != DocumentschemaPackage.PROPERTY__AGGREGATED_BY && newAggregatedBy != null)) {
+			if (EcoreUtil.isAncestor(this, newAggregatedBy))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newAggregatedBy != null)
+				msgs = ((InternalEObject)newAggregatedBy).eInverseAdd(this, DocumentschemaPackage.AGGREGATE__AGGREGATES, Aggregate.class, msgs);
+			msgs = basicSetAggregatedBy(newAggregatedBy, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.PROPERTY__AGGREGATED_BY, newAggregatedBy, newAggregatedBy));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetOwner((EntityType)otherEnd, msgs);
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetAggregatedBy((Aggregate)otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -163,6 +212,8 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 		switch (featureID) {
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				return basicSetOwner(null, msgs);
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				return basicSetAggregatedBy(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -177,6 +228,8 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 		switch (eContainerFeatureID()) {
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				return eInternalContainer().eInverseRemove(this, DocumentschemaPackage.ENTITY_TYPE__PROPERTIES, EntityType.class, msgs);
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				return eInternalContainer().eInverseRemove(this, DocumentschemaPackage.AGGREGATE__AGGREGATES, Aggregate.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -193,6 +246,8 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 				return getName();
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				return getOwner();
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				return getAggregatedBy();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -210,6 +265,9 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 				return;
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				setOwner((EntityType)newValue);
+				return;
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				setAggregatedBy((Aggregate)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -229,6 +287,9 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				setOwner((EntityType)null);
 				return;
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				setAggregatedBy((Aggregate)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -245,6 +306,8 @@ public abstract class PropertyImpl extends MinimalEObjectImpl.Container implemen
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case DocumentschemaPackage.PROPERTY__OWNER:
 				return getOwner() != null;
+			case DocumentschemaPackage.PROPERTY__AGGREGATED_BY:
+				return getAggregatedBy() != null;
 		}
 		return super.eIsSet(featureID);
 	}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ASCII"?>
+<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca">
+  <entities name="Usuario">
+    <properties xsi:type="documentschema:Attribute" name="UsuarioID_id" isKey="true" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="Nombre" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="Email" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="FechaRegistro" type="//@types.0"/>
+    <properties xsi:type="documentschema:Aggregate" name="DetallesUsuarios" isMany="true">
+      <aggregates xsi:type="documentschema:Attribute" name="Usuario_id" isKey="true" type="//@types.1"/>
+      <aggregates xsi:type="documentschema:Attribute" name="Direccion" type="//@types.0"/>
+      <aggregates xsi:type="documentschema:Attribute" name="Telefono" type="//@types.0"/>
+    </properties>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="DOUBLE"/>
+  <types xsi:type="documentschema:PrimitiveType"/>
+</documentschema:DocumentSchema>

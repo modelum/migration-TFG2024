@@ -6,12 +6,17 @@ import documentschema.Aggregate;
 import documentschema.DocumentschemaPackage;
 import documentschema.Property;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,14 +34,14 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class AggregateImpl extends PropertyImpl implements Aggregate {
 	/**
-	 * The cached value of the '{@link #getAggregates() <em>Aggregates</em>}' reference.
+	 * The cached value of the '{@link #getAggregates() <em>Aggregates</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getAggregates()
 	 * @generated
 	 * @ordered
 	 */
-	protected Property aggregates;
+	protected EList<Property> aggregates;
 
 	/**
 	 * The default value of the '{@link #isIsMany() <em>Is Many</em>}' attribute.
@@ -83,38 +88,11 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 * @generated
 	 */
 	@Override
-	public Property getAggregates() {
-		if (aggregates != null && aggregates.eIsProxy()) {
-			InternalEObject oldAggregates = (InternalEObject)aggregates;
-			aggregates = (Property)eResolveProxy(oldAggregates);
-			if (aggregates != oldAggregates) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, DocumentschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
-			}
+	public EList<Property> getAggregates() {
+		if (aggregates == null) {
+			aggregates = new EObjectContainmentWithInverseEList<Property>(Property.class, this, DocumentschemaPackage.AGGREGATE__AGGREGATES, DocumentschemaPackage.PROPERTY__AGGREGATED_BY);
 		}
 		return aggregates;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Property basicGetAggregates() {
-		return aggregates;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setAggregates(Property newAggregates) {
-		Property oldAggregates = aggregates;
-		aggregates = newAggregates;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, DocumentschemaPackage.AGGREGATE__AGGREGATES, oldAggregates, aggregates));
 	}
 
 	/**
@@ -145,12 +123,40 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAggregates()).basicAdd(otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
+				return ((InternalEList<?>)getAggregates()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				if (resolve) return getAggregates();
-				return basicGetAggregates();
+				return getAggregates();
 			case DocumentschemaPackage.AGGREGATE__IS_MANY:
 				return isIsMany();
 		}
@@ -162,11 +168,13 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				setAggregates((Property)newValue);
+				getAggregates().clear();
+				getAggregates().addAll((Collection<? extends Property>)newValue);
 				return;
 			case DocumentschemaPackage.AGGREGATE__IS_MANY:
 				setIsMany((Boolean)newValue);
@@ -184,7 +192,7 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	public void eUnset(int featureID) {
 		switch (featureID) {
 			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				setAggregates((Property)null);
+				getAggregates().clear();
 				return;
 			case DocumentschemaPackage.AGGREGATE__IS_MANY:
 				setIsMany(IS_MANY_EDEFAULT);
@@ -202,7 +210,7 @@ public class AggregateImpl extends PropertyImpl implements Aggregate {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case DocumentschemaPackage.AGGREGATE__AGGREGATES:
-				return aggregates != null;
+				return aggregates != null && !aggregates.isEmpty();
 			case DocumentschemaPackage.AGGREGATE__IS_MANY:
 				return isMany != IS_MANY_EDEFAULT;
 		}
