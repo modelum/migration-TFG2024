@@ -1,7 +1,5 @@
 package es.um.dsdm.document2uschema.main;
 
-import USchema.USchemaClass;
-import USchema.UschemaMMPackage;
 import documentschema.DocumentMMPackage;
 import documentschema.DocumentSchema;
 import es.um.dsdm.document2uschema.MappingDocument2Uschema;
@@ -15,6 +13,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
+import uschema.USchema;
+import uschema.UschemaMMPackage;
 
 @SuppressWarnings("all")
 public class Main {
@@ -38,7 +38,7 @@ public class Main {
     return ((DocumentSchema) _get);
   }
 
-  public void writeModel(final USchemaClass uschema, final String outputUri) throws IOException {
+  public void writeModel(final USchema uschema, final String outputUri) throws IOException {
     final Resource.Factory.Registry reg = Resource.Factory.Registry.INSTANCE;
     final Map<String, Object> map = reg.getExtensionToFactoryMap();
     XMIResourceFactoryImpl _xMIResourceFactoryImpl = new XMIResourceFactoryImpl();
@@ -52,14 +52,14 @@ public class Main {
 
   public static void main(final String[] args) {
     try {
-      final String inputFileName = "DocumentSchema-Regla4";
-      final String outputFileName = "USchema-Regla4";
+      final String inputFileName = "DocumentSchema-Regla3";
+      final String outputFileName = "USchema";
       final Main main2 = new Main();
       InputOutput.<String>println((((("Loading DocumentSchema from " + Main.USER_DIR) + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));
-      final DocumentSchema entitiesModel = main2.readModel((((Main.USER_DIR + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));
       InputOutput.<String>println("Performing transformation m2m document2uschema");
       MappingDocument2Uschema entities2sql = new MappingDocument2Uschema();
-      final USchemaClass sqlModel = entities2sql.document2uschema(entitiesModel);
+      entities2sql.loadSchema("inputs/DocumentSchema.xmi");
+      final USchema sqlModel = entities2sql.transformacion();
       InputOutput.<String>println((((("Writing USchema Model to " + Main.USER_DIR) + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
       main2.writeModel(sqlModel, (((Main.USER_DIR + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
       InputOutput.<String>println((((("USchema Model created at " + Main.USER_DIR) + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));

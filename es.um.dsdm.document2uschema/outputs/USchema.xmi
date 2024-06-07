@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="ASCII"?>
-<USchema:USchemaClass xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:USchema="http://www.modelum.es/USchema" name="prueba">
-  <entities name="entidad1">
-    <features xsi:type="USchema:Key" name="atributo1" attributes="//@entities.0/@features.1"/>
-    <features xsi:type="USchema:Attribute" name="atributo1" key="//@entities.0/@features.0"/>
-    <features xsi:type="USchema:Attribute" name="referencia1" references="//@entities.0/@features.3"/>
-    <features xsi:type="USchema:Reference" name="referencia1" refsTo="//@entities.0" attributes="//@entities.0/@features.2" upperBound="-1" lowerBound="1"/>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Metashop">
+  <entities name="User" root="true">
+    <features xsi:type="uschema:Attribute" name="address"/>
+    <features xsi:type="uschema:Attribute" name="phone"/>
+    <features xsi:type="uschema:Key" name="id" attributes="//@entities.0/@features.3"/>
+    <features xsi:type="uschema:Attribute" name="id" key="//@entities.0/@features.2"/>
   </entities>
-  <entities name="entidad2">
-    <features xsi:type="USchema:Attribute" name="atributo2"/>
-    <features xsi:type="USchema:Attribute" name="atributo3"/>
+  <entities name="Shop" root="true">
+    <features xsi:type="uschema:Attribute" name="address"/>
+    <features xsi:type="uschema:Key" name="id" attributes="//@entities.1/@features.2"/>
+    <features xsi:type="uschema:Attribute" name="id" key="//@entities.1/@features.1"/>
   </entities>
-</USchema:USchemaClass>
+  <entities name="Order" root="true">
+    <features xsi:type="uschema:Attribute" name="orderNumber"/>
+    <features xsi:type="uschema:Attribute" name="date"/>
+    <features xsi:type="uschema:Reference" name="user" refsTo="//@entities.0" attributes="//@entities.2/@features.3" upperBound="-1" lowerBound="1"/>
+    <features xsi:type="uschema:Attribute" name="user" references="//@entities.2/@features.2"/>
+    <features xsi:type="uschema:Reference" name="shop" refsTo="//@entities.1" attributes="//@entities.2/@features.5" upperBound="-1" lowerBound="1"/>
+    <features xsi:type="uschema:Attribute" name="shop" references="//@entities.2/@features.4"/>
+  </entities>
+  <entities name="Product" root="true">
+    <features xsi:type="uschema:Attribute" name="price"/>
+  </entities>
+  <entities name="OrderDetails" root="true">
+    <features xsi:type="uschema:Attribute" name="quantity"/>
+    <features xsi:type="uschema:Reference" name="order" refsTo="//@entities.2" attributes="//@entities.4/@features.2" upperBound="-1" lowerBound="1"/>
+    <features xsi:type="uschema:Attribute" name="order" references="//@entities.4/@features.1"/>
+    <features xsi:type="uschema:Aggregate" name="producto" specifiedBy="//@entities.5" upperBound="-1" lowerBound="1"/>
+  </entities>
+  <entities name="producto">
+    <features xsi:type="uschema:Attribute" name="productName"/>
+  </entities>
+</uschema:USchema>

@@ -8,9 +8,9 @@ import org.eclipse.emf.ecore.resource.Resource
 import documentschema.DocumentMMPackage
 import java.io.IOException
 import org.eclipse.emf.common.util.URI
-import USchema.UschemaMMPackage
-import USchema.USchemaClass
 import es.um.dsdm.document2uschema.MappingDocument2Uschema
+import uschema.UschemaMMPackage
+import uschema.USchema
 
 class Main {
 	
@@ -29,7 +29,7 @@ class Main {
 		return r.getContents().get(0) as DocumentSchema
 	}
 	
-	def writeModel(USchemaClass uschema, String outputUri) throws IOException {
+	def writeModel(USchema uschema, String outputUri) throws IOException {
 		val reg = Resource.Factory.Registry.INSTANCE;
 		val map = reg.getExtensionToFactoryMap();
 		map.put("xmi", new XMIResourceFactoryImpl());
@@ -44,18 +44,18 @@ class Main {
 	}
 	
 	def static void main(String[] args) {
-		val inputFileName = "DocumentSchema-Regla4";
-		val outputFileName = "USchema-Regla4";
+		val inputFileName = "DocumentSchema-Regla3";
+		val outputFileName = "USchema";
 		
 		val main2 = new Main()
 		
 		println("Loading DocumentSchema from " + USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
-		val entitiesModel = main2.readModel(USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
+		//val entitiesModel = main2.readModel(USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
 		
 		println("Performing transformation m2m document2uschema")
 		var entities2sql = new MappingDocument2Uschema;
-		val sqlModel = entities2sql.document2uschema(entitiesModel)
-		
+		entities2sql.loadSchema("inputs/DocumentSchema.xmi")
+		val sqlModel = entities2sql.transformacion()		
 		println("Writing USchema Model to " + USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)
 		main2.writeModel(sqlModel, USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)
 		
