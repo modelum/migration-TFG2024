@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ASCII"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Metashop">
+  <tables name="User">
+    <columns
+        name="address"
+        datatype="BOOLEAN"
+        nullable="true"/>
+    <columns
+        name="phone"
+        datatype="NUMERIC"
+        size="38"
+        nullable="true"/>
+    <columns
+        name="id"
+        datatype="NUMERIC"
+        size="38"
+        nullable="true"/>
+    <keys columns="//@tables.0/@columns.2"
+        constraintname="User_pk"/>
+  </tables>
+  <tables name="Shop">
+    <columns
+        name="address"
+        datatype="VARCHAR"
+        size="255"
+        nullable="true"/>
+    <columns
+        name="id"
+        nullable="true"/>
+    <keys columns="//@tables.1/@columns.1"
+        constraintname="Shop_pk"/>
+  </tables>
+  <tables name="Order">
+    <columns
+        name="orderNumber"
+        nullable="true"/>
+    <columns
+        name="date"
+        nullable="true"/>
+    <columns
+        name="user"
+        nullable="true"/>
+    <columns
+        name="shop"
+        nullable="true"/>
+    <fks columns="//@tables.2/@columns.2"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="User_fk"/>
+    <fks columns="//@tables.2/@columns.3"
+        refsTo="//@tables.1/@keys.0"
+        constraintname="Shop_fk"/>
+  </tables>
+  <tables name="Product">
+    <columns
+        name="price"
+        nullable="true"/>
+  </tables>
+  <tables name="OrderDetails">
+    <columns
+        name="quantity"
+        nullable="true"/>
+    <columns
+        name="order"
+        nullable="true"/>
+    <fks columns="//@tables.4/@columns.1"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="Order_fk"/>
+  </tables>
+  <tables name="producto">
+    <columns
+        name="id"
+        datatype="NUMERIC"
+        size="38"
+        defaultvalue="1"/>
+    <columns
+        name="productName"
+        nullable="true"/>
+    <keys columns="//@tables.5/@columns.0"
+        constraintname="producto_pk"/>
+    <fks refsTo="//@tables.0/@keys.0"
+        constraintname="OrderDetails_fk"/>
+  </tables>
+</relationalschema:RelationalSchema>
