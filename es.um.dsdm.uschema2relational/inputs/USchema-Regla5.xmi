@@ -1,18 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<USchema:USchemaClass
+<uschema:USchema
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:USchema="http://www.modelum.es/USchema"
-    name="nombre1">
+    xmlns:uschema="http://www.modelum.es/uschema"
+    name="Metashop">
   <entities
-      name="entidad1"
+      name="User"
       root="true">
     <features
-        xsi:type="USchema:Aggregate"
+        xsi:type="uschema:Aggregate"
         name="agregado1"
-        specifiedBy="//@entities.0"/>
+        specifiedBy="//@entities.1"
+        upperBound="1"/>
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo1"
+        key="//@entities.0/@features.3"/>
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo2"
+        key="//@entities.0/@features.3"/>
+    <features
+        xsi:type="uschema:Key"
+        name="key1"
+        attributes="//@entities.0/@features.1 //@entities.0/@features.2"/>
   </entities>
   <entities
       name="entidad2"/>
-</USchema:USchemaClass>
+</uschema:USchema>

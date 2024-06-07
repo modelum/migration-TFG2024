@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<relationalschema:RelationalSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:relationalschema="http://www.example.org/relationalschema" name="Metashop">
+  <tables name="User"/>
+  <tables name="entidad2">
+    <keys constraintname="entidad2_pk"/>
+    <fks constraintname="User_fk"/>
+  </tables>
+</relationalschema:RelationalSchema>

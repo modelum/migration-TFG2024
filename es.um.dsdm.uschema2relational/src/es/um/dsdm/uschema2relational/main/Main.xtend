@@ -5,10 +5,10 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
 import org.eclipse.emf.ecore.resource.Resource
 import java.io.IOException
 import org.eclipse.emf.common.util.URI
-import USchema.UschemaMMPackage
-import USchema.USchemaClass
 import relationalschema.RelationalSchema
 import es.um.dsdm.uschema2relational.MappingUSchema2Relational
+import uschema.USchema
+import uschema.UschemaMMPackage
 
 class Main {
 	
@@ -17,14 +17,14 @@ class Main {
 	val static String OUTPUTS_DIR = "/outputs/"
 	val static String FILE_EXTESION = ".xmi";
 	
-	def USchemaClass readModel(String inputFileName) {
+	def USchema readModel(String inputFileName) {
 		val rSet = new ResourceSetImpl()
 		rSet.getPackageRegistry().put(UschemaMMPackage.eNS_URI, UschemaMMPackage.eINSTANCE)
 		rSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xmi", new XMIResourceFactoryImpl())
 		//val r = rSet.getResource(URI.createURI(inputFileName), true)
 		val uri = 'file:///'+inputFileName
 		val r = rSet.getResource(URI.createURI(uri),true)
-		return r.getContents().get(0) as USchemaClass
+		return r.getContents().get(0) as USchema
 	}
 	
 	def writeModel(RelationalSchema relationalschema, String outputUri) throws IOException {
@@ -42,20 +42,22 @@ class Main {
 	}
 	
 	def static void main(String[] args) {
-		val inputFileName = "USchema-Regla4";
-		val outputFileName = "Relational-Regla4";
+		val inputFileName = "USchema";
+		val outputFileName = "Relational";
 		
 		val main2 = new Main()
 		
 		println("Loading USchema from " + USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
-		val entitiesModel = main2.readModel(USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
+		//val entitiesModel = main2.readModel(USER_DIR + INPUTSDIR + inputFileName + FILE_EXTESION)
 		
 		println("Performing transformation m2m uschema2relational")
 		var entities2sql = new MappingUSchema2Relational;
-		val sqlModel = entities2sql.uschema2relational(entitiesModel)
-		
+		entities2sql.loadSchema("inputs/USchema.xmi")
+		val relationalModel = entities2sql.transformacion()
+		//val sqlModel = entities2sql.uschema2relational(entitiesModel)
+		//entities2sql.imprimirTraza();
 		println("Writing Relational Model to " + USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)
-		main2.writeModel(sqlModel, USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)
+		main2.writeModel(relationalModel, USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)
 		
 		
 		println("Relational Model created at " + USER_DIR + OUTPUTS_DIR + outputFileName + FILE_EXTESION)

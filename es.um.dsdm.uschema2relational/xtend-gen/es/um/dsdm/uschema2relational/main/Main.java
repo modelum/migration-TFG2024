@@ -1,7 +1,5 @@
 package es.um.dsdm.uschema2relational.main;
 
-import USchema.USchemaClass;
-import USchema.UschemaMMPackage;
 import es.um.dsdm.uschema2relational.MappingUSchema2Relational;
 import java.io.IOException;
 import java.util.Collections;
@@ -14,6 +12,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import relationalschema.RelationalSchema;
+import uschema.USchema;
+import uschema.UschemaMMPackage;
 
 @SuppressWarnings("all")
 public class Main {
@@ -25,7 +25,7 @@ public class Main {
 
   private static final String FILE_EXTESION = ".xmi";
 
-  public USchemaClass readModel(final String inputFileName) {
+  public USchema readModel(final String inputFileName) {
     final ResourceSetImpl rSet = new ResourceSetImpl();
     rSet.getPackageRegistry().put(UschemaMMPackage.eNS_URI, UschemaMMPackage.eINSTANCE);
     Map<String, Object> _extensionToFactoryMap = rSet.getResourceFactoryRegistry().getExtensionToFactoryMap();
@@ -34,7 +34,7 @@ public class Main {
     final String uri = ("file:///" + inputFileName);
     final Resource r = rSet.getResource(URI.createURI(uri), true);
     EObject _get = r.getContents().get(0);
-    return ((USchemaClass) _get);
+    return ((USchema) _get);
   }
 
   public void writeModel(final RelationalSchema relationalschema, final String outputUri) throws IOException {
@@ -51,16 +51,16 @@ public class Main {
 
   public static void main(final String[] args) {
     try {
-      final String inputFileName = "USchema-Regla4";
-      final String outputFileName = "Relational-Regla4";
+      final String inputFileName = "USchema";
+      final String outputFileName = "Relational";
       final Main main2 = new Main();
       InputOutput.<String>println((((("Loading USchema from " + Main.USER_DIR) + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));
-      final USchemaClass entitiesModel = main2.readModel((((Main.USER_DIR + Main.INPUTSDIR) + inputFileName) + Main.FILE_EXTESION));
       InputOutput.<String>println("Performing transformation m2m uschema2relational");
       MappingUSchema2Relational entities2sql = new MappingUSchema2Relational();
-      final RelationalSchema sqlModel = entities2sql.uschema2relational(entitiesModel);
+      entities2sql.loadSchema("inputs/USchema.xmi");
+      final RelationalSchema relationalModel = entities2sql.transformacion();
       InputOutput.<String>println((((("Writing Relational Model to " + Main.USER_DIR) + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
-      main2.writeModel(sqlModel, (((Main.USER_DIR + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
+      main2.writeModel(relationalModel, (((Main.USER_DIR + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
       InputOutput.<String>println((((("Relational Model created at " + Main.USER_DIR) + Main.OUTPUTS_DIR) + outputFileName) + Main.FILE_EXTESION));
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);

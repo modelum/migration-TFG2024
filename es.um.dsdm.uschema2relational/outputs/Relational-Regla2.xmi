@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="ASCII"?>
-<relationalschema:RelationalSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:relationalschema="http://www.example.org/relationalschema" name="nombre1">
-  <tables name="entidad1">
+<relationalschema:RelationalSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:relationalschema="http://www.example.org/relationalschema" name="Metashop">
+  <tables name="User">
     <columns name="atributo1" datatype="VARCHAR" size="255" nullable="true"/>
     <columns name="atributo2" datatype="NUMERIC" size="38" nullable="true"/>
     <columns name="atributo3" datatype="NUMERIC" size="38" nullable="true"/>
+    <keys constraintname="User_pk"/>
   </tables>
   <tables name="entidad2">
     <columns name="atributo4" datatype="DATE" size="10" nullable="true"/>
     <columns name="atributo5" datatype="BOOLEAN" nullable="true"/>
+    <keys constraintname="entidad2_pk"/>
   </tables>
 </relationalschema:RelationalSchema>
