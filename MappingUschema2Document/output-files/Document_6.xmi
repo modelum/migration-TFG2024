@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ASCII"?>
+<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca">
+  <entities name="Autor">
+    <properties xsi:type="documentschema:Attribute" name="Nombre" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="FechaNacimiento" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="AutorID_id" isKey="true" type="//@types.1"/>
+  </entities>
+  <entities name="Libro">
+    <properties xsi:type="documentschema:Attribute" name="LibroID_id" isKey="true" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="Titulo" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="A&#xf1;oPublicacion" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="ISBN" type="//@types.0"/>
+  </entities>
+  <entities name="Libros_Autores">
+    <properties xsi:type="documentschema:Attribute" name="Libros_Autores_id" isKey="true" type="//@types.0"/>
+    <properties xsi:type="documentschema:Reference" name="Libro_FK" target="//@entities.1" type="//@types.1"/>
+    <properties xsi:type="documentschema:Reference" name="Autor_FK" target="//@entities.0" type="//@types.1"/>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="DOUBLE"/>
+  <types xsi:type="documentschema:PrimitiveType"/>
+</documentschema:DocumentSchema>

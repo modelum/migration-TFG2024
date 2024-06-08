@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -78,12 +77,6 @@ public class MappingUschema2Document {
             _matched=true;
             this.attribute2Attribute(((Attribute)f), d);
           }
-          if (!_matched) {
-            if (f instanceof Aggregate) {
-              _matched=true;
-              this.aggregate2Aggregate(((Aggregate)f), d);
-            }
-          }
         }
         EList<Feature> _features_1 = uet.getFeatures();
         for (final Feature f_1 : _features_1) {
@@ -96,15 +89,32 @@ public class MappingUschema2Document {
             }
           }
         }
-        EList<Feature> _features_2 = uet.getFeatures();
-        for (final Feature f_2 : _features_2) {
-          boolean _matched_2 = false;
-          if (f_2 instanceof Reference) {
-            _matched_2=true;
-            this.reference2Reference(((Reference)f_2), d);
+      }
+    }
+    EList<documentschema.EntityType> _entities_2 = this.documentSchema.getEntities();
+    for (final documentschema.EntityType d_1 : _entities_2) {
+      {
+        Object _head = IterableExtensions.<Object>head(this.trace.getSourceInstance(d_1.getName()));
+        final EntityType uet = ((EntityType) _head);
+        EList<Feature> _features = uet.getFeatures();
+        for (final Feature f : _features) {
+          boolean _matched = false;
+          if (f instanceof Aggregate) {
+            _matched=true;
+            this.aggregate2Aggregate(((Aggregate)f), d_1);
+          }
+          if (!_matched) {
+            if (f instanceof Reference) {
+              _matched=true;
+              this.reference2Reference(((Reference)f), d_1);
+            }
           }
         }
       }
+    }
+    EList<RelationshipType> _relationships = this.uSchema.getRelationships();
+    for (final RelationshipType rt : _relationships) {
+      this.relationshipType2EntityType(rt);
     }
     this.trace.printDirectTraceTypes();
     return this.documentSchema;
@@ -230,15 +240,18 @@ public class MappingUschema2Document {
       p_at.setType(this.docTypes.get(DataType.STRING));
       p_at.setIsKey(true);
       d.getProperties().add(p_at);
-      String _name_1 = p_at.getOwner().getName();
-      String _plus_1 = (_name_1 + ".");
-      String _keyAttributesName = this.getKeyAttributesName(f_key);
-      final String p_atTraceName = (_plus_1 + _keyAttributesName);
-      String _name_2 = f_key.getOwner().getName();
-      String _plus_2 = (_name_2 + ".");
-      String _name_3 = f_key.getName();
-      String _plus_3 = (_plus_2 + _name_3);
-      this.trace.addTrace(_plus_3, f_key, p_atTraceName, p_at);
+      EList<Attribute> _attributes = f_key.getAttributes();
+      for (final Attribute uAt : _attributes) {
+        String _name_1 = uAt.getOwner().getName();
+        String _plus_1 = (_name_1 + ".");
+        String _name_2 = uAt.getName();
+        String _plus_2 = (_plus_1 + _name_2);
+        String _name_3 = p_at.getOwner().getName();
+        String _plus_3 = (_name_3 + ".");
+        String _name_4 = p_at.getName();
+        String _plus_4 = (_plus_3 + _name_4);
+        this.trace.addTrace(_plus_2, uAt, _plus_4, p_at);
+      }
     }
   }
 
@@ -253,20 +266,27 @@ public class MappingUschema2Document {
       p_at.setType(this.docTypes.get(DataType.STRING));
       p_at.setIsKey(true);
       ag.getAggregates().add(p_at);
-      String p_atTraceName = this.getAggregateRecursiveTraceName(ag);
-      String _p_atTraceName = p_atTraceName;
-      String _keyAttributesName = this.getKeyAttributesName(f_key);
-      String _plus_1 = ((p_atTraceName + ".") + _keyAttributesName);
-      p_atTraceName = (_p_atTraceName + _plus_1);
-      String _name_1 = f_key.getOwner().getName();
-      String _plus_2 = (_name_1 + ".");
-      String _name_2 = f_key.getName();
-      String _plus_3 = (_plus_2 + _name_2);
-      this.trace.addTrace(_plus_3, f_key, p_atTraceName, p_at);
+      String _aggregateRecursiveTraceName = this.getAggregateRecursiveTraceName(ag);
+      String _plus_1 = (_aggregateRecursiveTraceName + ".");
+      String _name_1 = p_at.getName();
+      String p_atTraceName = (_plus_1 + _name_1);
+      EList<Attribute> _attributes = f_key.getAttributes();
+      for (final Attribute uAt : _attributes) {
+        String _name_2 = uAt.getOwner().getName();
+        String _plus_2 = (_name_2 + ".");
+        String _name_3 = uAt.getName();
+        String _plus_3 = (_plus_2 + _name_3);
+        this.trace.addTrace(_plus_3, uAt, p_atTraceName, p_at);
+      }
     }
   }
 
   public void reference2Reference(final Reference f_ref, final documentschema.EntityType d) {
+    RelationshipType _isFeaturedBy = f_ref.getIsFeaturedBy();
+    boolean _tripleNotEquals = (_isFeaturedBy != null);
+    if (_tripleNotEquals) {
+      return;
+    }
     final documentschema.Reference p_ref = this.dsFactory.createReference();
     Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(f_ref.getRefsTo().getName()));
     final documentschema.EntityType target = ((documentschema.EntityType) _head);
@@ -299,6 +319,11 @@ public class MappingUschema2Document {
   }
 
   public void reference2Reference(final Reference f_ref, final documentschema.Aggregate ag) {
+    RelationshipType _isFeaturedBy = f_ref.getIsFeaturedBy();
+    boolean _tripleNotEquals = (_isFeaturedBy != null);
+    if (_tripleNotEquals) {
+      return;
+    }
     final documentschema.Reference p_ref = this.dsFactory.createReference();
     Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(f_ref.getRefsTo().getName()));
     final documentschema.EntityType target = ((documentschema.EntityType) _head);
@@ -334,6 +359,7 @@ public class MappingUschema2Document {
     final documentschema.EntityType c = this.dsFactory.createEntityType();
     c.setName(rt.getName());
     this.documentSchema.getEntities().add(c);
+    this.trace.addTrace(rt.getName(), rt, c.getName(), c);
     EList<Feature> _features = rt.getFeatures();
     for (final Feature f : _features) {
       boolean _matched = false;
@@ -349,36 +375,32 @@ public class MappingUschema2Document {
     at.setIsKey(true);
     at.setType(this.docTypes.get(DataType.STRING));
     c.getProperties().add(at);
+    String _name_1 = rt.getName();
+    String _name_2 = at.getOwner().getName();
+    String _plus_1 = (_name_2 + ".");
+    String _name_3 = at.getName();
+    String _plus_2 = (_plus_1 + _name_3);
+    this.trace.addTrace(_name_1, rt, _plus_2, at);
     EList<Reference> _reference = rt.getReference();
     for (final Reference r : _reference) {
       {
         final documentschema.Reference rf = this.dsFactory.createReference();
         Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(r.getRefsTo().getName()));
         final documentschema.EntityType refsTo = ((documentschema.EntityType) _head);
-        Object _head_1 = IterableExtensions.<Object>head(this.trace.getTargetInstance(r.getOwner().getName()));
-        final documentschema.EntityType owner = ((documentschema.EntityType) _head_1);
-        String _name_1 = r.getOwner().getName();
-        String _plus_1 = (_name_1 + ".");
-        String _name_2 = c.getName();
-        String _plus_2 = (_plus_1 + _name_2);
-        Object _head_2 = IterableExtensions.<Object>head(this.trace.getTargetInstance(_plus_2));
-        final documentschema.Reference p = ((documentschema.Reference) _head_2);
+        rf.setName(r.getName());
         rf.setTarget(refsTo);
         Type _type = this.findAttributeKey(rf.getTarget()).getType();
         rf.setType(((PrimitiveType) _type));
         c.getProperties().add(rf);
-        if ((p != null)) {
-          owner.getProperties().remove(p);
-        }
-        final documentschema.Reference q = this.dsFactory.createReference();
-        final Array array = this.dsFactory.createArray();
-        this.documentSchema.getTypes().add(array);
-        documentschema.Attribute _findAttributeKey = this.findAttributeKey(q.getTarget());
-        array.setType(((PrimitiveType) _findAttributeKey));
-        q.setName(c.getName());
-        q.setTarget(c);
-        q.setType(array);
-        owner.getProperties().add(q);
+        String _name_4 = r.getOwner().getName();
+        String _plus_3 = (_name_4 + ".");
+        String _name_5 = r.getName();
+        String _plus_4 = (_plus_3 + _name_5);
+        String _name_6 = rf.getOwner().getName();
+        String _plus_5 = (_name_6 + ".");
+        String _name_7 = rf.getName();
+        String _plus_6 = (_plus_5 + _name_7);
+        this.trace.addTrace(_plus_4, r, _plus_6, rf);
       }
     }
   }
@@ -458,7 +480,8 @@ public class MappingUschema2Document {
     }
   }
 
-  public String getAggregateRecursiveTraceName(final documentschema.Aggregate ag) {
+  public String getAggregateRecursiveTraceName(final documentschema.Aggregate g) {
+    documentschema.Aggregate ag = g;
     String docAgTraceName = ag.getName();
     boolean exit = false;
     while ((!exit)) {
@@ -477,35 +500,10 @@ public class MappingUschema2Document {
         String _plus_2 = (_name_1 + ".");
         String _plus_3 = (_plus_2 + docAgTraceName);
         docAgTraceName = (_docAgTraceName_1 + _plus_3);
+        ag = ag.getAggregatedBy();
       }
     }
     return docAgTraceName;
-  }
-
-  public String getKeyAttributesName(final Key f_key) {
-    String _xblockexpression = null;
-    {
-      String name = "";
-      EList<Attribute> _attributes = f_key.getAttributes();
-      for (final Attribute uAt : _attributes) {
-        {
-          String _name = uAt.getOwner().getName();
-          String _plus = (_name + ".");
-          String _name_1 = uAt.getName();
-          String _plus_1 = (_plus + _name_1);
-          Object _head = IterableExtensions.<Object>head(this.trace.getTargetInstance(_plus_1));
-          final documentschema.Attribute dAt = ((documentschema.Attribute) _head);
-          String _name_2 = name;
-          String _name_3 = dAt.getName();
-          String _plus_2 = (_name_3 + ",");
-          name = (_name_2 + _plus_2);
-        }
-      }
-      int _length = name.length();
-      int _minus = (_length - 1);
-      _xblockexpression = name = name.substring(0, _minus);
-    }
-    return _xblockexpression;
   }
 
   public PrimitiveType createPrimitiveTypes() {
@@ -560,10 +558,6 @@ public class MappingUschema2Document {
     };
     Property _findFirst = IterableExtensions.<Property>findFirst(et.getProperties(), _function);
     return ((documentschema.Attribute) _findFirst);
-  }
-
-  public static String dot(final String... strings) {
-    return IterableExtensions.join(((Iterable<?>)Conversions.doWrapArray(strings)), ".");
   }
 
   public void loadSchema(final String path) {

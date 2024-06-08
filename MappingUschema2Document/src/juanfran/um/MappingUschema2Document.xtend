@@ -56,7 +56,6 @@ class MappingUschema2Document {
 			for (f : uet.features) {
 				switch f {
 					uschema.Attribute: attribute2Attribute(f, d) // r2
-					uschema.Aggregate: aggregate2Aggregate(f, d) // r3
 				}
 				
 			}
@@ -69,12 +68,21 @@ class MappingUschema2Document {
 					}
 				}
 			}
+		}
+		
+		for (d : documentSchema.entities) {
+			val uschema.EntityType uet = trace.getSourceInstance(d.name).head as uschema.EntityType
 			
 			for (f: uet.features) {
 				switch f {
+					uschema.Aggregate: aggregate2Aggregate(f, d) // r3 //TODO: comprobar con los profesores si es correcto aplicarla aquí
 					uschema.Reference: reference2Reference(f, d) // r5
 				}
 			}
+		}
+		
+		for (rt : uSchema.relationships) {
+			relationshipType2EntityType(rt) // r6
 		}
 		
 		trace.printDirectTraceTypes
@@ -153,7 +161,7 @@ class MappingUschema2Document {
 		
 		trace.addTrace(f_ag.owner.name+"."+f_ag.name, f_ag, d.name+"."+p_ag.name, p_ag)
 		
-		// EntityType non-root
+		// uschema.EntityType non-root
 		features2Properties(uet, p_ag)
 	}
 	
@@ -174,7 +182,7 @@ class MappingUschema2Document {
 		
 		trace.addTrace(f_ag.owner.name+"."+f_ag.name, f_ag, p_agTraceName, p_ag)
 		
-		// EntityType non-root
+		// uschema.EntityType non-root
 		features2Properties(uet, p_ag)
 	}
 	
@@ -188,9 +196,9 @@ class MappingUschema2Document {
 			p_at.isKey = true
 			d.properties.add(p_at)
 			
-			val p_atTraceName = p_at.owner.name + "." + getKeyAttributesName(f_key)
-			
-			trace.addTrace(f_key.owner.name+"."+f_key.name, f_key, p_atTraceName, p_at) //TODO: no sé si está bien la formación del nombre con el que se guarda p_at
+			for (uAt : f_key.attributes) {
+				trace.addTrace(uAt.owner.name+"."+uAt.name, uAt, p_at.owner.name+"."+p_at.name, p_at)
+			}
 		}
 	}
 	
@@ -204,15 +212,18 @@ class MappingUschema2Document {
 			p_at.isKey = true
 			ag.aggregates.add(p_at)
 			
-			var String p_atTraceName = getAggregateRecursiveTraceName(ag)
-			p_atTraceName += p_atTraceName+"."+getKeyAttributesName(f_key)
-			
-			trace.addTrace(f_key.owner.name+"."+f_key.name, f_key, p_atTraceName, p_at) //TODO: no sé si está bien la formación del nombre con el que se guarda p_at
+			var String p_atTraceName = getAggregateRecursiveTraceName(ag) + "." + p_at.name
+			for (uAt : f_key.attributes) {
+				trace.addTrace(uAt.owner.name+"."+uAt.name, uAt, p_atTraceName, p_at)
+			}
 		}
 	}
 	
 	// R5: uschema.Reference to Reference from EntityType
 	def void reference2Reference(uschema.Reference f_ref, EntityType d) {
+		if (f_ref.isFeaturedBy !== null)
+			return
+			
 		val Reference p_ref = dsFactory.createReference
 		val EntityType target = trace.getTargetInstance(f_ref.refsTo.name).head as EntityType
 		val PrimitiveType primitiveType = findAttributeKey(target).type as PrimitiveType
@@ -238,6 +249,9 @@ class MappingUschema2Document {
 	
 	// R5: uschema.Reference to Reference from Aggregate
 	def void reference2Reference(uschema.Reference f_ref, Aggregate ag) {
+		if (f_ref.isFeaturedBy !== null)
+			return
+		
 		val Reference p_ref = dsFactory.createReference
 		val EntityType target = trace.getTargetInstance(f_ref.refsTo.name).head as EntityType
 		val PrimitiveType primitiveType = findAttributeKey(target).type as PrimitiveType
@@ -267,8 +281,11 @@ class MappingUschema2Document {
 	def void relationshipType2EntityType(RelationshipType rt) {
 		val EntityType c = dsFactory.createEntityType
 		
+		// New EntityType from RelationshipType
 		c.name = rt.name
 		documentSchema.entities.add(c)
+		
+		trace.addTrace(rt.name, rt, c.name, c)
 		
 		// Map Attributes
 		for (f : rt.features) {
@@ -277,43 +294,41 @@ class MappingUschema2Document {
 			}
 		}
 		
-		// New Attribute
+		// New Attribute (id)
 		val Attribute at = dsFactory.createAttribute
 		at.name = c.name + "_id"
 		at.isKey = true
 		at.type = docTypes.get(DataType::STRING)
 		c.properties.add(at)
-		//TODO: traza del nuevo atributo
 		
+		trace.addTrace(rt.name, rt, at.owner.name+"."+at.name, at)
+		
+		// New References
 		for (r : rt.reference) {
 			val Reference rf = dsFactory.createReference
 			val EntityType refsTo = trace.getTargetInstance(r.refsTo.name).head as EntityType
-			val EntityType owner = trace.getTargetInstance(r.owner.name).head as EntityType
-			val Reference p = trace.getTargetInstance(r.owner.name+"."+c.name).head as Reference
+//			val EntityType owner = trace.getTargetInstance(r.owner.name).head as EntityType
+//			val Reference p = trace.getTargetInstance(r.owner.name+"."+c.name).head as Reference
 
+			rf.name = r.name
 			rf.target = refsTo
 			rf.type = findAttributeKey(rf.target).type as PrimitiveType
 			c.properties.add(rf)
 			
-			// Remove Reference p
-			if (p !== null)
-				owner.properties.remove(p)
+			trace.addTrace(r.owner.name+"."+r.name, r, rf.owner.name+"."+rf.name, rf)
 			
+			//TODO: esto falta que lo modifiquen y yo actualizarlo
 			// New Reference q
-			val Reference q = dsFactory.createReference
-			val array = dsFactory.createArray
-			documentSchema.types.add(array)
-			array.type = findAttributeKey(q.target) as PrimitiveType
-			
-			q.name = c.name
-			q.target = c
-			q.type = array
-			owner.properties.add(q)
-			
-			//TODO: traza de la referencia
+//			val Reference q = dsFactory.createReference
+//			val array = dsFactory.createArray
+//			documentSchema.types.add(array)
+//			array.type = findAttributeKey(q.target) as PrimitiveType
+//			
+//			q.name = c.name
+//			q.target = c
+//			q.type = array
+//			owner.properties.add(q)
 		}
-		
-		//TODO: traza del nuevo EntityType
 	}
 	
 	// R7: Datatype to Type   TODO: revisar si hay que hacer traza para array o introducirlos de forma global como los PrimitiveType
@@ -347,35 +362,33 @@ class MappingUschema2Document {
 	
 	// Creates the mapped properties from non-root uschema.EntityType.features and asign them to Aggregate
 	def void features2Properties(uschema.EntityType uet, Aggregate ag) {		
-		// r2, r3
 		for (f : uet.features) {
 			switch f {
-				uschema.Attribute: attribute2Attribute(f, ag)
-				uschema.Aggregate: aggregate2Aggregate(f, ag)
+				uschema.Attribute: attribute2Attribute(f, ag) // r2
+				uschema.Aggregate: aggregate2Aggregate(f, ag) // r3
 			}
 			
 		}
 		
-		// r4
 		for (f: uet.features) {
 			switch f {
 				uschema.Key: { 
 					if (f.isID)
-						key2Attribute(f, ag)
+						key2Attribute(f, ag) // r4
 				}
 			}
 		}
 		
-		// r5
 		for (f: uet.features) {
 			switch f {
-				uschema.Reference: reference2Reference(f, ag)
+				uschema.Reference: reference2Reference(f, ag) // r5
 			}
 		}
 	}
 	
 	// Obtains the recursive name for Aggregate that could be aggregatedBy another Aggregate
-	def String getAggregateRecursiveTraceName(Aggregate ag) {
+	def String getAggregateRecursiveTraceName(Aggregate g) {
+		var Aggregate ag = g
 		var String docAgTraceName = ag.name
 		var boolean exit = false
 		
@@ -385,20 +398,11 @@ class MappingUschema2Document {
 				exit = true
 			} else {
 				docAgTraceName += ag.aggregatedBy.name+"."+docAgTraceName
+				ag = ag.aggregatedBy
 			}
 		}
 		
 		return docAgTraceName
-	}
-	
-	// Returns a comma-separated String containing the names of all uschema.Attribute instances within a given uschema.Key
-	def String getKeyAttributesName(uschema.Key f_key) {
-		var String name = ""
-		for (uAt : f_key.attributes) {
-				val dAt = trace.getTargetInstance(uAt.owner.name+"."+uAt.name).head as Attribute
-				name += dAt.name + ","
-			}
-			name = name.substring(0, name.length - 1) // Substracts the last comma
 	}
 	
 	// Initialize all PrimitiveType instances for DocumentSchema and add them to the HashMap docTypes
@@ -421,7 +425,7 @@ class MappingUschema2Document {
 		docTypes.put(bool.datatype, bool)
 	}
 	
-	// Types conversion from uschema.PrimitiveType to documentschema.PrimitiveType
+	// Types conversion from uschema.PrimitiveType to PrimitiveType
 	def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
 		var DataType docDt;
 		
@@ -443,11 +447,6 @@ class MappingUschema2Document {
 			p instanceof Attribute &&
 			(p as Attribute).isIsKey
 		] as Attribute
-	}
-	
-	// Separate a list of string with dots
-	def static String dot(String... strings) {
-		return strings.join('.')
 	}
 	
 	// Loads the USchema from the input path
