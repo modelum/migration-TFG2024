@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<USchema:USchemaClass xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:USchema="http://www.modelum.es/USchema" name="prueba">
-  <entities name="aggregate1">
-    <features xsi:type="USchema:Attribute" name="atributo1">
-      <type xsi:type="USchema:PrimitiveType" name="BOOLEAN"/>
-    </features>
-  </entities>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="prueba">
   <entities name="entidad1" root="true">
-    <features xsi:type="USchema:Aggregate" name="aggregate1" specifiedBy="//@entities.0" upperBound="-1" lowerBound="1"/>
+    <features xsi:type="uschema:Reference" name="referencia1" refsTo="//@entities.1" attributes="//@entities.0/@features.1" upperBound="-1" lowerBound="1"/>
+    <features xsi:type="uschema:Attribute" name="referencia1" references="//@entities.0/@features.0"/>
+    <features xsi:type="uschema:Aggregate" name="aggregate1" specifiedBy="//@entities.2" upperBound="1" lowerBound="1"/>
   </entities>
-  <entities name="agregado2"/>
-  <entities name="entidad2" root="true">
-    <features xsi:type="USchema:Aggregate" name="agregado2" specifiedBy="//@entities.2" upperBound="1" lowerBound="1"/>
+  <entities name="entidad2" root="true"/>
+  <entities name="aggregate1">
+    <features xsi:type="uschema:Attribute" name="atributo1"/>
   </entities>
-</USchema:USchemaClass>
+</uschema:USchema>

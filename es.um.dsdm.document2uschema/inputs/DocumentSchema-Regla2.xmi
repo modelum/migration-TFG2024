@@ -4,33 +4,32 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:documentschema="http://www.example.org/documentschema"
-    name="prueba">
+    name="Metashop">
   <entities
-      name="entidad1">
+      name="User">
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo1"
+        name="address"
         type="//@types.0"/>
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo2"
-        isKey="true"
+        name="phone"
         type="//@types.1"/>
     <properties
         xsi:type="documentschema:Attribute"
-        name="key"
+        name="id"
         isKey="true"
         type="//@types.2"/>
   </entities>
   <entities
-      name="entidad2">
+      name="Shop">
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo3"
+        name="address"
         type="//@types.3"/>
     <properties
         xsi:type="documentschema:Attribute"
-        name="key2"
+        name="id"
         isKey="true"
         type="//@types.4"/>
   </entities>

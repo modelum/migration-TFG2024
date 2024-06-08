@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uschema:USchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:uschema="http://www.modelum.es/uschema"
+    name="Metashop">
+  <entities
+      name="Tienda">
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo1"
+        key="//@entities.0/@features.2"
+        references="//@entities.1/@features.2"/>
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo2"
+        key="//@entities.0/@features.2"
+        references="//@entities.1/@features.2"/>
+    <features
+        xsi:type="uschema:Key"
+        name="key1"
+        attributes="//@entities.0/@features.0 //@entities.0/@features.1"/>
+  </entities>
+  <entities
+      name="Usuario">
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo3"
+        key="//@entities.1/@features.3"/>
+    <features
+        xsi:type="uschema:Attribute"
+        name="atributo4"
+        key="//@entities.1/@features.3"/>
+    <features
+        xsi:type="uschema:Reference"
+        name="referencia1"
+        refsTo="//@entities.0"
+        attributes="//@entities.0/@features.0 //@entities.0/@features.1"
+        isFeaturedBy="//@relationships.0"/>
+    <features
+        xsi:type="uschema:Key"
+        name="key2"
+        attributes="//@entities.1/@features.0 //@entities.1/@features.1"/>
+  </entities>
+  <relationships
+      name="Comprar"
+      reference="//@entities.1/@features.2">
+    <features
+        xsi:type="uschema:Attribute"
+        name="Precio"/>
+    <features
+        xsi:type="uschema:Attribute"
+        name="Localizacion"/>
+  </relationships>
+</uschema:USchema>

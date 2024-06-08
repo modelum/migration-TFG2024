@@ -1,50 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<USchema:USchemaClass
+<uschema:USchema
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:USchema="http://www.modelum.es/USchema"
-    name="nombre1">
+    xmlns:uschema="http://www.modelum.es/uschema"
+    name="Metashop">
   <entities
-      name="entidad1"
+      name="User"
       root="true">
     <features
-        xsi:type="USchema:Attribute"
+        xsi:type="uschema:Attribute"
         name="atributo1">
       <type
-          xsi:type="USchema:PrimitiveType"
+          xsi:type="uschema:PrimitiveType"
           name="String"/>
     </features>
     <features
-        xsi:type="USchema:Attribute"
+        xsi:type="uschema:Attribute"
         name="atributo2">
       <type
-          xsi:type="USchema:PrimitiveType"
-          name="int"/>
+          xsi:type="uschema:PrimitiveType"
+          name="Integer"/>
     </features>
     <features
-        xsi:type="USchema:Attribute"
+        xsi:type="uschema:Attribute"
         name="atributo3">
       <type
-          xsi:type="USchema:PrimitiveType"
+          xsi:type="uschema:PrimitiveType"
           name="double"/>
     </features>
+    <features
+        xsi:type="uschema:Key"
+        name="clave1"/>
   </entities>
   <entities
       name="entidad2">
     <features
-        xsi:type="USchema:Attribute"
+        xsi:type="uschema:Attribute"
         name="atributo4">
       <type
-          xsi:type="USchema:PrimitiveType"
+          xsi:type="uschema:PrimitiveType"
           name="Date"/>
     </features>
     <features
-        xsi:type="USchema:Attribute"
+        xsi:type="uschema:Attribute"
         name="atributo5">
       <type
-          xsi:type="USchema:PrimitiveType"
+          xsi:type="uschema:PrimitiveType"
           name="boolean"/>
     </features>
+    <features
+        xsi:type="uschema:Key"
+        name="clave2"/>
   </entities>
-</USchema:USchemaClass>
+</uschema:USchema>

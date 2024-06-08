@@ -3,9 +3,9 @@
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:documentschema="http://www.example.org/documentschema"
-    name="prueba">
+    name="Metashop">
   <entities
-      name="entidad1"/>
+      name="User"/>
   <entities
-      name="entidad2"/>
+      name="Shop"/>
 </documentschema:DocumentSchema>

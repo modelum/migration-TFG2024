@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<USchema:USchemaClass
+<USchema:USchema
     xmi:version="2.0"
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:USchema="http://www.modelum.es/USchema"
+    xmlns:USchema="http://www.modelum.es/uschema"
     name="nombre1">
   <entities
       name="entidad1"
@@ -40,4 +40,4 @@
         name="key2"
         attributes="//@entities.0/@features.2"/>
   </entities>
-</USchema:USchemaClass>
+</USchema:USchema>

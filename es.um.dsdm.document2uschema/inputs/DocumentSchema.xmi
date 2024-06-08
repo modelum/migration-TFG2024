@@ -4,30 +4,83 @@
     xmlns:xmi="http://www.omg.org/XMI"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:documentschema="http://www.example.org/documentschema"
-    name="prueba">
+    name="Metashop">
   <entities
-      name="entidad1">
+      name="User">
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo1"
-        isKey="true"/>
+        name="address"
+        type="//@types.0"/>
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="phone"
+        type="//@types.1"/>
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="id"
+        isKey="true"
+        type="//@types.2"/>
+  </entities>
+  <entities
+      name="Shop">
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="address"
+        type="//@types.3"/>
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="id"
+        isKey="true"
+        type="//@types.4"/>
+  </entities>
+  <entities
+      name="Order">
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="orderNumber"/>
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="date"/>
     <properties
         xsi:type="documentschema:Reference"
-        name="referencia1"
+        name="user"
         target="//@entities.0"/>
     <properties
-        xsi:type="documentschema:Aggregate"
-        name="agregate1"
-        aggregates="//@entities.1/@properties.1"
-        isMany="true"/>
+        xsi:type="documentschema:Reference"
+        name="shop"
+        target="//@entities.1"/>
   </entities>
   <entities
-      name="entidad2">
+      name="Product">
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo2"/>
+        name="productName"/>
     <properties
         xsi:type="documentschema:Attribute"
-        name="atributo3"/>
+        name="price"/>
   </entities>
+  <entities
+      name="OrderDetails">
+    <properties
+        xsi:type="documentschema:Attribute"
+        name="quantity"/>
+    <properties
+        xsi:type="documentschema:Reference"
+        name="order"
+        target="//@entities.2"/>
+    <properties
+        xsi:type="documentschema:Aggregate"
+        name="producto"
+        aggregates="//@entities.3/@properties.0"
+        isMany="true"/>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType"/>
+  <types xsi:type="documentschema:PrimitiveType"
+      datatype="INTEGER"/>
+  <types xsi:type="documentschema:PrimitiveType"
+      datatype="DOUBLE"/>
+  <types xsi:type="documentschema:PrimitiveType"
+      datatype="STRING"/>
+  <types xsi:type="documentschema:Array"
+      type="//@types.1"/>
 </documentschema:DocumentSchema>

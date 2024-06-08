@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="ASCII"?>
-<USchema:USchemaClass xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:USchema="http://www.modelum.es/USchema" name="prueba">
-  <entities name="entidad1" root="true">
-    <features xsi:type="USchema:Attribute" name="atributo1">
-      <type xsi:type="USchema:PrimitiveType" name="BOOLEAN"/>
+<uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Metashop">
+  <entities name="User" root="true">
+    <features xsi:type="uschema:Attribute" name="address">
+      <type xsi:type="uschema:PrimitiveType" name="BOOLEAN"/>
     </features>
-    <features xsi:type="USchema:Key" name="atributo2" attributes="//@entities.0/@features.2"/>
-    <features xsi:type="USchema:Attribute" name="atributo2" key="//@entities.0/@features.1">
-      <type xsi:type="USchema:PrimitiveType" name="INTEGER"/>
+    <features xsi:type="uschema:Attribute" name="phone">
+      <type xsi:type="uschema:PrimitiveType" name="INTEGER"/>
     </features>
-    <features xsi:type="USchema:Key" name="key" attributes="//@entities.0/@features.4"/>
-    <features xsi:type="USchema:Attribute" name="key" key="//@entities.0/@features.3">
-      <type xsi:type="USchema:PrimitiveType" name="DOUBLE"/>
+    <features xsi:type="uschema:Key" name="id" attributes="//@entities.0/@features.3"/>
+    <features xsi:type="uschema:Attribute" name="id" key="//@entities.0/@features.2">
+      <type xsi:type="uschema:PrimitiveType" name="DOUBLE"/>
     </features>
   </entities>
-  <entities name="entidad2" root="true">
-    <features xsi:type="USchema:Attribute" name="atributo3">
-      <type xsi:type="USchema:PrimitiveType" name="STRING"/>
+  <entities name="Shop" root="true">
+    <features xsi:type="uschema:Attribute" name="address">
+      <type xsi:type="uschema:PrimitiveType" name="STRING"/>
     </features>
-    <features xsi:type="USchema:Key" name="key2" attributes="//@entities.1/@features.2"/>
-    <features xsi:type="USchema:Attribute" name="key2" key="//@entities.1/@features.1">
-      <type xsi:type="USchema:PList">
-        <elementType xsi:type="USchema:PrimitiveType" name="INTEGER"/>
+    <features xsi:type="uschema:Key" name="id" attributes="//@entities.1/@features.2"/>
+    <features xsi:type="uschema:Attribute" name="id" key="//@entities.1/@features.1">
+      <type xsi:type="uschema:PList">
+        <elementType xsi:type="uschema:PrimitiveType" name="INTEGER"/>
       </type>
     </features>
   </entities>
-</USchema:USchemaClass>
+</uschema:USchema>
