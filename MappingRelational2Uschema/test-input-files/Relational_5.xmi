@@ -6,35 +6,17 @@
     name="Biblioteca">
   <tables name="Autor">
     <columns
-        name="Nombre"
-        datatype="varchar"/>
-    <columns
-        name="FechaNacimiento"
-        datatype="DATE"/>
-    <columns
         name="AutorID"
         datatype="INT"/>
-    <keys columns="//@tables.0/@columns.2"
+    <keys columns="//@tables.0/@columns.0"
         constraintname="Autor_PK"/>
   </tables>
   <tables name="Libro">
     <columns
         name="LibroID"
         datatype="INT"/>
-    <columns
-        name="Titulo"
-        datatype="VARCHAR"/>
-    <columns
-        name="AñoPublicacion"
-        datatype="INT"/>
-    <columns
-        name="ISBN"
-        datatype="VARCHAR"/>
     <keys columns="//@tables.1/@columns.0"
         constraintname="Libro_PK"/>
-    <keys columns="//@tables.1/@columns.3"
-        constraintname="ISBN_UK"
-        isPK="false"/>
   </tables>
   <tables name="Libros_Autores">
     <columns
