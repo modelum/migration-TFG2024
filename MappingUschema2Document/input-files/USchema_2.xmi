@@ -10,23 +10,6 @@
       root="true">
     <features
         xsi:type="uschema:Attribute"
-        name="Nombre">
-      <type
-          xsi:type="uschema:PrimitiveType"
-          name="String"/>
-    </features>
-    <features
-        xsi:type="uschema:Attribute"
-        name="EditorialesFavoritas">
-      <type
-          xsi:type="uschema:PSet">
-        <elementType
-            xsi:type="uschema:PrimitiveType"
-            name="String"/>
-      </type>
-    </features>
-    <features
-        xsi:type="uschema:Attribute"
         name="AutorID">
       <type
           xsi:type="uschema:PrimitiveType"

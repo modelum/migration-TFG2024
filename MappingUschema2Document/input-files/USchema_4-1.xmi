@@ -6,22 +6,19 @@
     xmlns:uschema="http://www.modelum.es/uschema"
     name="Biblioteca">
   <entities
-      name="Usuario"
+      name="Autor"
       root="true">
     <features
-        xsi:type="uschema:Aggregate"
-        name="DetallesUsuarios"
-        specifiedBy="//@entities.1"
-        upperBound="-1"/>
-  </entities>
-  <entities
-      name="DetallesUsuario">
-    <features
         xsi:type="uschema:Attribute"
-        name="Usuario">
+        name="AutorID"
+        key="//@entities.0/@features.1">
       <type
           xsi:type="uschema:PrimitiveType"
           name="int"/>
     </features>
+    <features
+        xsi:type="uschema:Key"
+        name="Autor_PK"
+        attributes="//@entities.0/@features.0"/>
   </entities>
 </uschema:USchema>

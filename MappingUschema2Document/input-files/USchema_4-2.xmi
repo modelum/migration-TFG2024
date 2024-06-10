@@ -11,38 +11,22 @@
     <features
         xsi:type="uschema:Attribute"
         name="LibroID"
-        key="//@entities.0/@features.1">
+        key="//@entities.0/@features.2">
       <type
           xsi:type="uschema:PrimitiveType"
           name="int"/>
     </features>
     <features
-        xsi:type="uschema:Key"
-        name="Libro_PK"
-        attributes="//@entities.0/@features.0"/>
-    <features
-        xsi:type="uschema:Reference"
-        name="Editor_FK"
-        refsTo="//@entities.1"
-        attributes="//@entities.1/@features.0"
-        upperBound="1"
-        lowerBound="1"/>
-  </entities>
-  <entities
-      name="Editor"
-      root="true">
-    <features
         xsi:type="uschema:Attribute"
-        name="EditorID"
-        key="//@entities.1/@features.1"
-        references="//@entities.0/@features.2">
+        name="ISBN"
+        key="//@entities.0/@features.2">
       <type
           xsi:type="uschema:PrimitiveType"
-          name="string"/>
+          name="String"/>
     </features>
     <features
         xsi:type="uschema:Key"
-        name="Editor_PK"
-        attributes="//@entities.1/@features.0"/>
+        name="Libro_PK"
+        attributes="//@entities.0/@features.0 //@entities.0/@features.1"/>
   </entities>
 </uschema:USchema>

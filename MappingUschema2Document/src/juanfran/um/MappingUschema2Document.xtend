@@ -361,7 +361,7 @@ class MappingUschema2Document {
 	}
 	
 	// Creates the mapped properties from non-root uschema.EntityType.features and asign them to Aggregate
-	def void features2Properties(uschema.EntityType uet, Aggregate ag) {		
+	private def void features2Properties(uschema.EntityType uet, Aggregate ag) {		
 		for (f : uet.features) {
 			switch f {
 				uschema.Attribute: attribute2Attribute(f, ag) // r2
@@ -387,7 +387,7 @@ class MappingUschema2Document {
 	}
 	
 	// Obtains the recursive name for Aggregate that could be aggregatedBy another Aggregate
-	def String getAggregateRecursiveTraceName(Aggregate g) {
+	private def String getAggregateRecursiveTraceName(Aggregate g) {
 		var Aggregate ag = g
 		var String docAgTraceName = ag.name
 		var boolean exit = false
@@ -406,7 +406,7 @@ class MappingUschema2Document {
 	}
 	
 	// Initialize all PrimitiveType instances for DocumentSchema and add them to the HashMap docTypes
-	def createPrimitiveTypes() {
+	private def createPrimitiveTypes() {
 		val string = dsFactory.createPrimitiveType
 		val integer = dsFactory.createPrimitiveType
 		val doubl = dsFactory.createPrimitiveType
@@ -426,7 +426,7 @@ class MappingUschema2Document {
 	}
 	
 	// Types conversion from uschema.PrimitiveType to PrimitiveType
-	def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
+	private def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
 		var DataType docDt;
 		
 		val String uDtUp = uDt.name.toUpperCase
@@ -442,7 +442,7 @@ class MappingUschema2Document {
 	}
 	
 	// Find the Attribute that has isKey==true from an EntityType
-	def Attribute findAttributeKey(EntityType et) {
+	private def Attribute findAttributeKey(EntityType et) {
 		return et.properties.findFirst[ p |
 			p instanceof Attribute &&
 			(p as Attribute).isIsKey
@@ -481,6 +481,17 @@ class MappingUschema2Document {
 			docResource.contents.add(documentSchema)
 			docResource.save(null)
 		}
+	}
+	
+	// Getters
+	def USchema getUSchema() {
+		return this.uSchema
+	}
+	def DocumentSchema getDocumentSchema() {
+		return this.documentSchema
+	}
+	def Trace getTrace() {
+		return this.trace
 	}
 	
 }

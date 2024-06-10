@@ -444,7 +444,7 @@ public class MappingUschema2Document {
     }
   }
 
-  public void features2Properties(final EntityType uet, final documentschema.Aggregate ag) {
+  private void features2Properties(final EntityType uet, final documentschema.Aggregate ag) {
     EList<Feature> _features = uet.getFeatures();
     for (final Feature f : _features) {
       boolean _matched = false;
@@ -480,7 +480,7 @@ public class MappingUschema2Document {
     }
   }
 
-  public String getAggregateRecursiveTraceName(final documentschema.Aggregate g) {
+  private String getAggregateRecursiveTraceName(final documentschema.Aggregate g) {
     documentschema.Aggregate ag = g;
     String docAgTraceName = ag.getName();
     boolean exit = false;
@@ -506,7 +506,7 @@ public class MappingUschema2Document {
     return docAgTraceName;
   }
 
-  public PrimitiveType createPrimitiveTypes() {
+  private PrimitiveType createPrimitiveTypes() {
     PrimitiveType _xblockexpression = null;
     {
       final PrimitiveType string = this.dsFactory.createPrimitiveType();
@@ -526,7 +526,7 @@ public class MappingUschema2Document {
     return _xblockexpression;
   }
 
-  public PrimitiveType primitiveTypeConversionUsc2Doc(final uschema.PrimitiveType uDt) {
+  private PrimitiveType primitiveTypeConversionUsc2Doc(final uschema.PrimitiveType uDt) {
     DataType docDt = null;
     final String uDtUp = uDt.getName().toUpperCase();
     if (uDtUp != null) {
@@ -551,7 +551,7 @@ public class MappingUschema2Document {
     return this.docTypes.get(docDt);
   }
 
-  public documentschema.Attribute findAttributeKey(final documentschema.EntityType et) {
+  private documentschema.Attribute findAttributeKey(final documentschema.EntityType et) {
     final Function1<Property, Boolean> _function = (Property p) -> {
       return Boolean.valueOf(((p instanceof documentschema.Attribute) && 
         ((documentschema.Attribute) p).isIsKey()));
@@ -594,5 +594,17 @@ public class MappingUschema2Document {
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
+  }
+
+  public USchema getUSchema() {
+    return this.uSchema;
+  }
+
+  public DocumentSchema getDocumentSchema() {
+    return this.documentSchema;
+  }
+
+  public Trace getTrace() {
+    return this.trace;
   }
 }
