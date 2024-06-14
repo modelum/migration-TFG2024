@@ -1,8 +1,8 @@
 package juanfran.um
 
 class Main {
-	static val INPUT_XMI_PATH = "test-input-files/Relational_6-1_N.xmi"
-	static val OUTPUT_XMI_PATH = "output-files/USchema_6-1_N.xmi"
+	static val INPUT_XMI_PATH = "test-input-files/Relational_integration.xmi"
+	static val OUTPUT_XMI_PATH = "output-files/USchema_integration.xmi"
 	
 	def static void main(String[] args) {
 		val MappingRelational2Uschema mapping = new MappingRelational2Uschema()

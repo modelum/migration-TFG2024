@@ -9,18 +9,15 @@
         name="UsuarioID"
         datatype="INT"/>
     <columns
-        name="Nombre"
-        datatype="VARCHAR"/>
-    <columns
         name="Email"
         datatype="VARCHAR"/>
     <columns
-        name="FechaRegistro"
-        datatype="DATE"/>
+        name="Telefono"
+        datatype="VARCHAR"/>
     <keys columns="//@tables.0/@columns.0"
         constraintname="Usuario_PK"/>
-    <keys columns="//@tables.0/@columns.2"
-        constraintname="Email_UK"
+    <keys columns="//@tables.0/@columns.1 //@tables.0/@columns.2"
+        constraintname="EmailTelefono_UK"
         isPK="false"/>
   </tables>
 </relationalschema:RelationalSchema>

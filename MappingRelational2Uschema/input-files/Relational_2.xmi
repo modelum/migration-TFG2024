@@ -6,12 +6,6 @@
     name="Biblioteca">
   <tables name="Autor">
     <columns
-        name="Nombre"
-        datatype="varchar"/>
-    <columns
-        name="FechaNacimiento"
-        datatype="DATE"/>
-    <columns
         name="AutorID"
         datatype="INT"/>
   </tables>

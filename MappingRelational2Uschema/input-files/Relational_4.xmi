@@ -8,32 +8,13 @@
     <columns
         name="UsuarioID"
         datatype="INT"/>
-    <columns
-        name="Nombre"
-        datatype="VARCHAR"/>
-    <columns
-        name="Email"
-        datatype="VARCHAR"/>
-    <columns
-        name="FechaRegistro"
-        datatype="DATE"/>
     <keys columns="//@tables.0/@columns.0"
         constraintname="Usuario_PK"/>
-    <keys columns="//@tables.0/@columns.2"
-        constraintname="Email_UK"
-        isPK="false"/>
   </tables>
   <tables name="DetallesUsuario">
     <columns
         name="Usuario"
         datatype="INT"/>
-    <columns
-        name="Direccion"
-        datatype="VARCHAR"/>
-    <columns
-        name="Telefono"
-        datatype="VARCHAR"
-        nullable="true"/>
     <keys columns="//@tables.1/@columns.0"
         constraintname="DetallesUsuario_PK"/>
     <fks columns="//@tables.1/@columns.0"

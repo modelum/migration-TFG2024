@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relationalschema:RelationalSchema
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:relationalschema="http://www.example.org/relationalschema"
+    name="Biblioteca">
+  <tables name="Autor">
+    <columns
+        name="AutorID"
+        datatype="INT"/>
+    <keys columns="//@tables.0/@columns.0"
+        constraintname="Autor_PK"/>
+  </tables>
+  <tables name="Libro">
+    <columns
+        name="LibroID"
+        datatype="INT"/>
+    <keys columns="//@tables.1/@columns.0"
+        constraintname="Libro_PK"/>
+  </tables>
+  <tables name="Libros_Autores">
+    <columns
+        name="Libro"
+        datatype="INT"/>
+    <columns
+        name="Autor"
+        datatype="INT"/>
+    <columns
+        name="Editorial"
+        datatype="VARCHAR"/>
+    <keys columns="//@tables.2/@columns.0 //@tables.2/@columns.1"
+        constraintname="Libros_Autores_PK"/>
+    <fks columns="//@tables.2/@columns.0"
+        refsTo="//@tables.1/@keys.0"
+        constraintname="Libro_FK"/>
+    <fks columns="//@tables.2/@columns.1"
+        refsTo="//@tables.0/@keys.0"
+        constraintname="Autor_FK"/>
+  </tables>
+  <tables name="Usuario">
+    <columns
+        name="UsuarioID"
+        datatype="INT"/>
+    <keys columns="//@tables.3/@columns.0"
+        constraintname="Usuario_PK"/>
+  </tables>
+  <tables name="DetallesUsuario">
+    <columns
+        name="Usuario_D"
+        datatype="INT"/>
+    <keys columns="//@tables.4/@columns.0"
+        constraintname="DetallesUsuario_PK"/>
+    <fks columns="//@tables.4/@columns.0"
+        refsTo="//@tables.3/@keys.0"
+        constraintname="Usuario_FK"/>
+  </tables>
+  <tables name="Reserva">
+    <columns
+        name="ReservaID"
+        datatype="INT"/>
+    <columns
+        name="Libro_R"
+        datatype="INT"/>
+    <columns
+        name="Usuario_R"
+        datatype="INT"/>
+    <columns
+        name="FechaReserva"
+        datatype="DATE"/>
+    <keys columns="//@tables.5/@columns.0"
+        constraintname="Reserva_PK"/>
+    <keys columns="//@tables.5/@columns.2 //@tables.5/@columns.3"
+        constraintname="UsuarioFechaReserva"
+        isPK="false"/>
+    <fks columns="//@tables.5/@columns.1"
+        refsTo="//@tables.1/@keys.0"
+        constraintname="Libro_FK"/>
+    <fks columns="//@tables.5/@columns.2"
+        refsTo="//@tables.3/@keys.0"
+        constraintname="Usuario_FK"/>
+  </tables>
+</relationalschema:RelationalSchema>

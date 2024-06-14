@@ -3,7 +3,6 @@ package juanfran.um
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach
 import relationalschema.Table
 import uschema.EntityType
 import uschema.RelationshipType
@@ -14,7 +13,8 @@ import relationalschema.Key
 import uschema.Aggregate
 import relationalschema.FKey
 import uschema.Reference
-import uschema.Feature
+import uschema.SchemaType
+import java.util.List
 
 class MappingRelational2UschemaTest {
 	
@@ -26,6 +26,7 @@ class MappingRelational2UschemaTest {
 	static val RELATIONAL_SCHEMA_5 = "test-input-files/Relational_5.xmi"
 	static val RELATIONAL_SCHEMA_6_1_1 = "test-input-files/Relational_6-1_1.xmi"
 	static val RELATIONAL_SCHEMA_6_1_N = "test-input-files/Relational_6-1_N.xmi"
+	static val RELATIONAL_SCHEMA_INTEGRATION = "test-input-files/Relational_integration.xmi"
 	
 	val MappingRelational2Uschema mapping = new MappingRelational2Uschema;
 	
@@ -49,18 +50,8 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1 (EntityType)
-		val int numEntities1 = mapping.USchema.entities.size
 		val Table t = mapping.relationalSchema.tables.head
-		
-		mapping.table2SchemaType(t)
-		
-		val int numEntities2 = mapping.USchema.entities.size
-		val EntityType et = mapping.USchema.entities.head
-		
-		assertNotNull(et)
-		assertEquals(numEntities1+1, numEntities2)
-		assertEquals(t.name, et.name)
-		assertTrue(et.root)
+		table2EntityType_asserts(t)
 	}
 	
 	// R1: Table to RelationshipType
@@ -72,17 +63,8 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1 (RelationshipType)
-		val int numRelationships1 = mapping.USchema.relationships.size
 		val Table t = mapping.relationalSchema.tables.findFirst[ t | mapping.isMNTable(t) ]
-
-		mapping.table2SchemaType(t)
-		
-		val int numRelationships2 = mapping.USchema.relationships.size
-		val RelationshipType rt = mapping.USchema.relationships.head
-
-		assertNotNull(rt)
-		assertEquals(numRelationships1+1, numRelationships2)
-		assertEquals(t.name, rt.name)
+		table2RelationshipType_asserts(t)
 	}
 	
 	// R2: Column to Attribute (EntityType)
@@ -95,22 +77,11 @@ class MappingRelational2UschemaTest {
 		
 		// R1
 		val Table t = mapping.relationalSchema.tables.head
-		mapping.table2SchemaType(t)
+		table2EntityType_asserts(t)
 	
+		// R2
 		val Column c = t.columns.head
-		val EntityType et = mapping.USchema.entities.head
-		val int etFeaturesSize1 = et.features.size
-		
-		mapping.column2Attribute(c)
-		
-		val Attribute at = et.features.head as Attribute
-		val int etFeaturesSize2 = et.features.size
-		
-		assertNotNull(at)
-		assertEquals(etFeaturesSize1+1, etFeaturesSize2)
-		assertEquals(c.name, at.name)
-		assertEquals("int", (at.type as PrimitiveType).name)
-		assertEquals(c.nullable, at.optional)
+		column2Attribute_asserts(c)
 	}
 	
 	// R3: Key to uschema.Key
@@ -123,37 +94,18 @@ class MappingRelational2UschemaTest {
 		
 		// R1
 		val Table t = mapping.relationalSchema.tables.head
-		mapping.table2SchemaType(t)
+		table2EntityType_asserts(t)
 		
 		// R2
-		t.columns.forEach[ c | mapping.column2Attribute(c) ]
+		t.columns.forEach[ c | column2Attribute_asserts(c) ]
 		
-		// R3
+		// R3 (PK)
 		val Key pK = mapping.findPK(t)
+		key2Key_asserts(pK)
+		
+		// R3 (UK)
 		val Key uK = mapping.findUKs(t).head
-		val EntityType et = mapping.USchema.entities.head
-		val int etFeaturesSize1 = et.features.size
-
-		mapping.key2Key(pK)
-		mapping.key2Key(uK)
-		
-		val int etFeaturesSize2 = et.features.size
-		assertEquals(etFeaturesSize1+2, etFeaturesSize2)
-		
-		// PK
-		val uschema.Key u_pk = et.features.findFirst[ f | f.name == "Usuario_PK" ] as uschema.Key
-		assertNotNull(u_pk)
-		assertEquals(pK.constraintname, u_pk.name)
-		assertTrue(u_pk.isIsID)
-		assertEquals(pK.columns.size, u_pk.attributes.size)
-		
-		// UK
-		val uschema.Key u_uk = et.features.findFirst[ f | f.name == "EmailTelefono_UK" ] as uschema.Key
-		assertNotNull(u_uk)
-		assertEquals(uK.constraintname, u_uk.name)
-		assertFalse(u_uk.isIsID)
-		assertEquals(uK.columns.size, u_uk.attributes.size)
-		
+		key2Key_asserts(uK)
 	}
 	
 	// R4: Weak Table to Aggregate
@@ -165,34 +117,17 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1
-		val Table w = mapping.relationalSchema.tables.findFirst[ t | t.name == "DetallesUsuario" ]
-		val Table s = mapping.relationalSchema.tables.findFirst[ t | t.name == "Usuario" ]
-		mapping.table2SchemaType(w)
-		mapping.table2SchemaType(s)
+		mapping.relationalSchema.tables.forEach[ t | table2EntityType_asserts(t) ]
 		
 		// R2, R3
 		mapping.relationalSchema.tables.forEach[ t |
-			t.columns.forEach [ c | mapping.column2Attribute(c) ]
-			t.keys.forEach[ k | mapping.key2Key(k) ]
+			t.columns.forEach [ c | column2Attribute_asserts(c) ]
+			t.keys.forEach[ k | key2Key_asserts(k) ]
 		]
 		
 		// R4
-		val EntityType ew = mapping.USchema.entities.findFirst[ et | et.name == "DetallesUsuario" ]
-		val EntityType es = mapping.USchema.entities.findFirst[ et | et.name == "Usuario" ]
-		val int esFeaturesSize1 = es.features.size
-		
-		mapping.weakTable2Aggregate(w)
-		
-		val int esFeaturesSize2 = es.features.size
-		val Aggregate g = mapping.trace.getTargetInstance("DetallesUsuario.Usuario_FK").head as Aggregate
-		
-		assertNotNull(g)
-		assertEquals(esFeaturesSize1+1, esFeaturesSize2)
-		assertEquals(w.name+"s", g.name)
-		assertEquals(0, g.lowerBound)
-		assertEquals(-1, g.upperBound)
-		assertEquals(ew, g.specifiedBy)
-		assertFalse(ew.root)
+		val Table w = mapping.relationalSchema.tables.findFirst[ t | t.name == "DetallesUsuario" ]
+		weakTable2Aggregate_asserts(w)
 	}
 	
 	// R5: M:N Table to RelationshipType
@@ -204,67 +139,22 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1
-		mapping.relationalSchema.tables.forEach[ t | mapping.table2SchemaType(t) ]
+		mapping.relationalSchema.tables.forEach[ t | 
+			if (mapping.isMNTable(t))
+				table2RelationshipType_asserts(t)
+			else
+				table2EntityType_asserts(t)
+		]
 		
 		// R2, R3
-		val RelationshipType rm = mapping.USchema.relationships.findFirst[ r | r.name == "Libros_Autores" ]
-		val int rmNumFeatures1 = rm.features.size
 		mapping.relationalSchema.tables.forEach[ t |
-			t.columns.forEach [ c | mapping.column2Attribute(c) ]
-			t.keys.forEach[ k | mapping.key2Key(k) ]
+			t.columns.forEach [ c | column2Attribute_asserts(c) ]
+			t.keys.forEach[ k | key2Key_asserts(k) ]
 		]
-		val int rmNumFeatures2 = rm.features.size
-		assertEquals(rmNumFeatures1+1, rmNumFeatures2)
-		
-		// Only one Attribute added (which is not part of a Key)
-		val Attribute libro = rm.features.findFirst[ f | f.name == "Libro" ] as Attribute
-		val Attribute autor = rm.features.findFirst[ f | f.name == "Autor" ] as Attribute
-		val Attribute editorial = rm.features.findFirst[ f | f.name == "Editorial" ] as Attribute
-		assertNull(libro)
-		assertNull(autor)
-		assertNotNull(editorial)
-		
-		// Key not added
-		val Key libros_Autores_PK = rm.features.findFirst[ f | f.name == "Libros_Autores_PK" ] as Key
-		assertNull(libros_Autores_PK)
 		
 		// R5
 		val Table m = mapping.relationalSchema.tables.findFirst[ t | t.name == "Libros_Autores" ]
-		val FKey fk1 = m.fks.get(0) //Libro_FK
-		val FKey fk2 = m.fks.get(1) //Autor_FK
-		val EntityType et1 = mapping.USchema.entities.findFirst[ r | r.name == "Libro" ]
-		val EntityType et2 = mapping.USchema.entities.findFirst[ r | r.name == "Autor" ]
-		val int rmNumReferences1 = rm.reference.size
-		
-		mapping.mNTable2RelationshipType(m)
-		val int rmNumReferences2 = rm.reference.size
-		assertEquals(rmNumReferences1+2, rmNumReferences2)
-		
-		// Reference 1
-		val Reference ref1 = et1.features.findFirst[ f | f.name == "Autor_FK" ] as Reference
-		assertNotNull(ref1)
-		assertEquals(fk2.constraintname, ref1.name)
-		assertEquals(1, ref1.lowerBound)
-		assertEquals(-1, ref1.upperBound)
-		assertTrue(rm.reference.contains(ref1))
-		
-		// Attribute into Reference 1
-		val Attribute at1 = et2.features.findFirst[ f | f.name == "AutorID" ] as Attribute
-		assertNotNull(at1)
-		assertTrue(ref1.attributes.contains(at1))
-		
-		// Reference 2
-		val Reference ref2 = et2.features.findFirst[ f | f.name == "Libro_FK" ] as Reference
-		assertNotNull(ref2)
-		assertEquals(fk1.constraintname, ref2.name)		
-		assertEquals(1, ref2.lowerBound)		
-		assertEquals(-1, ref2.upperBound)		
-		assertTrue(rm.reference.contains(ref2))
-		
-		// Attribute into Reference 2
-		val Attribute at2 = et1.features.findFirst[ f | f.name == "LibroID" ] as Attribute
-		assertNotNull(at2)
-		assertTrue(ref2.attributes.contains(at2))
+		mNTable2RelationshipType_asserts(m)
 	}
 	
 	// R6: 1:1 Table
@@ -276,40 +166,18 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1
-		mapping.relationalSchema.tables.forEach[ t | mapping.table2SchemaType(t) ]
+		mapping.relationalSchema.tables.forEach[ t | table2EntityType_asserts(t) ]
 		
 		// R2, R3
 		mapping.relationalSchema.tables.forEach[ t |
-			t.columns.forEach [ c | mapping.column2Attribute(c) ]
-			t.keys.forEach[ k | mapping.key2Key(k) ]
+			t.columns.forEach [ c | column2Attribute_asserts(c) ]
+			t.keys.forEach[ k | key2Key_asserts(k) ]
 		]
 		
 		// R6 (1:1)
 		val Table t = mapping.relationalSchema.tables.findFirst[ t | t.name == "Reserva" ]
-		val FKey t_fk = t.fks.head
-		val Table s = mapping.relationalSchema.tables.findFirst[ table | table.name == "Libro" ]
-		val EntityType et = mapping.USchema.entities.findFirst[ r | r.name == "Reserva" ]
-		val EntityType es = mapping.USchema.entities.findFirst[ r | r.name == "Libro" ]
-		val int etFeaturesSize1 = et.features.size
-		
-		mapping.r6Table1_1(t, t_fk)
-		
-		val int etFeaturesSize2 = et.features.size
-		assertEquals(etFeaturesSize1+1, etFeaturesSize2)
-		
-		// Reference
-		val Reference rs = et.features.findFirst[ f | f.name == "Libro_Libro_FK" ] as Reference
-		assertNotNull(rs)
-		assertTrue(et.features.contains(rs))
-		assertEquals(s.name+"_"+t_fk.constraintname, rs.name)
-		assertEquals(0, rs.lowerBound)
-		assertEquals(1, rs.upperBound)
-		assertEquals(es, rs.refsTo)
-		
-		// Attribute into Reference
-		val Attribute at = et.features.findFirst[ f | f.name == "Libro" ] as Attribute
-		assertNotNull(at)
-		assertTrue(rs.attributes.contains(at))
+		val FKey fk = t.fks.head
+		r6Table1_1_asserts(t, fk)
 	}
 	
 	// R6: 1:N Table
@@ -321,43 +189,255 @@ class MappingRelational2UschemaTest {
 		mapping.relationalSchema2USchema()
 		
 		// R1
-		mapping.relationalSchema.tables.forEach[ t | mapping.table2SchemaType(t) ]
+		mapping.relationalSchema.tables.forEach[ t | table2EntityType_asserts(t) ]
 		
 		// R2, R3
 		mapping.relationalSchema.tables.forEach[ t |
-			t.columns.forEach [ c | mapping.column2Attribute(c) ]
-			t.keys.forEach[ k | mapping.key2Key(k) ]
+			t.columns.forEach [ c | column2Attribute_asserts(c) ]
+			t.keys.forEach[ k | key2Key_asserts(k) ]
 		]
 		
 		// R6 (1:N)
 		val Table t = mapping.relationalSchema.tables.findFirst[ t | t.name == "Reserva" ]
-		val FKey t_fk = t.fks.head
-		val Table s = mapping.relationalSchema.tables.findFirst[ table | table.name == "Libro" ]
-		val EntityType et = mapping.USchema.entities.findFirst[ r | r.name == "Reserva" ]
-		val EntityType es = mapping.USchema.entities.findFirst[ r | r.name == "Libro" ]
+		val FKey fk = t.fks.head
+		r6Table1_N_asserts(t, fk)
+	}
+	
+	// Integration test
+	@Test
+	def void relationalSchema2USchema_integration_OK() {
+		mapping.loadSchema(RELATIONAL_SCHEMA_INTEGRATION)
+		
+		// R0
+		mapping.relationalSchema2USchema()
+		
+		// R1
+		mapping.relationalSchema.tables.forEach[ t | 
+			if (mapping.isMNTable(t))
+				table2RelationshipType_asserts(t)
+			else
+				table2EntityType_asserts(t)
+		]
+		
+		mapping.relationalSchema.tables.forEach[ t |
+			t.columns.forEach [ c | column2Attribute_asserts(c) ] // r2
+			t.keys.forEach[ k | key2Key_asserts(k) ] // r3
+		]
+		
+		mapping.relationalSchema.tables.forEach[ t | 
+			if (mapping.isWeakTable(t))
+				weakTable2Aggregate_asserts(t) // r4
+			else if (mapping.isMNTable(t))
+				mNTable2RelationshipType_asserts(t) // r5
+			else {
+				// r6
+				val List<FKey> fKs = mapping.getFKsNotInPK(t)
+				val List<Key> uKs = mapping.findUKs(t)
+				
+				fKs.forEach[ fk |
+					if (mapping.isFKInUKs(fk, uKs))
+						r6Table1_1_asserts(t, fk)
+					else
+						r6Table1_N_asserts(t, fk)
+				]
+			}
+		]
+	}
+	
+	
+	
+	//----- PRIVATE METHODS -----//
+	
+	// R1 with asserts (EntityType)
+	private def EntityType table2EntityType_asserts(Table t) {
+		val int numEntities1 = mapping.USchema.entities.size
+		
+		mapping.table2SchemaType(t)
+		
+		val EntityType et = mapping.USchema.entities.findFirst[ r | r.name == t.name ]
+		val int numEntities2 = mapping.USchema.entities.size
+		
+		assertNotNull(et)
+		assertEquals(numEntities1+1, numEntities2)
+		assertTrue(et.root)
+		
+		return et
+	}
+	
+	// R1 with asserts (EntityType)
+	private def void table2RelationshipType_asserts(Table t) {
+		val int numRelationships1 = mapping.USchema.relationships.size
+		
+		mapping.table2SchemaType(t)
+		
+		val RelationshipType rt = mapping.USchema.relationships.findFirst[ r | r.name == t.name ]
+		val int numRelationship2 = mapping.USchema.relationships.size
+		
+		assertNotNull(rt)
+		assertEquals(numRelationships1+1, numRelationship2)
+	}
+	
+	// R2 with asserts
+	private def void column2Attribute_asserts(Column c) {
+		var SchemaType st = mapping.USchema.entities.findFirst[ e | e.name == c.owner.name ]
+		if (st === null)
+			st = mapping.USchema.relationships.findFirst[ r | r.name == c.owner.name ]
+		val int stFeaturesSize1 = st.features.size
+		
+		mapping.column2Attribute(c)
+		
+		val Attribute at = st.features.findFirst[ f | f.name == c.name ] as Attribute
+		val int stFeaturesSize2 = st.features.size
+		
+		if (st instanceof RelationshipType && mapping.isColumnInFKsOrPKs(c)) {
+			assertNull(at)
+		} else {
+			assertNotNull(at)
+			assertEquals(stFeaturesSize1+1, stFeaturesSize2)
+			assertEquals(MappingRelational2Uschema.typeConversionRelToUsc(c.datatype), (at.type as PrimitiveType).name)
+			assertEquals(c.nullable, at.optional)
+		}
+	}
+	
+	// R3 with asserts
+	private def void key2Key_asserts(Key k) {
+		var EntityType et = mapping.USchema.entities.findFirst[ e | e.name == k.owner.name ]
+		if (et === null)
+			return
+		val int etFeaturesSize1 = et.features.size
+
+		mapping.key2Key(k)
+		
+		val int etFeaturesSize2 = et.features.size
+		val uschema.Key u_k = et.features.findFirst[ f | f.name == k.constraintname ] as uschema.Key
+		
+		assertNotNull(u_k)
+		assertEquals(etFeaturesSize1+1, etFeaturesSize2)
+		assertEquals(k.isIsPK, u_k.isIsID)
+		assertEquals(k.columns.size, u_k.attributes.size)
+	}
+	
+	// R4 with asserts
+	private def void weakTable2Aggregate_asserts(Table w) {
+		val FKey fk = mapping.getFKsInPK(w).head
+		val Table s = fk.refsTo.owner
+		val EntityType ew = mapping.USchema.entities.findFirst[ et | et.name == w.name ]
+		val EntityType es = mapping.USchema.entities.findFirst[ et | et.name == s.name ]
 		val int esFeaturesSize1 = es.features.size
 		
-		mapping.r6Table1_N(t, t_fk)
+		mapping.weakTable2Aggregate(w)
+		
+		val int esFeaturesSize2 = es.features.size
+		val Aggregate g = es.features.findFirst[ f | f.name == w.name+"s" ] as Aggregate
+		
+		assertNotNull(g)
+		assertEquals(esFeaturesSize1+1, esFeaturesSize2)
+		assertEquals(w.name+"s", g.name)
+		assertEquals(0, g.lowerBound)
+		assertEquals(-1, g.upperBound)
+		assertEquals(ew, g.specifiedBy)
+		assertFalse(ew.root)
+	}
+	
+	// R5 with asserts
+	private def void mNTable2RelationshipType_asserts(Table m) {
+		val FKey fk1 = m.fks.get(0) //Libro_FK
+		val FKey fk2 = m.fks.get(1) //Autor_FK
+		val Table t1 = fk1.refsTo.owner
+		val Table t2 = fk2.refsTo.owner
+		val EntityType et1 = mapping.USchema.entities.findFirst[ r | r.name == t1.name ]
+		val EntityType et2 = mapping.USchema.entities.findFirst[ r | r.name == t2.name ]
+		val RelationshipType rm = mapping.USchema.relationships.findFirst[ r | r.name == m.name ]
+		val int rmNumReferences1 = rm.reference.size
+		
+		mapping.mNTable2RelationshipType(m)
+		
+		val int rmNumReferences2 = rm.reference.size
+		assertEquals(rmNumReferences1+2, rmNumReferences2)
+		
+		// Reference 1
+		val Reference ref1 = et1.features.findFirst[ f | f.name == fk2.constraintname ] as Reference
+		assertNotNull(ref1)
+		assertEquals(1, ref1.lowerBound)
+		assertEquals(-1, ref1.upperBound)
+		assertTrue(rm.reference.contains(ref1))
+		
+		// Attributes into Reference 1
+		for (c : fk2.refsTo.columns) {
+			val Attribute at = et2.features.findFirst[ f | f.name == c.name ] as Attribute
+			assertNotNull(at)
+			assertTrue(ref1.attributes.contains(at))
+		}
+		
+		// Reference 2
+		val Reference ref2 = et2.features.findFirst[ f | f.name == fk1.constraintname ] as Reference
+		assertNotNull(ref2)
+		assertEquals(1, ref2.lowerBound)		
+		assertEquals(-1, ref2.upperBound)		
+		assertTrue(rm.reference.contains(ref2))
+		
+		// Attributes into Reference 2
+		for (c : fk1.refsTo.columns) {
+			val Attribute at = et1.features.findFirst[ f | f.name == c.name ] as Attribute
+			assertNotNull(at)
+			assertTrue(ref2.attributes.contains(at))
+		}
+	}
+	
+	// R6 with asserts (1:1 table)
+	private def void r6Table1_1_asserts(Table t, FKey fk) {
+		val Table s = fk.refsTo.owner
+		val EntityType et = mapping.USchema.entities.findFirst[ r | r.name == t.name ]
+		val EntityType es = mapping.USchema.entities.findFirst[ r | r.name == s.name ]
+		val int etFeaturesSize1 = et.features.size
+		
+		mapping.r6Table1_1(t, fk)
+		
+		val int etFeaturesSize2 = et.features.size
+		assertEquals(etFeaturesSize1+1, etFeaturesSize2)
+		
+		// Reference
+		val Reference rs = et.features.findFirst[ f | f.name == s.name+"_"+fk.constraintname ] as Reference
+		assertNotNull(rs)
+		assertEquals(0, rs.lowerBound)
+		assertEquals(1, rs.upperBound)
+		assertEquals(es, rs.refsTo)
+		
+		// Attributes into Reference
+		for (c : fk.columns) {
+			val Attribute at = et.features.findFirst[ f | f.name == c.name ] as Attribute
+			assertNotNull(at)
+			assertTrue(rs.attributes.contains(at))
+		}
+	}
+	
+	// R6 with asserts (1:N table)
+	private def void r6Table1_N_asserts(Table t, FKey fk) {
+		val Table s = fk.refsTo.owner
+		val EntityType et = mapping.USchema.entities.findFirst[ r | r.name == t.name ]
+		val EntityType es = mapping.USchema.entities.findFirst[ r | r.name == s.name ]
+		val Key pk = mapping.findPK(t)
+		val int esFeaturesSize1 = es.features.size
+		
+		mapping.r6Table1_N(t, fk)
 		
 		val int esFeaturesSize2 = es.features.size
 		assertEquals(esFeaturesSize1+2, esFeaturesSize2)
 		
 		// Reference
-		val Reference rt = es.features.findFirst[ f | f instanceof Reference ] as Reference
+		val Reference rt = es.features.findFirst[ f | f.name == t.name+"s" ] as Reference
 		assertNotNull(rt)
-		assertEquals(t.name+"s", rt.name)
 		assertEquals(0, rt.lowerBound)
 		assertEquals(-1, rt.upperBound)
 		assertEquals(et, rt.refsTo)
 		
 		// Attribute
-		val Column col = t.columns.findFirst[ c | c.name == "ReservaID" ]
-		var Attribute at = es.features.findFirst[ f | f.name == "ReservaIDReservas" ] as Attribute
-		assertNotNull(at)
-		assertEquals(col.name+et.name+"s", at.name)
-		assertEquals("int", (at.type as PrimitiveType).name)
-		assertTrue(rt.attributes.contains(at))
-		assertTrue(at.references.contains(rt))
+		for (c : pk.columns) {
+			var Attribute at = es.features.findFirst[ f | f.name == c.name+et.name+"s" ] as Attribute
+			assertNotNull(at)
+			assertEquals(MappingRelational2Uschema.typeConversionRelToUsc(c.datatype), (at.type as PrimitiveType).name)
+			assertTrue(rt.attributes.contains(at))
+			assertTrue(at.references.contains(rt))
+		}
 	}
-	
 }

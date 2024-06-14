@@ -1,7 +1,9 @@
 package juanfran.um;
 
 import com.google.common.base.Objects;
+import java.util.List;
 import java.util.function.Consumer;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +20,7 @@ import uschema.Feature;
 import uschema.PrimitiveType;
 import uschema.Reference;
 import uschema.RelationshipType;
+import uschema.SchemaType;
 
 @SuppressWarnings("all")
 public class MappingRelational2UschemaTest {
@@ -37,6 +40,8 @@ public class MappingRelational2UschemaTest {
 
   private static final String RELATIONAL_SCHEMA_6_1_N = "test-input-files/Relational_6-1_N.xmi";
 
+  private static final String RELATIONAL_SCHEMA_INTEGRATION = "test-input-files/Relational_integration.xmi";
+
   private final MappingRelational2Uschema mapping = new MappingRelational2Uschema();
 
   @Test
@@ -51,32 +56,19 @@ public class MappingRelational2UschemaTest {
   public void table2SchemaType_EntityType_OK() {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_1);
     this.mapping.relationalSchema2USchema();
-    final int numEntities1 = this.mapping.getUSchema().getEntities().size();
     final Table t = IterableExtensions.<Table>head(this.mapping.getRelationalSchema().getTables());
-    this.mapping.table2SchemaType(t);
-    final int numEntities2 = this.mapping.getUSchema().getEntities().size();
-    final EntityType et = IterableExtensions.<EntityType>head(this.mapping.getUSchema().getEntities());
-    Assertions.assertNotNull(et);
-    Assertions.assertEquals((numEntities1 + 1), numEntities2);
-    Assertions.assertEquals(t.getName(), et.getName());
-    Assertions.assertTrue(et.isRoot());
+    this.table2EntityType_asserts(t);
   }
 
   @Test
   public void table2SchemaType_RelationshipType_OK() {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_5);
     this.mapping.relationalSchema2USchema();
-    final int numRelationships1 = this.mapping.getUSchema().getRelationships().size();
     final Function1<Table, Boolean> _function = (Table t) -> {
       return Boolean.valueOf(this.mapping.isMNTable(t));
     };
     final Table t = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function);
-    this.mapping.table2SchemaType(t);
-    final int numRelationships2 = this.mapping.getUSchema().getRelationships().size();
-    final RelationshipType rt = IterableExtensions.<RelationshipType>head(this.mapping.getUSchema().getRelationships());
-    Assertions.assertNotNull(rt);
-    Assertions.assertEquals((numRelationships1 + 1), numRelationships2);
-    Assertions.assertEquals(t.getName(), rt.getName());
+    this.table2RelationshipType_asserts(t);
   }
 
   @Test
@@ -84,20 +76,9 @@ public class MappingRelational2UschemaTest {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_2);
     this.mapping.relationalSchema2USchema();
     final Table t = IterableExtensions.<Table>head(this.mapping.getRelationalSchema().getTables());
-    this.mapping.table2SchemaType(t);
+    this.table2EntityType_asserts(t);
     final Column c = IterableExtensions.<Column>head(t.getColumns());
-    final EntityType et = IterableExtensions.<EntityType>head(this.mapping.getUSchema().getEntities());
-    final int etFeaturesSize1 = et.getFeatures().size();
-    this.mapping.column2Attribute(c);
-    Feature _head = IterableExtensions.<Feature>head(et.getFeatures());
-    final Attribute at = ((Attribute) _head);
-    final int etFeaturesSize2 = et.getFeatures().size();
-    Assertions.assertNotNull(at);
-    Assertions.assertEquals((etFeaturesSize1 + 1), etFeaturesSize2);
-    Assertions.assertEquals(c.getName(), at.getName());
-    DataType _type = at.getType();
-    Assertions.assertEquals("int", ((PrimitiveType) _type).getName());
-    Assertions.assertEquals(Boolean.valueOf(c.isNullable()), Boolean.valueOf(at.isOptional()));
+    this.column2Attribute_asserts(c);
   }
 
   @Test
@@ -105,83 +86,300 @@ public class MappingRelational2UschemaTest {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_3);
     this.mapping.relationalSchema2USchema();
     final Table t = IterableExtensions.<Table>head(this.mapping.getRelationalSchema().getTables());
-    this.mapping.table2SchemaType(t);
+    this.table2EntityType_asserts(t);
     final Consumer<Column> _function = (Column c) -> {
-      this.mapping.column2Attribute(c);
+      this.column2Attribute_asserts(c);
     };
     t.getColumns().forEach(_function);
     final Key pK = this.mapping.findPK(t);
+    this.key2Key_asserts(pK);
     final Key uK = IterableExtensions.<Key>head(this.mapping.findUKs(t));
-    final EntityType et = IterableExtensions.<EntityType>head(this.mapping.getUSchema().getEntities());
-    final int etFeaturesSize1 = et.getFeatures().size();
-    this.mapping.key2Key(pK);
-    this.mapping.key2Key(uK);
-    final int etFeaturesSize2 = et.getFeatures().size();
-    Assertions.assertEquals((etFeaturesSize1 + 2), etFeaturesSize2);
-    final Function1<Feature, Boolean> _function_1 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Usuario_PK"));
-    };
-    Feature _findFirst = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_1);
-    final uschema.Key u_pk = ((uschema.Key) _findFirst);
-    Assertions.assertNotNull(u_pk);
-    Assertions.assertEquals(pK.getConstraintname(), u_pk.getName());
-    Assertions.assertTrue(u_pk.isIsID());
-    Assertions.assertEquals(pK.getColumns().size(), u_pk.getAttributes().size());
-    final Function1<Feature, Boolean> _function_2 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "EmailTelefono_UK"));
-    };
-    Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_2);
-    final uschema.Key u_uk = ((uschema.Key) _findFirst_1);
-    Assertions.assertNotNull(u_uk);
-    Assertions.assertEquals(uK.getConstraintname(), u_uk.getName());
-    Assertions.assertFalse(u_uk.isIsID());
-    Assertions.assertEquals(uK.getColumns().size(), u_uk.getAttributes().size());
+    this.key2Key_asserts(uK);
   }
 
   @Test
   public void weakTable2Aggregate_OK() {
     this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_4);
     this.mapping.relationalSchema2USchema();
-    final Function1<Table, Boolean> _function = (Table t) -> {
+    final Consumer<Table> _function = (Table t) -> {
+      this.table2EntityType_asserts(t);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.column2Attribute_asserts(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.key2Key_asserts(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
+    final Function1<Table, Boolean> _function_2 = (Table t) -> {
       String _name = t.getName();
       return Boolean.valueOf(Objects.equal(_name, "DetallesUsuario"));
     };
-    final Table w = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function);
-    final Function1<Table, Boolean> _function_1 = (Table t) -> {
-      String _name = t.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Usuario"));
+    final Table w = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
+    this.weakTable2Aggregate_asserts(w);
+  }
+
+  @Test
+  public void mNTable2RelationshipType_OK() {
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_5);
+    this.mapping.relationalSchema2USchema();
+    final Consumer<Table> _function = (Table t) -> {
+      boolean _isMNTable = this.mapping.isMNTable(t);
+      if (_isMNTable) {
+        this.table2RelationshipType_asserts(t);
+      } else {
+        this.table2EntityType_asserts(t);
+      }
     };
-    final Table s = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_1);
-    this.mapping.table2SchemaType(w);
-    this.mapping.table2SchemaType(s);
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.column2Attribute_asserts(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.key2Key_asserts(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
+    final Function1<Table, Boolean> _function_2 = (Table t) -> {
+      String _name = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, "Libros_Autores"));
+    };
+    final Table m = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
+    this.mNTable2RelationshipType_asserts(m);
+  }
+
+  @Test
+  public void r6Table1_1_OK() {
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_6_1_1);
+    this.mapping.relationalSchema2USchema();
+    final Consumer<Table> _function = (Table t) -> {
+      this.table2EntityType_asserts(t);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.column2Attribute_asserts(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.key2Key_asserts(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
+    final Function1<Table, Boolean> _function_2 = (Table t) -> {
+      String _name = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
+    };
+    final Table t = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
+    final FKey fk = IterableExtensions.<FKey>head(t.getFks());
+    this.r6Table1_1_asserts(t, fk);
+  }
+
+  @Test
+  public void r6Table1_N_OK() {
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_6_1_N);
+    this.mapping.relationalSchema2USchema();
+    final Consumer<Table> _function = (Table t) -> {
+      this.table2EntityType_asserts(t);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.column2Attribute_asserts(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.key2Key_asserts(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
+    final Function1<Table, Boolean> _function_2 = (Table t) -> {
+      String _name = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
+    };
+    final Table t = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
+    final FKey fk = IterableExtensions.<FKey>head(t.getFks());
+    this.r6Table1_N_asserts(t, fk);
+  }
+
+  @Test
+  public void relationalSchema2USchema_integration_OK() {
+    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_INTEGRATION);
+    this.mapping.relationalSchema2USchema();
+    final Consumer<Table> _function = (Table t) -> {
+      boolean _isMNTable = this.mapping.isMNTable(t);
+      if (_isMNTable) {
+        this.table2RelationshipType_asserts(t);
+      } else {
+        this.table2EntityType_asserts(t);
+      }
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function);
+    final Consumer<Table> _function_1 = (Table t) -> {
+      final Consumer<Column> _function_2 = (Column c) -> {
+        this.column2Attribute_asserts(c);
+      };
+      t.getColumns().forEach(_function_2);
+      final Consumer<Key> _function_3 = (Key k) -> {
+        this.key2Key_asserts(k);
+      };
+      t.getKeys().forEach(_function_3);
+    };
+    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
     final Consumer<Table> _function_2 = (Table t) -> {
-      final Consumer<Column> _function_3 = (Column c) -> {
-        this.mapping.column2Attribute(c);
-      };
-      t.getColumns().forEach(_function_3);
-      final Consumer<Key> _function_4 = (Key k) -> {
-        this.mapping.key2Key(k);
-      };
-      t.getKeys().forEach(_function_4);
+      boolean _isWeakTable = this.mapping.isWeakTable(t);
+      if (_isWeakTable) {
+        this.weakTable2Aggregate_asserts(t);
+      } else {
+        boolean _isMNTable = this.mapping.isMNTable(t);
+        if (_isMNTable) {
+          this.mNTable2RelationshipType_asserts(t);
+        } else {
+          final List<FKey> fKs = this.mapping.getFKsNotInPK(t);
+          final List<Key> uKs = this.mapping.findUKs(t);
+          final Consumer<FKey> _function_3 = (FKey fk) -> {
+            boolean _isFKInUKs = this.mapping.isFKInUKs(fk, uKs);
+            if (_isFKInUKs) {
+              this.r6Table1_1_asserts(t, fk);
+            } else {
+              this.r6Table1_N_asserts(t, fk);
+            }
+          };
+          fKs.forEach(_function_3);
+        }
+      }
     };
     this.mapping.getRelationalSchema().getTables().forEach(_function_2);
-    final Function1<EntityType, Boolean> _function_3 = (EntityType et) -> {
-      String _name = et.getName();
-      return Boolean.valueOf(Objects.equal(_name, "DetallesUsuario"));
+  }
+
+  private EntityType table2EntityType_asserts(final Table t) {
+    final int numEntities1 = this.mapping.getUSchema().getEntities().size();
+    this.mapping.table2SchemaType(t);
+    final Function1<EntityType, Boolean> _function = (EntityType r) -> {
+      String _name = r.getName();
+      String _name_1 = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType ew = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_3);
-    final Function1<EntityType, Boolean> _function_4 = (EntityType et) -> {
-      String _name = et.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Usuario"));
+    final EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    final int numEntities2 = this.mapping.getUSchema().getEntities().size();
+    Assertions.assertNotNull(et);
+    Assertions.assertEquals((numEntities1 + 1), numEntities2);
+    Assertions.assertTrue(et.isRoot());
+    return et;
+  }
+
+  private void table2RelationshipType_asserts(final Table t) {
+    final int numRelationships1 = this.mapping.getUSchema().getRelationships().size();
+    this.mapping.table2SchemaType(t);
+    final Function1<RelationshipType, Boolean> _function = (RelationshipType r) -> {
+      String _name = r.getName();
+      String _name_1 = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_4);
+    final RelationshipType rt = IterableExtensions.<RelationshipType>findFirst(this.mapping.getUSchema().getRelationships(), _function);
+    final int numRelationship2 = this.mapping.getUSchema().getRelationships().size();
+    Assertions.assertNotNull(rt);
+    Assertions.assertEquals((numRelationships1 + 1), numRelationship2);
+  }
+
+  private void column2Attribute_asserts(final Column c) {
+    final Function1<EntityType, Boolean> _function = (EntityType e) -> {
+      String _name = e.getName();
+      String _name_1 = c.getOwner().getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    SchemaType st = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    if ((st == null)) {
+      final Function1<RelationshipType, Boolean> _function_1 = (RelationshipType r) -> {
+        String _name = r.getName();
+        String _name_1 = c.getOwner().getName();
+        return Boolean.valueOf(Objects.equal(_name, _name_1));
+      };
+      st = IterableExtensions.<RelationshipType>findFirst(this.mapping.getUSchema().getRelationships(), _function_1);
+    }
+    final int stFeaturesSize1 = st.getFeatures().size();
+    this.mapping.column2Attribute(c);
+    final Function1<Feature, Boolean> _function_2 = (Feature f) -> {
+      String _name = f.getName();
+      String _name_1 = c.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(st.getFeatures(), _function_2);
+    final Attribute at = ((Attribute) _findFirst);
+    final int stFeaturesSize2 = st.getFeatures().size();
+    if (((st instanceof RelationshipType) && this.mapping.isColumnInFKsOrPKs(c))) {
+      Assertions.assertNull(at);
+    } else {
+      Assertions.assertNotNull(at);
+      Assertions.assertEquals((stFeaturesSize1 + 1), stFeaturesSize2);
+      DataType _type = at.getType();
+      Assertions.assertEquals(MappingRelational2Uschema.typeConversionRelToUsc(c.getDatatype()), ((PrimitiveType) _type).getName());
+      Assertions.assertEquals(Boolean.valueOf(c.isNullable()), Boolean.valueOf(at.isOptional()));
+    }
+  }
+
+  private void key2Key_asserts(final Key k) {
+    final Function1<EntityType, Boolean> _function = (EntityType e) -> {
+      String _name = e.getName();
+      String _name_1 = k.getOwner().getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    if ((et == null)) {
+      return;
+    }
+    final int etFeaturesSize1 = et.getFeatures().size();
+    this.mapping.key2Key(k);
+    final int etFeaturesSize2 = et.getFeatures().size();
+    final Function1<Feature, Boolean> _function_1 = (Feature f) -> {
+      String _name = f.getName();
+      String _constraintname = k.getConstraintname();
+      return Boolean.valueOf(Objects.equal(_name, _constraintname));
+    };
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_1);
+    final uschema.Key u_k = ((uschema.Key) _findFirst);
+    Assertions.assertNotNull(u_k);
+    Assertions.assertEquals((etFeaturesSize1 + 1), etFeaturesSize2);
+    Assertions.assertEquals(Boolean.valueOf(k.isIsPK()), Boolean.valueOf(u_k.isIsID()));
+    Assertions.assertEquals(k.getColumns().size(), u_k.getAttributes().size());
+  }
+
+  private void weakTable2Aggregate_asserts(final Table w) {
+    final FKey fk = IterableExtensions.<FKey>head(this.mapping.getFKsInPK(w));
+    final Table s = fk.getRefsTo().getOwner();
+    final Function1<EntityType, Boolean> _function = (EntityType et) -> {
+      String _name = et.getName();
+      String _name_1 = w.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    final EntityType ew = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    final Function1<EntityType, Boolean> _function_1 = (EntityType et) -> {
+      String _name = et.getName();
+      String _name_1 = s.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_1);
     final int esFeaturesSize1 = es.getFeatures().size();
     this.mapping.weakTable2Aggregate(w);
     final int esFeaturesSize2 = es.getFeatures().size();
-    Object _head = IterableExtensions.<Object>head(this.mapping.getTrace().getTargetInstance("DetallesUsuario.Usuario_FK"));
-    final Aggregate g = ((Aggregate) _head);
+    final Function1<Feature, Boolean> _function_2 = (Feature f) -> {
+      String _name = f.getName();
+      String _name_1 = w.getName();
+      String _plus = (_name_1 + "s");
+      return Boolean.valueOf(Objects.equal(_name, _plus));
+    };
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(es.getFeatures(), _function_2);
+    final Aggregate g = ((Aggregate) _findFirst);
     Assertions.assertNotNull(g);
     Assertions.assertEquals((esFeaturesSize1 + 1), esFeaturesSize2);
     String _name = w.getName();
@@ -193,268 +391,183 @@ public class MappingRelational2UschemaTest {
     Assertions.assertFalse(ew.isRoot());
   }
 
-  @Test
-  public void mNTable2RelationshipType_OK() {
-    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_5);
-    this.mapping.relationalSchema2USchema();
-    final Consumer<Table> _function = (Table t) -> {
-      this.mapping.table2SchemaType(t);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function);
-    final Function1<RelationshipType, Boolean> _function_1 = (RelationshipType r) -> {
-      String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libros_Autores"));
-    };
-    final RelationshipType rm = IterableExtensions.<RelationshipType>findFirst(this.mapping.getUSchema().getRelationships(), _function_1);
-    final int rmNumFeatures1 = rm.getFeatures().size();
-    final Consumer<Table> _function_2 = (Table t) -> {
-      final Consumer<Column> _function_3 = (Column c) -> {
-        this.mapping.column2Attribute(c);
-      };
-      t.getColumns().forEach(_function_3);
-      final Consumer<Key> _function_4 = (Key k) -> {
-        this.mapping.key2Key(k);
-      };
-      t.getKeys().forEach(_function_4);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function_2);
-    final int rmNumFeatures2 = rm.getFeatures().size();
-    Assertions.assertEquals((rmNumFeatures1 + 1), rmNumFeatures2);
-    final Function1<Feature, Boolean> _function_3 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
-    };
-    Feature _findFirst = IterableExtensions.<Feature>findFirst(rm.getFeatures(), _function_3);
-    final Attribute libro = ((Attribute) _findFirst);
-    final Function1<Feature, Boolean> _function_4 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Autor"));
-    };
-    Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(rm.getFeatures(), _function_4);
-    final Attribute autor = ((Attribute) _findFirst_1);
-    final Function1<Feature, Boolean> _function_5 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Editorial"));
-    };
-    Feature _findFirst_2 = IterableExtensions.<Feature>findFirst(rm.getFeatures(), _function_5);
-    final Attribute editorial = ((Attribute) _findFirst_2);
-    Assertions.assertNull(libro);
-    Assertions.assertNull(autor);
-    Assertions.assertNotNull(editorial);
-    final Function1<Feature, Boolean> _function_6 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libros_Autores_PK"));
-    };
-    Feature _findFirst_3 = IterableExtensions.<Feature>findFirst(rm.getFeatures(), _function_6);
-    final Key libros_Autores_PK = ((Key) _findFirst_3);
-    Assertions.assertNull(libros_Autores_PK);
-    final Function1<Table, Boolean> _function_7 = (Table t) -> {
-      String _name = t.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libros_Autores"));
-    };
-    final Table m = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_7);
+  private void mNTable2RelationshipType_asserts(final Table m) {
     final FKey fk1 = m.getFks().get(0);
     final FKey fk2 = m.getFks().get(1);
-    final Function1<EntityType, Boolean> _function_8 = (EntityType r) -> {
+    final Table t1 = fk1.getRefsTo().getOwner();
+    final Table t2 = fk2.getRefsTo().getOwner();
+    final Function1<EntityType, Boolean> _function = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
+      String _name_1 = t1.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType et1 = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_8);
-    final Function1<EntityType, Boolean> _function_9 = (EntityType r) -> {
+    final EntityType et1 = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    final Function1<EntityType, Boolean> _function_1 = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Autor"));
+      String _name_1 = t2.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType et2 = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_9);
+    final EntityType et2 = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_1);
+    final Function1<RelationshipType, Boolean> _function_2 = (RelationshipType r) -> {
+      String _name = r.getName();
+      String _name_1 = m.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
+    };
+    final RelationshipType rm = IterableExtensions.<RelationshipType>findFirst(this.mapping.getUSchema().getRelationships(), _function_2);
     final int rmNumReferences1 = rm.getReference().size();
     this.mapping.mNTable2RelationshipType(m);
     final int rmNumReferences2 = rm.getReference().size();
     Assertions.assertEquals((rmNumReferences1 + 2), rmNumReferences2);
-    final Function1<Feature, Boolean> _function_10 = (Feature f) -> {
+    final Function1<Feature, Boolean> _function_3 = (Feature f) -> {
       String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Autor_FK"));
+      String _constraintname = fk2.getConstraintname();
+      return Boolean.valueOf(Objects.equal(_name, _constraintname));
     };
-    Feature _findFirst_4 = IterableExtensions.<Feature>findFirst(et1.getFeatures(), _function_10);
-    final Reference ref1 = ((Reference) _findFirst_4);
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(et1.getFeatures(), _function_3);
+    final Reference ref1 = ((Reference) _findFirst);
     Assertions.assertNotNull(ref1);
-    Assertions.assertEquals(fk2.getConstraintname(), ref1.getName());
     Assertions.assertEquals(1, ref1.getLowerBound());
     Assertions.assertEquals((-1), ref1.getUpperBound());
     Assertions.assertTrue(rm.getReference().contains(ref1));
-    final Function1<Feature, Boolean> _function_11 = (Feature f) -> {
+    EList<Column> _columns = fk2.getRefsTo().getColumns();
+    for (final Column c : _columns) {
+      {
+        final Function1<Feature, Boolean> _function_4 = (Feature f) -> {
+          String _name = f.getName();
+          String _name_1 = c.getName();
+          return Boolean.valueOf(Objects.equal(_name, _name_1));
+        };
+        Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(et2.getFeatures(), _function_4);
+        final Attribute at = ((Attribute) _findFirst_1);
+        Assertions.assertNotNull(at);
+        Assertions.assertTrue(ref1.getAttributes().contains(at));
+      }
+    }
+    final Function1<Feature, Boolean> _function_4 = (Feature f) -> {
       String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "AutorID"));
+      String _constraintname = fk1.getConstraintname();
+      return Boolean.valueOf(Objects.equal(_name, _constraintname));
     };
-    Feature _findFirst_5 = IterableExtensions.<Feature>findFirst(et2.getFeatures(), _function_11);
-    final Attribute at1 = ((Attribute) _findFirst_5);
-    Assertions.assertNotNull(at1);
-    Assertions.assertTrue(ref1.getAttributes().contains(at1));
-    final Function1<Feature, Boolean> _function_12 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro_FK"));
-    };
-    Feature _findFirst_6 = IterableExtensions.<Feature>findFirst(et2.getFeatures(), _function_12);
-    final Reference ref2 = ((Reference) _findFirst_6);
+    Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(et2.getFeatures(), _function_4);
+    final Reference ref2 = ((Reference) _findFirst_1);
     Assertions.assertNotNull(ref2);
-    Assertions.assertEquals(fk1.getConstraintname(), ref2.getName());
     Assertions.assertEquals(1, ref2.getLowerBound());
     Assertions.assertEquals((-1), ref2.getUpperBound());
     Assertions.assertTrue(rm.getReference().contains(ref2));
-    final Function1<Feature, Boolean> _function_13 = (Feature f) -> {
-      String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "LibroID"));
-    };
-    Feature _findFirst_7 = IterableExtensions.<Feature>findFirst(et1.getFeatures(), _function_13);
-    final Attribute at2 = ((Attribute) _findFirst_7);
-    Assertions.assertNotNull(at2);
-    Assertions.assertTrue(ref2.getAttributes().contains(at2));
+    EList<Column> _columns_1 = fk1.getRefsTo().getColumns();
+    for (final Column c_1 : _columns_1) {
+      {
+        final Function1<Feature, Boolean> _function_5 = (Feature f) -> {
+          String _name = f.getName();
+          String _name_1 = c_1.getName();
+          return Boolean.valueOf(Objects.equal(_name, _name_1));
+        };
+        Feature _findFirst_2 = IterableExtensions.<Feature>findFirst(et1.getFeatures(), _function_5);
+        final Attribute at = ((Attribute) _findFirst_2);
+        Assertions.assertNotNull(at);
+        Assertions.assertTrue(ref2.getAttributes().contains(at));
+      }
+    }
   }
 
-  @Test
-  public void r6Table1_1_OK() {
-    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_6_1_1);
-    this.mapping.relationalSchema2USchema();
-    final Consumer<Table> _function = (Table t) -> {
-      this.mapping.table2SchemaType(t);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function);
-    final Consumer<Table> _function_1 = (Table t) -> {
-      final Consumer<Column> _function_2 = (Column c) -> {
-        this.mapping.column2Attribute(c);
-      };
-      t.getColumns().forEach(_function_2);
-      final Consumer<Key> _function_3 = (Key k) -> {
-        this.mapping.key2Key(k);
-      };
-      t.getKeys().forEach(_function_3);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
-    final Function1<Table, Boolean> _function_2 = (Table t) -> {
-      String _name = t.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
-    };
-    final Table t = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
-    final FKey t_fk = IterableExtensions.<FKey>head(t.getFks());
-    final Function1<Table, Boolean> _function_3 = (Table table) -> {
-      String _name = table.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
-    };
-    final Table s = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_3);
-    final Function1<EntityType, Boolean> _function_4 = (EntityType r) -> {
+  private void r6Table1_1_asserts(final Table t, final FKey fk) {
+    final Table s = fk.getRefsTo().getOwner();
+    final Function1<EntityType, Boolean> _function = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
+      String _name_1 = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_4);
-    final Function1<EntityType, Boolean> _function_5 = (EntityType r) -> {
+    final EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    final Function1<EntityType, Boolean> _function_1 = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
+      String _name_1 = s.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_5);
+    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_1);
     final int etFeaturesSize1 = et.getFeatures().size();
-    this.mapping.r6Table1_1(t, t_fk);
+    this.mapping.r6Table1_1(t, fk);
     final int etFeaturesSize2 = et.getFeatures().size();
     Assertions.assertEquals((etFeaturesSize1 + 1), etFeaturesSize2);
-    final Function1<Feature, Boolean> _function_6 = (Feature f) -> {
+    final Function1<Feature, Boolean> _function_2 = (Feature f) -> {
       String _name = f.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro_Libro_FK"));
+      String _name_1 = s.getName();
+      String _plus = (_name_1 + "_");
+      String _constraintname = fk.getConstraintname();
+      String _plus_1 = (_plus + _constraintname);
+      return Boolean.valueOf(Objects.equal(_name, _plus_1));
     };
-    Feature _findFirst = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_6);
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_2);
     final Reference rs = ((Reference) _findFirst);
     Assertions.assertNotNull(rs);
-    Assertions.assertTrue(et.getFeatures().contains(rs));
-    String _name = s.getName();
-    String _plus = (_name + "_");
-    String _constraintname = t_fk.getConstraintname();
-    String _plus_1 = (_plus + _constraintname);
-    Assertions.assertEquals(_plus_1, rs.getName());
     Assertions.assertEquals(0, rs.getLowerBound());
     Assertions.assertEquals(1, rs.getUpperBound());
     Assertions.assertEquals(es, rs.getRefsTo());
-    final Function1<Feature, Boolean> _function_7 = (Feature f) -> {
-      String _name_1 = f.getName();
-      return Boolean.valueOf(Objects.equal(_name_1, "Libro"));
-    };
-    Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_7);
-    final Attribute at = ((Attribute) _findFirst_1);
-    Assertions.assertNotNull(at);
-    Assertions.assertTrue(rs.getAttributes().contains(at));
+    EList<Column> _columns = fk.getColumns();
+    for (final Column c : _columns) {
+      {
+        final Function1<Feature, Boolean> _function_3 = (Feature f) -> {
+          String _name = f.getName();
+          String _name_1 = c.getName();
+          return Boolean.valueOf(Objects.equal(_name, _name_1));
+        };
+        Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(et.getFeatures(), _function_3);
+        final Attribute at = ((Attribute) _findFirst_1);
+        Assertions.assertNotNull(at);
+        Assertions.assertTrue(rs.getAttributes().contains(at));
+      }
+    }
   }
 
-  @Test
-  public void r6Table1_N_OK() {
-    this.mapping.loadSchema(MappingRelational2UschemaTest.RELATIONAL_SCHEMA_6_1_N);
-    this.mapping.relationalSchema2USchema();
-    final Consumer<Table> _function = (Table t) -> {
-      this.mapping.table2SchemaType(t);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function);
-    final Consumer<Table> _function_1 = (Table t) -> {
-      final Consumer<Column> _function_2 = (Column c) -> {
-        this.mapping.column2Attribute(c);
-      };
-      t.getColumns().forEach(_function_2);
-      final Consumer<Key> _function_3 = (Key k) -> {
-        this.mapping.key2Key(k);
-      };
-      t.getKeys().forEach(_function_3);
-    };
-    this.mapping.getRelationalSchema().getTables().forEach(_function_1);
-    final Function1<Table, Boolean> _function_2 = (Table t) -> {
-      String _name = t.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
-    };
-    final Table t = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_2);
-    final FKey t_fk = IterableExtensions.<FKey>head(t.getFks());
-    final Function1<Table, Boolean> _function_3 = (Table table) -> {
-      String _name = table.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
-    };
-    final Table s = IterableExtensions.<Table>findFirst(this.mapping.getRelationalSchema().getTables(), _function_3);
-    final Function1<EntityType, Boolean> _function_4 = (EntityType r) -> {
+  private void r6Table1_N_asserts(final Table t, final FKey fk) {
+    final Table s = fk.getRefsTo().getOwner();
+    final Function1<EntityType, Boolean> _function = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Reserva"));
+      String _name_1 = t.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_4);
-    final Function1<EntityType, Boolean> _function_5 = (EntityType r) -> {
+    final EntityType et = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function);
+    final Function1<EntityType, Boolean> _function_1 = (EntityType r) -> {
       String _name = r.getName();
-      return Boolean.valueOf(Objects.equal(_name, "Libro"));
+      String _name_1 = s.getName();
+      return Boolean.valueOf(Objects.equal(_name, _name_1));
     };
-    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_5);
+    final EntityType es = IterableExtensions.<EntityType>findFirst(this.mapping.getUSchema().getEntities(), _function_1);
+    final Key pk = this.mapping.findPK(t);
     final int esFeaturesSize1 = es.getFeatures().size();
-    this.mapping.r6Table1_N(t, t_fk);
+    this.mapping.r6Table1_N(t, fk);
     final int esFeaturesSize2 = es.getFeatures().size();
     Assertions.assertEquals((esFeaturesSize1 + 2), esFeaturesSize2);
-    final Function1<Feature, Boolean> _function_6 = (Feature f) -> {
-      return Boolean.valueOf((f instanceof Reference));
+    final Function1<Feature, Boolean> _function_2 = (Feature f) -> {
+      String _name = f.getName();
+      String _name_1 = t.getName();
+      String _plus = (_name_1 + "s");
+      return Boolean.valueOf(Objects.equal(_name, _plus));
     };
-    Feature _findFirst = IterableExtensions.<Feature>findFirst(es.getFeatures(), _function_6);
+    Feature _findFirst = IterableExtensions.<Feature>findFirst(es.getFeatures(), _function_2);
     final Reference rt = ((Reference) _findFirst);
     Assertions.assertNotNull(rt);
-    String _name = t.getName();
-    String _plus = (_name + "s");
-    Assertions.assertEquals(_plus, rt.getName());
     Assertions.assertEquals(0, rt.getLowerBound());
     Assertions.assertEquals((-1), rt.getUpperBound());
     Assertions.assertEquals(et, rt.getRefsTo());
-    final Function1<Column, Boolean> _function_7 = (Column c) -> {
-      String _name_1 = c.getName();
-      return Boolean.valueOf(Objects.equal(_name_1, "ReservaID"));
-    };
-    final Column col = IterableExtensions.<Column>findFirst(t.getColumns(), _function_7);
-    final Function1<Feature, Boolean> _function_8 = (Feature f) -> {
-      String _name_1 = f.getName();
-      return Boolean.valueOf(Objects.equal(_name_1, "ReservaIDReservas"));
-    };
-    Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(es.getFeatures(), _function_8);
-    Attribute at = ((Attribute) _findFirst_1);
-    Assertions.assertNotNull(at);
-    String _name_1 = col.getName();
-    String _name_2 = et.getName();
-    String _plus_1 = (_name_1 + _name_2);
-    String _plus_2 = (_plus_1 + "s");
-    Assertions.assertEquals(_plus_2, at.getName());
-    DataType _type = at.getType();
-    Assertions.assertEquals("int", ((PrimitiveType) _type).getName());
-    Assertions.assertTrue(rt.getAttributes().contains(at));
-    Assertions.assertTrue(at.getReferences().contains(rt));
+    EList<Column> _columns = pk.getColumns();
+    for (final Column c : _columns) {
+      {
+        final Function1<Feature, Boolean> _function_3 = (Feature f) -> {
+          String _name = f.getName();
+          String _name_1 = c.getName();
+          String _name_2 = et.getName();
+          String _plus = (_name_1 + _name_2);
+          String _plus_1 = (_plus + "s");
+          return Boolean.valueOf(Objects.equal(_name, _plus_1));
+        };
+        Feature _findFirst_1 = IterableExtensions.<Feature>findFirst(es.getFeatures(), _function_3);
+        Attribute at = ((Attribute) _findFirst_1);
+        Assertions.assertNotNull(at);
+        DataType _type = at.getType();
+        Assertions.assertEquals(MappingRelational2Uschema.typeConversionRelToUsc(c.getDatatype()), ((PrimitiveType) _type).getName());
+        Assertions.assertTrue(rt.getAttributes().contains(at));
+        Assertions.assertTrue(at.getReferences().contains(rt));
+      }
+    }
   }
 }

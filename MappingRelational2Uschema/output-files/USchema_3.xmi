@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uschema:USchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uschema="http://www.modelum.es/uschema" name="Biblioteca">
   <entities name="Usuario" root="true">
-    <features xsi:type="uschema:Attribute" name="UsuarioID" key="//@entities.0/@features.4">
+    <features xsi:type="uschema:Attribute" name="UsuarioID" key="//@entities.0/@features.3">
       <type xsi:type="uschema:PrimitiveType" name="int"/>
     </features>
-    <features xsi:type="uschema:Attribute" name="Nombre">
+    <features xsi:type="uschema:Attribute" name="Email" key="//@entities.0/@features.4">
       <type xsi:type="uschema:PrimitiveType" name="String"/>
     </features>
-    <features xsi:type="uschema:Attribute" name="Email" key="//@entities.0/@features.5">
+    <features xsi:type="uschema:Attribute" name="Telefono" key="//@entities.0/@features.4">
       <type xsi:type="uschema:PrimitiveType" name="String"/>
-    </features>
-    <features xsi:type="uschema:Attribute" name="FechaRegistro">
-      <type xsi:type="uschema:PrimitiveType" name="Date"/>
     </features>
     <features xsi:type="uschema:Key" name="Usuario_PK" attributes="//@entities.0/@features.0"/>
-    <features xsi:type="uschema:Key" name="Email_UK" attributes="//@entities.0/@features.2" isID="false"/>
+    <features xsi:type="uschema:Key" name="EmailTelefono_UK" attributes="//@entities.0/@features.1 //@entities.0/@features.2" isID="false"/>
   </entities>
 </uschema:USchema>
