@@ -44,6 +44,8 @@ public class MappingUschema2Document {
 
   private final HashMap<DataType, PrimitiveType> docTypes;
 
+  private final HashMap<DataType, Array> docArrayTypes;
+
   private final DocumentschemaFactory dsFactory;
 
   private final Trace trace;
@@ -51,6 +53,8 @@ public class MappingUschema2Document {
   public MappingUschema2Document() {
     HashMap<DataType, PrimitiveType> _hashMap = new HashMap<DataType, PrimitiveType>();
     this.docTypes = _hashMap;
+    HashMap<DataType, Array> _hashMap_1 = new HashMap<DataType, Array>();
+    this.docArrayTypes = _hashMap_1;
     this.dsFactory = DocumentschemaFactory.eINSTANCE;
     Trace _trace = new Trace();
     this.trace = _trace;
@@ -123,6 +127,7 @@ public class MappingUschema2Document {
   public void uSchema2DocumentSchema() {
     this.documentSchema = this.dsFactory.createDocumentSchema();
     this.createPrimitiveTypes();
+    this.createArrays();
     this.documentSchema.setName(this.uSchema.getName());
     this.trace.addTrace(this.uSchema.getName(), this.uSchema, this.documentSchema.getName(), this.documentSchema);
   }
@@ -300,8 +305,7 @@ public class MappingUschema2Document {
       p_ref.setType(primitiveType);
     } else {
       if (((f_ref.getUpperBound() == (-1)) || (f_ref.getUpperBound() > 1))) {
-        final Array array = this.dsFactory.createArray();
-        this.documentSchema.getTypes().add(array);
+        final Array array = this.docArrayTypes.get(primitiveType.getDatatype());
         array.setType(primitiveType);
         p_ref.setType(array);
       }
@@ -337,8 +341,7 @@ public class MappingUschema2Document {
       p_ref.setType(primitiveType);
     } else {
       if (((f_ref.getUpperBound() == (-1)) || (f_ref.getUpperBound() > 1))) {
-        final Array array = this.dsFactory.createArray();
-        this.documentSchema.getTypes().add(array);
+        final Array array = this.docArrayTypes.get(primitiveType.getDatatype());
         array.setType(primitiveType);
         p_ref.setType(array);
       }
@@ -409,7 +412,6 @@ public class MappingUschema2Document {
     if ((dt instanceof uschema.PrimitiveType)) {
       return this.primitiveTypeConversionUsc2Doc(((uschema.PrimitiveType)dt));
     } else {
-      final Array ar = this.dsFactory.createArray();
       uschema.PrimitiveType upt = null;
       boolean _matched = false;
       if (dt instanceof PList) {
@@ -438,13 +440,12 @@ public class MappingUschema2Document {
           upt = ((uschema.PrimitiveType) _valueType);
         }
       }
-      ar.setType(this.primitiveTypeConversionUsc2Doc(upt));
-      this.documentSchema.getTypes().add(ar);
-      return ar;
+      final PrimitiveType pt = this.primitiveTypeConversionUsc2Doc(upt);
+      return this.docArrayTypes.get(pt.getDatatype());
     }
   }
 
-  private void features2Properties(final EntityType uet, final documentschema.Aggregate ag) {
+  public void features2Properties(final EntityType uet, final documentschema.Aggregate ag) {
     EList<Feature> _features = uet.getFeatures();
     for (final Feature f : _features) {
       boolean _matched = false;
@@ -480,7 +481,7 @@ public class MappingUschema2Document {
     }
   }
 
-  private String getAggregateRecursiveTraceName(final documentschema.Aggregate g) {
+  public String getAggregateRecursiveTraceName(final documentschema.Aggregate g) {
     documentschema.Aggregate ag = g;
     String docAgTraceName = ag.getName();
     boolean exit = false;
@@ -506,7 +507,7 @@ public class MappingUschema2Document {
     return docAgTraceName;
   }
 
-  private PrimitiveType createPrimitiveTypes() {
+  public PrimitiveType createPrimitiveTypes() {
     PrimitiveType _xblockexpression = null;
     {
       final PrimitiveType string = this.dsFactory.createPrimitiveType();
@@ -526,7 +527,31 @@ public class MappingUschema2Document {
     return _xblockexpression;
   }
 
-  private PrimitiveType primitiveTypeConversionUsc2Doc(final uschema.PrimitiveType uDt) {
+  public Array createArrays() {
+    Array _xblockexpression = null;
+    {
+      final PrimitiveType string = this.docTypes.get(DataType.STRING);
+      final PrimitiveType integer = this.docTypes.get(DataType.INTEGER);
+      final PrimitiveType doubl = this.docTypes.get(DataType.DOUBLE);
+      final PrimitiveType bool = this.docTypes.get(DataType.BOOLEAN);
+      final Array arrayString = this.dsFactory.createArray();
+      final Array arrayInteger = this.dsFactory.createArray();
+      final Array arrayDouble = this.dsFactory.createArray();
+      final Array arrayBoolean = this.dsFactory.createArray();
+      arrayString.setType(string);
+      arrayInteger.setType(integer);
+      arrayDouble.setType(doubl);
+      arrayBoolean.setType(bool);
+      this.documentSchema.getTypes().addAll(List.<Array>of(arrayString, arrayInteger, arrayDouble, arrayBoolean));
+      this.docArrayTypes.put(string.getDatatype(), arrayString);
+      this.docArrayTypes.put(integer.getDatatype(), arrayInteger);
+      this.docArrayTypes.put(doubl.getDatatype(), arrayDouble);
+      _xblockexpression = this.docArrayTypes.put(bool.getDatatype(), arrayBoolean);
+    }
+    return _xblockexpression;
+  }
+
+  public PrimitiveType primitiveTypeConversionUsc2Doc(final uschema.PrimitiveType uDt) {
     DataType docDt = null;
     final String uDtUp = uDt.getName().toUpperCase();
     if (uDtUp != null) {
@@ -551,7 +576,7 @@ public class MappingUschema2Document {
     return this.docTypes.get(docDt);
   }
 
-  private documentschema.Attribute findAttributeKey(final documentschema.EntityType et) {
+  public documentschema.Attribute findAttributeKey(final documentschema.EntityType et) {
     final Function1<Property, Boolean> _function = (Property p) -> {
       return Boolean.valueOf(((p instanceof documentschema.Attribute) && 
         ((documentschema.Attribute) p).isIsKey()));
@@ -606,5 +631,9 @@ public class MappingUschema2Document {
 
   public Trace getTrace() {
     return this.trace;
+  }
+
+  public HashMap<DataType, Array> getDocArrayTypes() {
+    return this.docArrayTypes;
   }
 }

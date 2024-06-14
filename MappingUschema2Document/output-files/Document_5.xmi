@@ -11,4 +11,8 @@
   <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
   <types xsi:type="documentschema:PrimitiveType" datatype="DOUBLE"/>
   <types xsi:type="documentschema:PrimitiveType"/>
+  <types xsi:type="documentschema:Array" type="//@types.0"/>
+  <types xsi:type="documentschema:Array" type="//@types.1"/>
+  <types xsi:type="documentschema:Array" type="//@types.2"/>
+  <types xsi:type="documentschema:Array" type="//@types.3"/>
 </documentschema:DocumentSchema>

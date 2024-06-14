@@ -32,11 +32,13 @@ class MappingUschema2Document {
 	var USchema uSchema;
 	var DocumentSchema documentSchema;
 	val HashMap<DataType, PrimitiveType> docTypes;
+	val HashMap<DataType, Array> docArrayTypes;
 	val DocumentschemaFactory dsFactory;
 	val Trace trace;
 	
 	new() {
 		this.docTypes = new HashMap
+		this.docArrayTypes = new HashMap
 		this.dsFactory = DocumentschemaFactory.eINSTANCE
 		this.trace = new Trace()
 	}
@@ -75,7 +77,7 @@ class MappingUschema2Document {
 			
 			for (f: uet.features) {
 				switch f {
-					uschema.Aggregate: aggregate2Aggregate(f, d) // r3 //TODO: comprobar con los profesores si es correcto aplicarla aquí
+					uschema.Aggregate: aggregate2Aggregate(f, d) // r3
 					uschema.Reference: reference2Reference(f, d) // r5
 				}
 			}
@@ -94,6 +96,7 @@ class MappingUschema2Document {
 	def void uSchema2DocumentSchema() {
 		documentSchema = dsFactory.createDocumentSchema
 		createPrimitiveTypes()
+		createArrays()
 		
 		documentSchema.name = uSchema.name
 		
@@ -207,7 +210,7 @@ class MappingUschema2Document {
 		if (f_key.attributes.size > 1) {
 			val Attribute p_at = dsFactory.createAttribute
 
-			p_at.name = ag.name + "_id" //TODO: no sé si es el nombre del Aggregate o el nombre del f_key.owner (EntityType non-root)
+			p_at.name = ag.name + "_id"
 			p_at.type = docTypes.get(DataType::STRING)
 			p_at.isKey = true
 			ag.aggregates.add(p_at)
@@ -235,9 +238,7 @@ class MappingUschema2Document {
 		if (f_ref.upperBound == 1) {
 			p_ref.type = primitiveType
 		} else if (f_ref.upperBound == -1 || f_ref.upperBound > 1) {
-			val Array array = dsFactory.createArray
-			
-			documentSchema.types.add(array)
+			val Array array = docArrayTypes.get(primitiveType.datatype)
 			array.type = primitiveType
 			p_ref.type = array
 		}
@@ -263,9 +264,7 @@ class MappingUschema2Document {
 		if (f_ref.upperBound == 1) {
 			p_ref.type = primitiveType
 		} else if (f_ref.upperBound == -1 || f_ref.upperBound > 1) {
-			val Array array = dsFactory.createArray
-			
-			documentSchema.types.add(array)
+			val Array array = docArrayTypes.get(primitiveType.datatype)
 			array.type = primitiveType
 			p_ref.type = array
 		}
@@ -307,8 +306,6 @@ class MappingUschema2Document {
 		for (r : rt.reference) {
 			val Reference rf = dsFactory.createReference
 			val EntityType refsTo = trace.getTargetInstance(r.refsTo.name).head as EntityType
-//			val EntityType owner = trace.getTargetInstance(r.owner.name).head as EntityType
-//			val Reference p = trace.getTargetInstance(r.owner.name+"."+c.name).head as Reference
 
 			rf.name = r.name
 			rf.target = refsTo
@@ -316,27 +313,14 @@ class MappingUschema2Document {
 			c.properties.add(rf)
 			
 			trace.addTrace(r.owner.name+"."+r.name, r, rf.owner.name+"."+rf.name, rf)
-			
-			//TODO: esto falta que lo modifiquen y yo actualizarlo
-			// New Reference q
-//			val Reference q = dsFactory.createReference
-//			val array = dsFactory.createArray
-//			documentSchema.types.add(array)
-//			array.type = findAttributeKey(q.target) as PrimitiveType
-//			
-//			q.name = c.name
-//			q.target = c
-//			q.type = array
-//			owner.properties.add(q)
 		}
 	}
 	
-	// R7: Datatype to Type   TODO: revisar si hay que hacer traza para array o introducirlos de forma global como los PrimitiveType
+	// R7: Datatype to Type
 	def Type datatype2Type(uschema.DataType dt) {
 		if(dt instanceof uschema.PrimitiveType)
 			return primitiveTypeConversionUsc2Doc(dt)
 		else {
-			val ar = dsFactory.createArray
 			var uschema.PrimitiveType upt
 			
 			switch dt {	
@@ -353,15 +337,14 @@ class MappingUschema2Document {
 					upt = dt.valueType as uschema.PrimitiveType
 				}
 			}
-			ar.type = primitiveTypeConversionUsc2Doc(upt)
-			documentSchema.types.add(ar)
+			val PrimitiveType pt = primitiveTypeConversionUsc2Doc(upt)
 			
-			return ar
+			return docArrayTypes.get(pt.datatype)
 		}
 	}
 	
 	// Creates the mapped properties from non-root uschema.EntityType.features and asign them to Aggregate
-	private def void features2Properties(uschema.EntityType uet, Aggregate ag) {		
+	def void features2Properties(uschema.EntityType uet, Aggregate ag) {		
 		for (f : uet.features) {
 			switch f {
 				uschema.Attribute: attribute2Attribute(f, ag) // r2
@@ -387,7 +370,7 @@ class MappingUschema2Document {
 	}
 	
 	// Obtains the recursive name for Aggregate that could be aggregatedBy another Aggregate
-	private def String getAggregateRecursiveTraceName(Aggregate g) {
+	def String getAggregateRecursiveTraceName(Aggregate g) {
 		var Aggregate ag = g
 		var String docAgTraceName = ag.name
 		var boolean exit = false
@@ -406,7 +389,7 @@ class MappingUschema2Document {
 	}
 	
 	// Initialize all PrimitiveType instances for DocumentSchema and add them to the HashMap docTypes
-	private def createPrimitiveTypes() {
+	def createPrimitiveTypes() {
 		val string = dsFactory.createPrimitiveType
 		val integer = dsFactory.createPrimitiveType
 		val doubl = dsFactory.createPrimitiveType
@@ -425,8 +408,33 @@ class MappingUschema2Document {
 		docTypes.put(bool.datatype, bool)
 	}
 	
+	// Initialize all Array instances for DocumentSchema and add them to the HashMap docArrayTypes
+	def createArrays() {
+		val string = docTypes.get(DataType::STRING)
+		val integer = docTypes.get(DataType::INTEGER)
+		val doubl = docTypes.get(DataType::DOUBLE)
+		val bool = docTypes.get(DataType::BOOLEAN)
+		
+		val arrayString = dsFactory.createArray
+		val arrayInteger = dsFactory.createArray
+		val arrayDouble = dsFactory.createArray
+		val arrayBoolean = dsFactory.createArray
+		
+		arrayString.type = string
+		arrayInteger.type = integer
+		arrayDouble.type = doubl
+		arrayBoolean.type = bool
+		
+		documentSchema.types.addAll(List.of(arrayString, arrayInteger, arrayDouble, arrayBoolean))
+		
+		docArrayTypes.put(string.datatype, arrayString)
+		docArrayTypes.put(integer.datatype, arrayInteger)
+		docArrayTypes.put(doubl.datatype, arrayDouble)
+		docArrayTypes.put(bool.datatype, arrayBoolean)
+	}
+	
 	// Types conversion from uschema.PrimitiveType to PrimitiveType
-	private def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
+	def PrimitiveType primitiveTypeConversionUsc2Doc(uschema.PrimitiveType uDt) {
 		var DataType docDt;
 		
 		val String uDtUp = uDt.name.toUpperCase
@@ -442,7 +450,7 @@ class MappingUschema2Document {
 	}
 	
 	// Find the Attribute that has isKey==true from an EntityType
-	private def Attribute findAttributeKey(EntityType et) {
+	def Attribute findAttributeKey(EntityType et) {
 		return et.properties.findFirst[ p |
 			p instanceof Attribute &&
 			(p as Attribute).isIsKey
@@ -492,6 +500,9 @@ class MappingUschema2Document {
 	}
 	def Trace getTrace() {
 		return this.trace
+	}
+	def HashMap<DataType, Array> getDocArrayTypes() {
+		return this.docArrayTypes
 	}
 	
 }
