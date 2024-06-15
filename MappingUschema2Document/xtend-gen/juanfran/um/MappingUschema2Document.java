@@ -4,6 +4,7 @@ import documentschema.Array;
 import documentschema.DataType;
 import documentschema.DocumentSchema;
 import documentschema.DocumentschemaFactory;
+import documentschema.DocumentschemaPackage;
 import documentschema.PrimitiveType;
 import documentschema.Property;
 import documentschema.Type;
@@ -606,7 +607,7 @@ public class MappingUschema2Document {
         ResourceSet resourceSet = null;
         Resource docResource = null;
         URI docUri = URI.createFileURI(output);
-        UschemaPackage.eINSTANCE.eClass();
+        DocumentschemaPackage.eINSTANCE.eClass();
         ResourceSetImpl _resourceSetImpl = new ResourceSetImpl();
         resourceSet = _resourceSetImpl;
         Map<String, Object> _extensionToFactoryMap = resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap();

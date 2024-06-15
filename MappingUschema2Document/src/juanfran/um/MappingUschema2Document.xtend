@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import uschema.UschemaPackage
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl
+import documentschema.DocumentschemaPackage
 
 class MappingUschema2Document {
 	
@@ -480,7 +481,7 @@ class MappingUschema2Document {
 			var Resource docResource
 			var URI docUri = URI.createFileURI(output)
 			
-			UschemaPackage.eINSTANCE.eClass()
+			DocumentschemaPackage.eINSTANCE.eClass()
 			
 			resourceSet = new ResourceSetImpl()
 			resourceSet.resourceFactoryRegistry.extensionToFactoryMap.put("xmi", new XMIResourceFactoryImpl())
