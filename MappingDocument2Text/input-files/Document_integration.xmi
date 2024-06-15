@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ASCII"?>
+<documentschema:DocumentSchema xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:documentschema="http://www.example.org/documentschema" name="Biblioteca">
+  <entities name="Autor">
+    <properties xsi:type="documentschema:Attribute" name="AutorID_id" isKey="true" type="//@types.1"/>
+  </entities>
+  <entities name="Libro">
+    <properties xsi:type="documentschema:Attribute" name="LibroID_id" isKey="true" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="ReservaIDReservas" type="//@types.1"/>
+    <properties xsi:type="documentschema:Reference" name="Reservas" target="//@entities.3" type="//@types.5"/>
+  </entities>
+  <entities name="Usuario">
+    <properties xsi:type="documentschema:Attribute" name="UsuarioID_id" isKey="true" type="//@types.1"/>
+    <properties xsi:type="documentschema:Aggregate" name="DetallesUsuarios" isMany="true">
+      <aggregates xsi:type="documentschema:Attribute" name="Usuario_D_id" isKey="true" type="//@types.1"/>
+    </properties>
+  </entities>
+  <entities name="Reserva">
+    <properties xsi:type="documentschema:Attribute" name="ReservaID_id" isKey="true" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="Libro_R" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="Usuario_R" type="//@types.1"/>
+    <properties xsi:type="documentschema:Attribute" name="FechaReserva" type="//@types.0"/>
+    <properties xsi:type="documentschema:Reference" name="Usuario_Usuario_FK" target="//@entities.2" type="//@types.1"/>
+  </entities>
+  <entities name="Libros_Autores">
+    <properties xsi:type="documentschema:Attribute" name="Editorial" type="//@types.0"/>
+    <properties xsi:type="documentschema:Attribute" name="Libros_Autores_id" isKey="true" type="//@types.0"/>
+    <properties xsi:type="documentschema:Reference" name="Libro_FK" target="//@entities.1" type="//@types.1"/>
+    <properties xsi:type="documentschema:Reference" name="Autor_FK" target="//@entities.0" type="//@types.1"/>
+  </entities>
+  <types xsi:type="documentschema:PrimitiveType" datatype="STRING"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="INTEGER"/>
+  <types xsi:type="documentschema:PrimitiveType" datatype="DOUBLE"/>
+  <types xsi:type="documentschema:PrimitiveType"/>
+  <types xsi:type="documentschema:Array" type="//@types.0"/>
+  <types xsi:type="documentschema:Array" type="//@types.1"/>
+  <types xsi:type="documentschema:Array" type="//@types.2"/>
+  <types xsi:type="documentschema:Array" type="//@types.3"/>
+</documentschema:DocumentSchema>

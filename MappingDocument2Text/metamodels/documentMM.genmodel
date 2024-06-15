@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/MappingDocument2Text/src" modelPluginID="MappingDocument2Text"
+    modelName="DocumentMM" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>documentMM.ecore</foreignModel>
+  <genPackages prefix="Documentschema" disposableProviderFactory="true" ecorePackage="documentMM.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="documentMM.ecore#//DataType">
+      <genEnumLiterals ecoreEnumLiteral="documentMM.ecore#//DataType/BOOLEAN"/>
+      <genEnumLiterals ecoreEnumLiteral="documentMM.ecore#//DataType/INTEGER"/>
+      <genEnumLiterals ecoreEnumLiteral="documentMM.ecore#//DataType/DOUBLE"/>
+      <genEnumLiterals ecoreEnumLiteral="documentMM.ecore#//DataType/STRING"/>
+    </genEnums>
+    <genClasses ecoreClass="documentMM.ecore#//DocumentSchema">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//DocumentSchema/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference documentMM.ecore#//DocumentSchema/entities"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference documentMM.ecore#//DocumentSchema/types"/>
+    </genClasses>
+    <genClasses ecoreClass="documentMM.ecore#//EntityType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//EntityType/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference documentMM.ecore#//EntityType/properties"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference documentMM.ecore#//EntityType/owner"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="documentMM.ecore#//Property">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Property/name"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference documentMM.ecore#//Property/owner"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference documentMM.ecore#//Property/aggregatedBy"/>
+    </genClasses>
+    <genClasses ecoreClass="documentMM.ecore#//Attribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Attribute/isKey"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Attribute/type"/>
+    </genClasses>
+    <genClasses ecoreClass="documentMM.ecore#//Reference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Reference/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Reference/type"/>
+    </genClasses>
+    <genClasses ecoreClass="documentMM.ecore#//Aggregate">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference documentMM.ecore#//Aggregate/aggregates"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//Aggregate/isMany"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="documentMM.ecore#//Type"/>
+    <genClasses ecoreClass="documentMM.ecore#//PrimitiveType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute documentMM.ecore#//PrimitiveType/datatype"/>
+    </genClasses>
+    <genClasses ecoreClass="documentMM.ecore#//Array">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference documentMM.ecore#//Array/type"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
