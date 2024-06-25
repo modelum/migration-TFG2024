@@ -48,45 +48,33 @@ class MappingUschema2Document {
 	def DocumentSchema executeMapping() {
 		uSchema2DocumentSchema() // r0
 		
-		for (e : uSchema.entities) {
-			if (e.root)
-				entityType2EntityType(e) // r1
-		}
+		uSchema.entities.filter[ e | e.root ].forEach[ e | entityType2EntityType(e) ] // r1
 		
-		for (d : documentSchema.entities) {
-			val uschema.EntityType uet = trace.getSourceInstance(d.name).head as uschema.EntityType
-		
-			for (f : uet.features) {
-				switch f {
-					uschema.Attribute: attribute2Attribute(f, d) // r2
-				}
-				
-			}
+		uSchema.entities.filter[ e | e.root ].forEach[ e |
+			val EntityType d = trace.getTargetInstance(e.name).head as EntityType
 			
-			for (f: uet.features) {
-				switch f {
-					uschema.Key: { 
-						if (f.isID)
-							key2Attribute(f, d) // r4
-					}
-				}
-			}
-		}
+			e.features.filter[ f | f instanceof uschema.Attribute ].forEach[ at |
+				attribute2Attribute(at as uschema.Attribute, d) // r2
+			]
+			e.features.filter[ f | f instanceof uschema.Key ].forEach[ k |
+				key2Attribute(k as uschema.Key, d) // r4
+			]
+		]
 		
-		for (d : documentSchema.entities) {
-			val uschema.EntityType uet = trace.getSourceInstance(d.name).head as uschema.EntityType
+		uSchema.entities.filter[ e | e.root ].forEach[ e |
+			val EntityType d = trace.getTargetInstance(e.name).head as EntityType
 			
-			for (f: uet.features) {
-				switch f {
-					uschema.Aggregate: aggregate2Aggregate(f, d) // r3
-					uschema.Reference: reference2Reference(f, d) // r5
-				}
-			}
-		}
+			e.features.filter[ f | f instanceof uschema.Aggregate ].forEach[ ag |
+				aggregate2Aggregate(ag as uschema.Aggregate, d) // r3
+			]
+			e.features.filter[ f | f instanceof uschema.Reference ].forEach[ rf |
+				reference2Reference(rf as uschema.Reference, d) // r5
+			]
+		]
 		
-		for (rt : uSchema.relationships) {
+		uSchema.relationships.forEach[ rt | 
 			relationshipType2EntityType(rt) // r6
-		}
+		]
 		
 		trace.printDirectTraceTypes
 		
@@ -192,14 +180,14 @@ class MappingUschema2Document {
 	
 	// R4: Key (isKey=true) to Attribute from EntityType
 	def void key2Attribute(Key f_key, EntityType d) {
-		if (f_key.attributes.size > 1) {
+		if (f_key.isID && f_key.attributes.size > 1) {
 			val Attribute p_at = dsFactory.createAttribute
 
 			p_at.name = d.name + "_id"
 			p_at.type = docTypes.get(DataType::STRING)
 			p_at.isKey = true
 			d.properties.add(p_at)
-			
+
 			for (uAt : f_key.attributes) {
 				trace.addTrace(uAt.owner.name+"."+uAt.name, uAt, p_at.owner.name+"."+p_at.name, p_at)
 			}
